@@ -1,0 +1,776 @@
+START RECORDING @ 2016-01-01 09:52:34
+00:00:19 - Scene changed
+00:09:17 - Scene changed
+00:12:40 - Scene changed
+00:13:04 - Scene changed
+00:13:40 - Scene changed
+00:14:11 - Scene changed
+00:14:42 - Scene changed
+00:15:13 - Scene changed
+00:15:45 - Scene changed
+00:16:29 - Scene changed
+00:17:46 - Scene changed
+00:18:40 - Scene changed
+00:19:07 - Scene changed
+00:19:32 - Scene changed
+00:19:58 - Scene changed
+00:20:26 - Scene changed
+00:20:56 - Scene changed
+00:23:09 - Scene changed
+00:25:40 - Scene changed
+00:31:49 - Scene changed
+00:31:55 - Scene changed
+00:33:17 - Scene changed
+00:34:37 - Scene changed
+00:37:07 - Scene changed
+00:37:23 - Scene changed
+00:40:51 - Scene changed
+00:41:22 - Scene changed
+00:42:01 - Scene changed
+00:42:32 - Scene changed
+00:42:48 - Scene changed
+00:43:01 - Scene changed
+00:43:16 - Scene changed
+00:43:47 - Scene changed
+00:44:44 - Scene changed
+00:45:46 - Scene changed
+00:46:34 - Scene changed
+00:47:13 - Scene changed
+00:51:02 - Scene changed
+00:53:34 - Scene changed
+00:55:27 - Scene changed
+00:55:50 - Scene changed
+00:56:46 - Scene changed
+01:04:33 - Scene changed
+01:13:00 - Scene changed
+01:13:39 - Scene changed
+01:14:25 - Scene changed
+01:15:01 - Scene changed
+01:15:40 - Scene changed
+01:17:15 - Scene changed
+STOP RECORDING @ 2016-01-01 11:11:25
+START RECORDING @ 2017-01-01 09:52:34
+00:00:19 - Scene changed
+00:09:17 - Scene changed
+00:12:40 - Scene changed
+00:13:04 - Scene changed
+00:13:40 - Scene changed
+00:14:11 - Scene changed
+00:14:42 - Scene changed
+00:15:13 - Scene changed
+00:15:45 - Scene changed
+00:16:29 - Scene changed
+00:17:46 - Scene changed
+00:18:40 - Scene changed
+00:19:07 - Scene changed
+00:19:32 - Scene changed
+00:19:58 - Scene changed
+00:20:26 - Scene changed
+00:20:56 - Scene changed
+00:23:09 - Scene changed
+00:25:40 - Scene changed
+00:31:49 - Scene changed
+00:31:55 - Scene changed
+00:33:17 - Scene changed
+00:34:37 - Scene changed
+00:37:07 - Scene changed
+00:37:23 - Scene changed
+00:40:51 - Scene changed
+00:41:22 - Scene changed
+00:42:01 - Scene changed
+00:42:32 - Scene changed
+00:42:48 - Scene changed
+00:43:01 - Scene changed
+00:43:16 - Scene changed
+00:43:47 - Scene changed
+00:44:44 - Scene changed
+00:45:46 - Scene changed
+00:46:34 - Scene changed
+00:47:13 - Scene changed
+00:51:02 - Scene changed
+00:53:34 - Scene changed
+00:55:27 - Scene changed
+00:55:50 - Scene changed
+00:56:46 - Scene changed
+01:04:33 - Scene changed
+01:13:00 - Scene changed
+01:13:39 - Scene changed
+01:14:25 - Scene changed
+01:15:01 - Scene changed
+01:15:40 - Scene changed
+01:17:15 - Scene changed
+STOP RECORDING @ 2017-01-01 11:11:25
+START RECORDING @ 2017-01-08 09:53:10
+00:07:06 - Someone is Speaking
+00:07:15 - Music
+00:08:02 - Joel Eidsness Is Speaking
+00:10:06 - Scene changed to Slides EVEN
+00:10:34 - Scene changed to Slides ODD
+00:10:46 - Scene changed to Slides EVEN
+00:11:02 - Scene changed to Slides ODD
+00:11:21 - Scene changed to Slides EVEN
+00:11:39 - Scene changed to Slides ODD
+00:11:57 - Scene changed to Slides EVEN
+00:12:15 - Scene changed to Slides ODD
+00:12:33 - Scene changed to Slides EVEN
+00:14:01 - Scene changed to Slides ODD
+00:14:36 - Scene changed to Slides EVEN
+00:15:52 - Scene changed to Slides ODD
+00:16:28 - Scene changed to Slides EVEN
+00:16:37 - Someone is Speaking
+00:18:01 - Scene changed to Slides ODD
+00:23:25 - Scene changed to Slides EVEN
+00:23:32 - Scene changed to Slides ODD
+00:25:44 - Scene changed to Slides EVEN
+00:30:11 - Scene changed to Slides ODD
+00:30:16 - Joel Eidsness Is Speaking
+00:31:25 - Scene changed to Slides EVEN
+00:32:32 - Music
+00:33:02 - Scene changed to Slides ODD
+00:33:06 - Someone is Singing
+00:37:15 - Scene changed to Slides EVEN
+00:37:22 - Joel Eidsness Is Speaking
+00:37:49 - Scene changed to Slides ODD
+00:38:50 - Scene changed to Slides EVEN
+00:41:46 - Scene changed to Slides ODD
+00:43:20 - Scene changed to Slides EVEN
+00:43:36 - Scene changed to Slides ODD
+00:45:10 - Scene changed to Slides EVEN
+00:46:22 - Scene changed to Slides ODD
+00:48:03 - Scene changed to Slides EVEN
+00:49:34 - Scene changed to Slides ODD
+00:51:54 - Scene changed to Slides EVEN
+00:52:27 - Scene changed to Slides ODD
+00:54:41 - Scene changed to Slides EVEN
+00:55:57 - Scene changed to Slides ODD
+00:57:30 - Scene changed to Slides EVEN
+00:59:13 - Scene changed to Slides ODD
+00:59:50 - Scene changed to Slides EVEN
+01:07:40 - Scene changed to Slides ODD
+01:07:49 - Scene changed to Slides EVEN
+01:08:29 - Scene changed to Slides ODD
+01:08:51 - Scene changed to Slides EVEN
+01:09:15 - Scene changed to Slides ODD
+01:09:20 - Joel Eidsness Is Speaking
+01:10:28 - Scene changed to Slides EVEN
+01:10:30 - Music
+STOP RECORDING @ 2017-01-08 11:06:22
+START RECORDING @ 2017-01-15 09:52:55
+00:00:51 - Music
+00:28:22 - Scene changed to Slides ODD
+00:29:12 - Scene changed to Slides EVEN
+00:30:00 - Scene changed to Slides ODD
+00:38:39 - Scene changed to Slides EVEN
+00:39:32 - Scene changed to Slides ODD
+00:39:33 - Scene changed to Slides EVEN
+00:45:36 - Scene changed to Slides ODD
+00:45:36 - Scene changed to Slides ODD
+00:46:11 - Scene changed to Slides EVEN
+00:46:26 - Scene changed to Slides ODD
+00:46:31 - Scene changed to Slides EVEN
+00:46:32 - Scene changed to Slides ODD
+00:46:33 - Scene changed to Slides EVEN
+00:46:34 - Scene changed to Slides ODD
+00:46:48 - Scene changed to Slides EVEN
+00:46:48 - Scene changed to Slides ODD
+00:46:49 - Scene changed to Slides EVEN
+00:46:50 - Scene changed to Slides ODD
+00:46:51 - Scene changed to Slides EVEN
+00:46:51 - Scene changed to Slides ODD
+00:46:53 - Scene changed to Slides EVEN
+00:46:54 - Scene changed to Slides ODD
+00:46:55 - Scene changed to Slides EVEN
+00:48:14 - Scene changed to Slides ODD
+00:48:15 - Scene changed to Slides EVEN
+00:48:16 - Scene changed to Slides ODD
+STOP RECORDING @ 2017-01-15 11:12:31
+START RECORDING @ 2017-01-15 15:03:40
+00:05:35 - Scene changed to Slides EVEN
+00:08:32 - Scene changed to Slides ODD
+00:15:36 - Scene changed to Slides EVEN
+00:26:47 - Scene changed to Slides ODD
+00:30:30 - Scene changed to Slides EVEN
+00:57:56 - Scene changed to Slides ODD
+01:21:02 - Joel Eidsness Is Speaking
+01:21:04 - Joel Eidsness Is Speaking
+01:21:10 - Joel Eidsness Is Speaking
+STOP RECORDING @ 2017-01-15 16:54:26
+START RECORDING @ 2017-01-22 09:50:57
+00:00:40 - Scene changed to Slides EVEN
+00:10:46 - Scene changed to Slides ODD
+00:13:19 - Scene changed to Slides EVEN
+00:13:30 - Scene changed to Slides ODD
+00:13:54 - Scene changed to Slides EVEN
+00:14:11 - Scene changed to Slides ODD
+00:14:28 - Scene changed to Slides EVEN
+00:14:47 - Scene changed to Slides ODD
+00:15:04 - Scene changed to Slides EVEN
+00:15:21 - Scene changed to Slides ODD
+00:15:40 - Scene changed to Slides EVEN
+00:15:58 - Scene changed to Slides ODD
+00:16:15 - Scene changed to Slides EVEN
+00:17:36 - Scene changed to Slides ODD
+00:18:56 - Scene changed to Slides EVEN
+00:19:23 - Scene changed to Slides ODD
+00:19:45 - Scene changed to Slides EVEN
+00:20:42 - Scene changed to Slides ODD
+00:21:03 - Scene changed to Slides EVEN
+00:21:26 - Scene changed to Slides ODD
+00:21:53 - Scene changed to Slides EVEN
+00:26:46 - Scene changed to Slides ODD
+00:27:11 - Scene changed to Slides EVEN
+00:27:54 - Scene changed to Slides ODD
+00:28:21 - Scene changed to Slides EVEN
+00:29:07 - Scene changed to Slides ODD
+00:34:31 - Scene changed to Slides EVEN
+00:34:41 - Scene changed to Slides ODD
+00:35:10 - Scene changed to Slides EVEN
+00:35:35 - Scene changed to Slides ODD
+00:35:59 - Scene changed to Slides EVEN
+00:36:31 - Scene changed to Slides ODD
+00:40:13 - Scene changed to Slides EVEN
+00:42:56 - Scene changed to Slides ODD
+00:43:24 - Scene changed to Slides EVEN
+00:44:02 - Scene changed to Slides ODD
+00:44:44 - Scene changed to Slides EVEN
+00:49:27 - Scene changed to Slides ODD
+00:51:04 - Scene changed to Slides EVEN
+00:52:46 - Scene changed to Slides ODD
+00:53:27 - Scene changed to Slides EVEN
+00:54:27 - Scene changed to Slides ODD
+00:54:42 - Scene changed to Slides EVEN
+00:56:54 - Scene changed to Slides ODD
+00:59:12 - Scene changed to Slides EVEN
+01:00:51 - Scene changed to Slides ODD
+01:03:53 - Scene changed to Slides EVEN
+01:04:12 - Scene changed to Slides ODD
+01:04:59 - Scene changed to Slides EVEN
+01:05:38 - Scene changed to Slides ODD
+01:06:06 - Scene changed to Slides EVEN
+01:07:31 - Scene changed to Slides ODD
+01:08:20 - Scene changed to Slides EVEN
+01:13:46 - Scene changed to Slides ODD
+01:13:51 - Scene changed to Slides EVEN
+01:15:52 - Scene changed to Slides ODD
+01:16:40 - Scene changed to Slides EVEN
+STOP RECORDING @ 2017-01-22 11:09:22
+START RECORDING @ 2017-01-29 09:51:10
+00:11:45 - Scene changed to Slides EVEN
+00:13:27 - Scene changed to Slides ODD
+00:13:35 - Scene changed to Slides EVEN
+00:14:09 - Scene changed to Slides ODD
+00:14:27 - Scene changed to Slides EVEN
+00:15:03 - Scene changed to Slides ODD
+00:15:23 - Scene changed to Slides EVEN
+00:15:45 - Scene changed to Slides ODD
+00:16:48 - Scene changed to Slides EVEN
+00:17:29 - Scene changed to Slides ODD
+00:18:14 - Scene changed to Slides EVEN
+00:18:50 - Scene changed to Slides ODD
+00:19:27 - Scene changed to Slides EVEN
+00:20:17 - Scene changed to Slides ODD
+00:22:45 - Scene changed to Slides EVEN
+00:29:58 - Scene changed to Slides ODD
+00:30:00 - Scene changed to Slides EVEN
+00:30:37 - Scene changed to Slides ODD
+00:30:57 - Scene changed to Slides EVEN
+00:31:13 - Scene changed to Slides ODD
+00:31:35 - Scene changed to Slides EVEN
+00:31:57 - Scene changed to Slides ODD
+00:34:45 - Scene changed to Slides EVEN
+00:38:24 - Scene changed to Slides ODD
+00:38:45 - Scene changed to Slides EVEN
+00:39:21 - Scene changed to Slides ODD
+00:44:06 - Scene changed to Slides EVEN
+00:46:14 - Scene changed to Slides ODD
+00:47:09 - Scene changed to Slides EVEN
+00:50:10 - Scene changed to Slides ODD
+00:50:21 - Scene changed to Slides EVEN
+00:56:04 - Scene changed to Slides ODD
+00:58:11 - Scene changed to Slides EVEN
+01:00:25 - Scene changed to Slides ODD
+01:07:50 - Scene changed to Slides EVEN
+01:08:15 - Scene changed to Slides ODD
+01:08:17 - Scene changed to Slides EVEN
+01:15:14 - Scene changed to Slides ODD
+01:15:14 - Scene changed to Slides EVEN
+01:15:15 - Scene changed to Slides EVEN
+01:15:15 - Scene changed to Slides EVEN
+01:15:15 - Scene changed to Slides EVEN
+01:15:40 - Scene changed to Slides ODD
+STOP RECORDING @ 2017-01-29 11:10:00
+START RECORDING @ 2017-02-05 09:49:29
+00:06:50 - Scene changed to Slides EVEN
+00:08:07 - Scene changed to Slides ODD
+00:08:11 - Scene changed to Slides EVEN
+00:12:43 - Scene changed to Slides ODD
+00:17:38 - Scene changed to Slides EVEN
+00:19:14 - Scene changed to Slides ODD
+00:19:58 - Scene changed to Slides EVEN
+00:20:14 - Scene changed to Slides ODD
+00:21:12 - Scene changed to Slides EVEN
+00:21:30 - Scene changed to Slides ODD
+00:22:07 - Scene changed to Slides EVEN
+00:22:33 - Scene changed to Slides ODD
+00:24:48 - Scene changed to Slides EVEN
+00:25:01 - Scene changed to Slides ODD
+00:25:22 - Scene changed to Slides EVEN
+00:25:44 - Scene changed to Slides ODD
+00:26:04 - Scene changed to Slides EVEN
+00:26:24 - Scene changed to Slides ODD
+00:26:45 - Scene changed to Slides EVEN
+00:27:07 - Scene changed to Slides ODD
+00:27:40 - Scene changed to Slides EVEN
+00:28:02 - Scene changed to Slides ODD
+00:28:14 - Scene changed to Slides EVEN
+00:28:26 - Scene changed to Slides ODD
+00:28:37 - Scene changed to Slides EVEN
+00:28:47 - Scene changed to Slides ODD
+00:29:04 - Scene changed to Slides EVEN
+00:29:16 - Scene changed to Slides ODD
+00:29:31 - Scene changed to Slides EVEN
+00:29:38 - Scene changed to Slides ODD
+00:29:50 - Scene changed to Slides EVEN
+00:30:03 - Scene changed to Slides ODD
+00:30:11 - Scene changed to Slides EVEN
+00:30:17 - Scene changed to Slides ODD
+00:30:26 - Scene changed to Slides EVEN
+00:31:26 - Scene changed to Slides ODD
+00:32:03 - Scene changed to Slides EVEN
+00:32:21 - Scene changed to Slides ODD
+00:32:51 - Scene changed to Slides EVEN
+00:33:12 - Scene changed to Slides ODD
+00:37:20 - Scene changed to Slides EVEN
+00:38:31 - Scene changed to Slides ODD
+00:39:16 - Scene changed to Slides EVEN
+00:42:44 - Scene changed to Slides ODD
+00:45:12 - Scene changed to Slides EVEN
+00:45:40 - Scene changed to Slides ODD
+00:46:35 - Scene changed to Slides EVEN
+00:47:25 - Scene changed to Slides ODD
+00:48:00 - Scene changed to Slides EVEN
+00:49:20 - Scene changed to Slides ODD
+00:49:39 - Scene changed to Slides EVEN
+00:51:17 - Scene changed to Slides ODD
+00:53:13 - Scene changed to Slides EVEN
+01:04:42 - Scene changed to Slides ODD
+01:04:43 - Scene changed to Slides EVEN
+01:04:44 - Scene changed to Slides ODD
+01:04:47 - Scene changed to Slides EVEN
+01:04:50 - Scene changed to Slides ODD
+01:04:54 - Scene changed to Slides EVEN
+01:04:56 - Scene changed to Slides ODD
+01:05:18 - Scene changed to Slides EVEN
+01:16:44 - Scene changed to Slides ODD
+01:17:00 - Scene changed to Slides EVEN
+01:17:21 - Scene changed to Slides ODD
+01:17:42 - Scene changed to Slides EVEN
+01:18:05 - Scene changed to Slides ODD
+01:18:26 - Scene changed to Slides EVEN
+01:19:12 - Scene changed to Slides ODD
+STOP RECORDING @ 2017-02-05 11:12:14
+START RECORDING @ 2017-02-12 09:55:38
+00:06:27 - Scene changed to Slides EVEN
+00:08:09 - Scene changed to Slides ODD
+00:12:35 - Scene changed to Slides EVEN
+00:12:44 - Scene changed to Slides ODD
+00:13:20 - Scene changed to Slides EVEN
+00:13:47 - Scene changed to Slides ODD
+00:14:13 - Scene changed to Slides EVEN
+00:15:43 - Scene changed to Slides ODD
+00:16:14 - Scene changed to Slides EVEN
+00:16:40 - Scene changed to Slides ODD
+00:17:07 - Scene changed to Slides EVEN
+00:17:34 - Scene changed to Slides ODD
+00:18:02 - Scene changed to Slides EVEN
+00:18:29 - Scene changed to Slides ODD
+00:24:57 - Scene changed to Slides EVEN
+00:25:37 - Scene changed to Slides ODD
+00:25:56 - Scene changed to Slides EVEN
+00:26:18 - Scene changed to Slides ODD
+00:26:39 - Scene changed to Slides EVEN
+00:26:56 - Scene changed to Slides ODD
+00:32:12 - Scene changed to Slides EVEN
+00:37:44 - Scene changed to Slides ODD
+00:40:08 - Scene changed to Slides EVEN
+00:41:37 - Scene changed to Slides ODD
+00:49:17 - Scene changed to Slides EVEN
+00:51:44 - Scene changed to Slides ODD
+00:53:02 - Scene changed to Slides EVEN
+00:53:59 - Scene changed to Slides ODD
+00:55:24 - Scene changed to Slides EVEN
+00:56:09 - Scene changed to Slides ODD
+00:58:40 - Scene changed to Slides EVEN
+01:01:18 - Scene changed to Slides ODD
+01:04:28 - Scene changed to Slides EVEN
+01:08:19 - Scene changed to Slides ODD
+01:08:20 - Scene changed to Slides EVEN
+01:15:09 - Scene changed to Slides ODD
+01:15:37 - Scene changed to Slides EVEN
+01:16:12 - Scene changed to Slides ODD
+01:16:48 - Scene changed to Slides EVEN
+01:17:23 - Scene changed to Slides ODD
+01:18:03 - Scene changed to Slides EVEN
+01:18:33 - Scene changed to Slides ODD
+STOP RECORDING @ 2017-02-12 11:21:21
+START RECORDING @ 2017-02-14 17:21:43
+STOP RECORDING @ 2017-02-14 17:39:18
+STOP STREAM @ 2017-02-14 17:39:19
+START RECORDING @ 2017-02-14 17:39:21
+00:00:31 - Joel Eidsness Is Speaking
+00:00:31 - Joel Eidsness Is Speaking
+00:00:31 - Joel Eidsness Is Speaking
+00:00:32 - Joel Eidsness Is Speaking
+STOP RECORDING @ 2017-02-14 18:45:05
+START RECORDING @ 2017-02-19 09:47:01
+STOP RECORDING @ 2017-02-19 09:47:08
+START RECORDING @ 2017-02-19 09:47:10
+00:15:21 - Scene changed to Slides EVEN
+00:15:23 - Scene changed to Slides ODD
+00:17:21 - Scene changed to Slides EVEN
+00:17:31 - Scene changed to Slides ODD
+00:18:27 - Scene changed to Slides EVEN
+00:18:59 - Scene changed to Slides ODD
+00:19:29 - Scene changed to Slides EVEN
+00:19:59 - Scene changed to Slides ODD
+00:20:32 - Scene changed to Slides EVEN
+00:21:02 - Scene changed to Slides ODD
+00:23:06 - Scene changed to Slides EVEN
+00:33:04 - Scene changed to Slides ODD
+00:46:12 - Scene changed to Slides EVEN
+00:46:13 - Scene changed to Slides ODD
+00:50:17 - Scene changed to Slides EVEN
+00:54:58 - Scene changed to Slides ODD
+00:54:59 - Scene changed to Slides EVEN
+01:21:42 - Scene changed to Slides ODD
+01:22:15 - Scene changed to Slides EVEN
+01:24:19 - Scene changed to Slides ODD
+01:24:20 - Scene changed to Slides ODD
+01:24:20 - Scene changed to Slides ODD
+01:24:20 - Scene changed to Slides ODD
+01:24:21 - Scene changed to Slides EVEN
+01:24:26 - Scene changed to Slides ODD
+STOP RECORDING @ 2017-02-19 11:12:57
+START RECORDING @ 2017-02-19 16:49:34
+00:02:20 - Scene changed to Slides EVEN
+00:11:39 - Scene changed to Slides ODD
+00:14:08 - Scene changed to Slides EVEN
+00:14:16 - Scene changed to Slides ODD
+00:14:17 - Scene changed to Slides EVEN
+00:14:18 - Scene changed to Slides ODD
+00:14:19 - Scene changed to Slides EVEN
+00:14:27 - Scene changed to Slides ODD
+00:42:11 - Scene changed to Slides EVEN
+00:48:56 - Scene changed to Slides ODD
+00:51:52 - Scene changed to Slides EVEN
+00:59:30 - Scene changed to Slides ODD
+01:18:14 - Scene changed to Slides EVEN
+01:18:54 - Scene changed to Slides ODD
+STOP RECORDING @ 2017-02-19 18:09:59
+START RECORDING @ 2017-02-26 09:53:31
+00:06:29 - Scene changed to Slides ODD
+00:08:32 - Scene changed to Slides EVEN
+00:08:39 - Scene changed to Slides ODD
+00:09:23 - Scene changed to Slides EVEN
+00:09:50 - Scene changed to Slides ODD
+00:10:58 - Scene changed to Slides EVEN
+00:12:16 - Scene changed to Slides ODD
+00:12:54 - Scene changed to Slides EVEN
+00:13:30 - Scene changed to Slides ODD
+00:15:14 - Scene changed to Slides EVEN
+00:15:49 - Scene changed to Slides ODD
+00:16:22 - Scene changed to Slides EVEN
+00:16:58 - Scene changed to Slides ODD
+00:17:12 - Scene changed to Slides EVEN
+00:17:32 - Scene changed to Slides ODD
+00:17:59 - Scene changed to Slides EVEN
+00:18:28 - Scene changed to Slides ODD
+00:18:52 - Scene changed to Slides EVEN
+00:19:31 - Scene changed to Slides ODD
+00:21:32 - Scene changed to Slides EVEN
+00:21:40 - Scene changed to Slides ODD
+00:22:46 - Scene changed to Slides EVEN
+00:23:10 - Scene changed to Slides ODD
+00:26:35 - Scene changed to Slides EVEN
+00:29:21 - Scene changed to Slides ODD
+00:29:54 - Scene changed to Slides EVEN
+00:30:27 - Scene changed to Slides ODD
+00:35:29 - Scene changed to Slides EVEN
+00:35:43 - Scene changed to Slides ODD
+00:38:26 - Scene changed to Slides EVEN
+00:39:09 - Scene changed to Slides ODD
+00:39:53 - Scene changed to Slides EVEN
+00:41:46 - Scene changed to Slides ODD
+00:42:25 - Scene changed to Slides EVEN
+00:44:32 - Scene changed to Slides ODD
+00:47:27 - Scene changed to Slides EVEN
+00:48:12 - Scene changed to Slides ODD
+00:49:32 - Scene changed to Slides EVEN
+00:52:15 - Scene changed to Slides ODD
+00:55:46 - Scene changed to Slides EVEN
+00:56:44 - Scene changed to Slides ODD
+01:00:42 - Scene changed to Slides EVEN
+01:01:38 - Scene changed to Slides ODD
+01:02:20 - Scene changed to Slides EVEN
+01:02:54 - Scene changed to Slides ODD
+01:03:34 - Scene changed to Slides EVEN
+STOP RECORDING @ 2017-02-26 10:58:16
+START RECORDING @ 2017-03-03 19:14:54
+00:00:05 - Scene changed to Slides EVEN
+00:00:11 - Scene changed to Slides EVEN
+00:00:20 - Scene changed to Slides EVEN
+00:00:23 - Scene changed to Slides EVEN
+00:00:26 - Scene changed to Slides EVEN
+00:00:32 - Scene changed to Slides EVEN
+00:00:35 - Scene changed to Slides EVEN
+00:00:36 - Scene changed to Slides EVEN
+00:00:38 - Scene changed to Slides EVEN
+00:00:41 - Scene changed to Slides EVEN
+00:00:45 - Scene changed to Slides EVEN
+00:00:47 - Scene changed to Slides EVEN
+00:00:49 - Scene changed to Slides EVEN
+00:01:02 - Scene changed to Slides EVEN
+00:01:08 - Scene changed to Slides EVEN
+00:01:11 - Scene changed to Slides EVEN
+00:01:24 - Scene changed to Slides EVEN
+00:01:27 - Scene changed to Slides EVEN
+00:01:32 - Scene changed to Slides EVEN
+00:01:34 - Scene changed to Slides EVEN
+00:01:36 - Scene changed to Slides EVEN
+00:01:39 - Scene changed to Slides EVEN
+00:01:40 - Scene changed to Slides EVEN
+00:01:41 - Scene changed to Slides EVEN
+STOP RECORDING @ 2017-03-03 19:17:18
+START RECORDING @ 2017-03-05 09:51:00
+00:02:01 - Someone is Singing
+00:02:01 - Someone is Singing
+00:02:01 - Someone is Singing
+00:02:02 - Someone is Singing
+00:11:17 - Scene changed to Slides EVEN
+00:11:26 - Scene changed to Slides EVEN
+00:12:06 - Scene changed to Slides EVEN
+00:12:26 - Scene changed to Slides EVEN
+00:12:46 - Scene changed to Slides EVEN
+00:13:05 - Scene changed to Slides EVEN
+00:13:25 - Scene changed to Slides EVEN
+00:13:57 - Scene changed to Slides EVEN
+00:14:53 - Scene changed to Slides EVEN
+00:15:16 - Scene changed to Slides EVEN
+00:15:35 - Scene changed to Slides EVEN
+00:15:47 - Scene changed to Slides EVEN
+00:15:58 - Scene changed to Slides EVEN
+00:16:09 - Scene changed to Slides EVEN
+00:16:16 - Scene changed to Slides EVEN
+00:16:33 - Scene changed to Slides EVEN
+00:16:42 - Scene changed to Slides EVEN
+00:16:56 - Scene changed to Slides EVEN
+00:17:08 - Scene changed to Slides EVEN
+00:17:20 - Scene changed to Slides EVEN
+00:17:28 - Scene changed to Slides EVEN
+00:17:41 - Scene changed to Slides EVEN
+00:20:04 - Scene changed to Slides EVEN
+00:20:16 - Scene changed to Slides EVEN
+00:20:49 - Scene changed to Slides EVEN
+00:21:17 - Scene changed to Slides EVEN
+00:21:47 - Scene changed to Slides EVEN
+00:22:18 - Scene changed to Slides EVEN
+00:34:00 - Scene changed to Slides EVEN
+00:34:03 - Scene changed to Slides EVEN
+00:34:32 - Scene changed to Slides EVEN
+00:35:02 - Scene changed to Slides EVEN
+00:35:38 - Scene changed to Slides EVEN
+00:36:02 - Scene changed to Slides EVEN
+00:39:54 - Scene changed to Slides EVEN
+00:40:24 - Scene changed to Slides EVEN
+00:40:53 - Scene changed to Slides EVEN
+00:44:58 - Scene changed to Slides EVEN
+00:45:49 - Scene changed to Slides EVEN
+00:46:01 - Scene changed to Slides EVEN
+00:46:30 - Scene changed to Slides EVEN
+00:47:13 - Scene changed to Slides EVEN
+00:47:39 - Scene changed to Slides EVEN
+00:47:54 - Scene changed to Slides EVEN
+00:48:13 - Scene changed to Slides EVEN
+00:48:45 - Scene changed to Slides EVEN
+00:49:37 - Scene changed to Slides EVEN
+00:51:15 - Scene changed to Slides EVEN
+00:52:24 - Scene changed to Slides EVEN
+00:53:21 - Scene changed to Slides EVEN
+00:54:20 - Scene changed to Slides EVEN
+00:57:42 - Scene changed to Slides EVEN
+01:00:01 - Scene changed to Slides EVEN
+01:01:28 - Scene changed to Slides EVEN
+01:02:50 - Scene changed to Slides EVEN
+01:04:39 - Scene changed to Slides EVEN
+01:05:01 - Scene changed to Slides EVEN
+01:05:43 - Scene changed to Slides EVEN
+01:09:47 - Scene changed to Slides EVEN
+01:09:56 - Scene changed to Slides EVEN
+01:10:21 - Scene changed to Slides EVEN
+01:10:41 - Scene changed to Slides EVEN
+01:11:00 - Scene changed to Slides EVEN
+01:11:21 - Scene changed to Slides EVEN
+01:11:40 - Scene changed to Slides EVEN
+01:12:06 - Scene changed to Slides EVEN
+STOP RECORDING @ 2017-03-05 11:05:10
+START RECORDING @ 2017-03-11 09:56:56
+00:00:04 - Scene changed to Slides EVEN
+00:01:02 - Bob Rudd Is Singing
+00:01:03 - Music
+STOP RECORDING @ 2017-03-11 10:11:28
+START RECORDING @ 2017-03-12 09:46:34
+00:14:46 - Scene changed to Slides EVEN
+00:14:53 - Scene changed to Slides EVEN
+00:15:38 - Scene changed to Slides EVEN
+00:16:13 - Scene changed to Slides EVEN
+00:16:40 - Scene changed to Slides EVEN
+00:17:05 - Scene changed to Slides EVEN
+00:17:31 - Scene changed to Slides EVEN
+00:17:59 - Scene changed to Slides EVEN
+00:19:13 - Scene changed to Slides EVEN
+00:20:16 - Scene changed to Slides EVEN
+00:26:04 - Scene changed to Slides EVEN
+00:26:10 - Scene changed to Slides EVEN
+00:26:48 - Scene changed to Slides EVEN
+00:27:14 - Scene changed to Slides EVEN
+00:33:16 - Scene changed to Slides EVEN
+00:36:41 - Scene changed to Slides EVEN
+00:40:26 - Scene changed to Slides EVEN
+01:16:40 - Scene changed to Slides EVEN
+01:17:22 - Scene changed to Slides EVEN
+01:18:07 - Scene changed to Slides EVEN
+01:18:29 - Scene changed to Slides EVEN
+01:20:39 - Scene changed to Slides EVEN
+STOP RECORDING @ 2017-03-12 11:08:46
+START RECORDING @ 2017-03-12 16:44:30
+00:16:40 - Scene changed to Slides EVEN
+00:19:03 - Scene changed to Slides EVEN
+00:42:36 - Scene changed to Slides EVEN
+00:46:06 - Scene changed to Slides EVEN
+00:48:37 - Scene changed to Slides EVEN
+00:49:53 - Scene changed to Slides EVEN
+00:50:20 - Scene changed to Slides EVEN
+00:50:37 - Scene changed to Slides EVEN
+00:51:25 - Scene changed to Slides EVEN
+00:51:42 - Scene changed to Slides EVEN
+00:56:16 - Scene changed to Slides EVEN
+00:58:06 - Scene changed to Slides EVEN
+01:00:55 - Scene changed to Slides EVEN
+01:16:22 - Scene changed to Slides EVEN
+01:19:24 - Scene changed to Slides EVEN
+STOP RECORDING @ 2017-03-12 18:04:18
+START RECORDING @ 2017-03-19 09:40:37
+00:19:02 - Scene changed to Slides EVEN
+00:20:56 - Scene changed to Slides EVEN
+00:21:26 - Scene changed to Slides EVEN
+00:22:02 - Scene changed to Slides EVEN
+00:22:32 - Scene changed to Slides EVEN
+00:23:02 - Scene changed to Slides EVEN
+00:26:02 - Scene changed to Slides EVEN
+00:26:49 - Scene changed to Slides EVEN
+00:27:23 - Scene changed to Slides EVEN
+00:27:39 - Scene changed to Slides EVEN
+00:28:04 - Scene changed to Slides EVEN
+00:28:24 - Scene changed to Slides EVEN
+00:29:18 - Scene changed to Slides EVEN
+00:29:38 - Scene changed to Slides EVEN
+00:30:31 - Scene changed to Slides EVEN
+00:31:14 - Scene changed to Slides EVEN
+00:31:25 - Scene changed to Slides EVEN
+00:31:36 - Scene changed to Slides EVEN
+00:31:43 - Scene changed to Slides EVEN
+00:32:05 - Scene changed to Slides EVEN
+00:32:20 - Scene changed to Slides EVEN
+00:32:30 - Scene changed to Slides EVEN
+00:32:38 - Scene changed to Slides EVEN
+00:32:46 - Scene changed to Slides EVEN
+00:32:55 - Scene changed to Slides EVEN
+00:33:01 - Scene changed to Slides EVEN
+00:33:10 - Scene changed to Slides EVEN
+00:33:21 - Scene changed to Slides EVEN
+00:33:31 - Scene changed to Slides EVEN
+00:36:38 - Scene changed to Slides EVEN
+00:36:53 - Scene changed to Slides EVEN
+00:37:44 - Scene changed to Slides EVEN
+00:38:25 - Scene changed to Slides EVEN
+00:41:57 - Scene changed to Slides EVEN
+00:45:01 - Scene changed to Slides EVEN
+00:47:42 - Scene changed to Slides EVEN
+00:48:02 - Scene changed to Slides EVEN
+00:48:38 - Scene changed to Slides EVEN
+00:49:07 - Scene changed to Slides EVEN
+00:49:29 - Scene changed to Slides EVEN
+00:51:08 - Scene changed to Slides EVEN
+00:52:31 - Scene changed to Slides EVEN
+00:53:44 - Scene changed to Slides EVEN
+00:55:07 - Scene changed to Slides EVEN
+00:55:14 - Scene changed to Slides EVEN
+01:01:04 - Scene changed to Slides EVEN
+01:03:14 - Scene changed to Slides EVEN
+01:04:34 - Scene changed to Slides EVEN
+01:04:44 - Scene changed to Slides EVEN
+01:07:22 - Scene changed to Slides EVEN
+01:09:26 - Scene changed to Slides EVEN
+01:11:06 - Scene changed to Slides EVEN
+01:18:49 - Scene changed to Slides EVEN
+01:19:02 - Scene changed to Slides EVEN
+01:20:14 - Scene changed to Slides EVEN
+01:21:01 - Scene changed to Slides EVEN
+STOP RECORDING @ 2017-03-19 11:02:54
+START RECORDING @ 2017-03-26 09:57:29
+STOP RECORDING @ 2017-03-26 09:57:30
+START RECORDING @ 2017-03-26 11:24:42
+00:00:05 - Scene changed to Slides ODD
+00:00:11 - Scene changed to Slides EVEN
+00:00:21 - Scene changed to Slides ODD
+STOP RECORDING @ 2017-03-26 11:25:08
+START RECORDING @ 2017-03-26 11:29:04
+STOP RECORDING @ 2017-03-26 11:29:14
+START RECORDING @ 2017-03-26 11:59:14
+00:00:04 - Scene changed to Slides EVEN
+00:00:06 - Scene changed to Slides ODD
+00:00:08 - Scene changed to Slides EVEN
+STOP RECORDING @ 2017-03-26 11:59:25
+START RECORDING @ 2017-03-26 12:01:29
+STOP RECORDING @ 2017-03-26 12:01:32
+START RECORDING @ 2017-04-02 09:32:42
+00:29:13 - Scene changed to Slides ODD
+00:31:44 - Scene changed to Slides EVEN
+00:31:51 - Scene changed to Slides ODD
+00:32:31 - Scene changed to Slides EVEN
+00:32:49 - Scene changed to Slides ODD
+00:33:22 - Scene changed to Slides EVEN
+00:33:40 - Scene changed to Slides ODD
+00:34:14 - Scene changed to Slides EVEN
+00:35:48 - Scene changed to Slides ODD
+00:35:56 - Scene changed to Slides EVEN
+00:36:51 - Scene changed to Slides ODD
+00:37:13 - Scene changed to Slides EVEN
+00:37:35 - Scene changed to Slides ODD
+00:38:11 - Scene changed to Slides EVEN
+00:43:00 - Scene changed to Slides ODD
+00:43:03 - Scene changed to Slides EVEN
+00:43:43 - Scene changed to Slides ODD
+00:45:04 - Scene changed to Slides EVEN
+00:45:27 - Scene changed to Slides ODD
+00:49:20 - Scene changed to Slides EVEN
+00:49:37 - Scene changed to Slides ODD
+00:50:21 - Scene changed to Slides EVEN
+00:56:16 - Scene changed to Slides ODD
+01:02:00 - Scene changed to Slides EVEN
+01:02:18 - Scene changed to Slides ODD
+01:03:30 - Scene changed to Slides EVEN
+01:04:50 - Scene changed to Slides ODD
+01:12:06 - Scene changed to Slides EVEN
+01:20:25 - Scene changed to Slides ODD
+01:20:28 - Scene changed to Slides EVEN
+01:21:19 - Scene changed to Slides ODD
+01:22:09 - Scene changed to Slides EVEN
+01:32:06 - Scene changed to Slides ODD
+01:32:07 - Scene changed to Slides EVEN
+01:32:52 - Scene changed to Slides ODD
+01:33:41 - Scene changed to Slides EVEN
+01:34:23 - Scene changed to Slides ODD
+01:35:58 - Scene changed to Slides EVEN
+01:36:04 - Scene changed to Slides ODD
+STOP RECORDING @ 2017-04-02 11:08:53
