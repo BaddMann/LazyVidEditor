@@ -19,6 +19,13 @@ setInterval(function () {
  }, 1000);
 
 
+var extronsocket = net.createConnection(23, '10.2.16.50', function() {
+    var telnetInput = new TelnetInput();
+    var telnetOutput = new TelnetOutput();
+    extronsocket.pipe(telnetInput).pipe(process.stdout);
+    process.stdin.pipe(telnetOutput).pipe(extronsocket).pipe(ws);
+});
+
 var socket = net.createConnection(1702, '10.2.16.54', function() {
     var telnetInput = new TelnetInput();
     var telnetOutput = new TelnetOutput();
@@ -32,6 +39,7 @@ var socket = net.createConnection(1702, '10.2.16.54', function() {
 
 function alive(){
     socket.write('sg\n')
+    extronsocket.write('Q');
 }
 
 function init(){
@@ -54,6 +62,7 @@ function init(){
     socket.write('cga 1 "Input 15 Mute"\n');
     socket.write('cgpna 1\n');
     socket.write('cgsna 1 500\n');
+    extronsocket.write('W1CV\r\n');
 }
 
 

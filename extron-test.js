@@ -19,19 +19,19 @@ setInterval(function () {
  }, 1000);
 
 
-var socket = net.createConnection(23, '10.2.16.50', function() {
+var extronsocket = net.createConnection(23, '10.2.16.50', function() {
     var telnetInput = new TelnetInput();
     var telnetOutput = new TelnetOutput();
-    socket.pipe(telnetInput).pipe(process.stdout);
-    process.stdin.pipe(telnetOutput).pipe(socket).pipe(ws);
+    extronsocket.pipe(telnetInput).pipe(process.stdout);
+    process.stdin.pipe(telnetOutput).pipe(extronsocket).pipe(ws);
 });
 
 function alive(){
-    socket.write('Q');
+    extronsocket.write('Q');
 }
 
 function init(){
-    socket.write('W1CV\r\n');
+    extronsocket.write('W1CV\r\n');
 }
 
 
@@ -43,7 +43,7 @@ setInterval(alive, 50000);
 //ToDo: Find way to poll telnet with SG command once a minute: Done
 //      Format output from telnet stream into something more useful, JSON maybe
 //      Create Variables based on Stream output and update state of variables based on continued stream
-// ///Cool!     Integrate WebSocket Stream or call from it on another script... OBS WEB Socket stream is now being Consumed.
+// ///Cool!     Integrate websocket Stream or call from it on another script... OBS WEB extronsocket stream is now being Consumed.
 //      Learn how to emit and consume events better.
 //      parse telnet output into JSON
 //      emit timestamp only when data is added to pipe......
