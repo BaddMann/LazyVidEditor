@@ -26,42 +26,42 @@ var extronsocket = net.createConnection(23, '10.2.16.50', function() {
     process.stdin.pipe(telnetOutput).pipe(extronsocket).pipe(ws);
 });
 
-var socket = net.createConnection(1702, '10.2.16.54', function() {
+var qsyssocket = net.createConnection(1702, '10.2.16.54', function() {
     var telnetInput = new TelnetInput();
     var telnetOutput = new TelnetOutput();
     var wss = websocket('ws://localhost:4444');
     
     wss.pipe(process.stdout);
     wss.pipe(ws);
-    socket.pipe(telnetInput).pipe(process.stdout);
-    process.stdin.pipe(telnetOutput).pipe(socket).pipe(ws);
+    qsyssocket.pipe(telnetInput).pipe(process.stdout);
+    process.stdin.pipe(telnetOutput).pipe(qsyssocket).pipe(ws);
 });
 
 function alive(){
-    socket.write('sg\n')
+    qsyssocket.write('sg\n')
     extronsocket.write('Q');
 }
 
 function init(){
-    socket.write('1WCV\n');
-    socket.write('cgc 1\n');
-    socket.write('cga 1 "Input 1 Mute"\n');
-    socket.write('cga 1 "Input 2 Mute"\n');
-    socket.write('cga 1 "Input 3 Mute"\n');
-    socket.write('cga 1 "Input 4 Mute"\n');
-    socket.write('cga 1 "Input 5 Mute"\n');
-    socket.write('cga 1 "Input 6 Mute"\n');
-    socket.write('cga 1 "Input 7 Mute"\n');
-    socket.write('cga 1 "Input 8 Mute"\n');
-    socket.write('cga 1 "Input 9 Mute"\n');
-    socket.write('cga 1 "Input 10 Mute"\n');
-    socket.write('cga 1 "Input 11 Mute"\n');
-    socket.write('cga 1 "Input 12 Mute"\n');
-    socket.write('cga 1 "Input 13 Mute"\n');
-    socket.write('cga 1 "Input 14 Mute"\n');
-    socket.write('cga 1 "Input 15 Mute"\n');
-    socket.write('cgpna 1\n');
-    socket.write('cgsna 1 500\n');
+    //qsyssocket.write('1WCV\n');
+    qsyssocket.write('cgc 1\n');
+    qsyssocket.write('cga 1 "Input 1 Mute"\n');
+    qsyssocket.write('cga 1 "Input 2 Mute"\n');
+    qsyssocket.write('cga 1 "Input 3 Mute"\n');
+    qsyssocket.write('cga 1 "Input 4 Mute"\n');
+    qsyssocket.write('cga 1 "Input 5 Mute"\n');
+    qsyssocket.write('cga 1 "Input 6 Mute"\n');
+    qsyssocket.write('cga 1 "Input 7 Mute"\n');
+    qsyssocket.write('cga 1 "Input 8 Mute"\n');
+    qsyssocket.write('cga 1 "Input 9 Mute"\n');
+    qsyssocket.write('cga 1 "Input 10 Mute"\n');
+    qsyssocket.write('cga 1 "Input 11 Mute"\n');
+    qsyssocket.write('cga 1 "Input 12 Mute"\n');
+    qsyssocket.write('cga 1 "Input 13 Mute"\n');
+    qsyssocket.write('cga 1 "Input 14 Mute"\n');
+    qsyssocket.write('cga 1 "Input 15 Mute"\n');
+    qsyssocket.write('cgpna 1\n');
+    qsyssocket.write('cgsna 1 500\n');
     extronsocket.write('W1CV\r\n');
 }
 
