@@ -5,7 +5,7 @@ var dateTime = require('node-datetime');
 var dt = dateTime.create();
 var formatted = dt.format('Y-m-d_H-M');
 var fs = require('fs');
-var ws = fs.createWriteStream(formatted.concat('-Slides.txt'));
+var logfile = fs.createWriteStream(formatted.concat('-Slides.txt'));
 var websocket = require('websocket-stream');
 var JSONStream = require('JSONStream');
 var es = require('event-stream');
@@ -14,7 +14,7 @@ var es = require('event-stream');
 setInterval(function () {
     var dt = dateTime.create();
     var formatted = dt.format('Y-m-d H:M:S');
-    ws.write(formatted.concat(' \r\n'));
+    logfile.write(formatted.concat(' \r\n'));
     console.log(formatted);
  }, 1000);
 
@@ -23,18 +23,18 @@ var extronsocket = net.createConnection(23, '10.2.16.50', function() {
     var telnetInput = new TelnetInput();
     var telnetOutput = new TelnetOutput();
     extronsocket.pipe(telnetInput).pipe(process.stdout);
-    process.stdin.pipe(telnetOutput).pipe(extronsocket).pipe(ws);
+    process.stdin.pipe(telnetOutput).pipe(extronsocket).pipe(logfile);
 });
 
 var qsyssocket = net.createConnection(1702, '10.2.16.54', function() {
     var telnetInput = new TelnetInput();
     var telnetOutput = new TelnetOutput();
-    var wss = websocket('ws://localhost:4444');
+    var obssocket = websocket('ws://localhost:4444');
     
-    wss.pipe(process.stdout);
-    wss.pipe(ws);
+    obssocket.pipe(process.stdout);
+    obssocket.pipe(logfile);
     qsyssocket.pipe(telnetInput).pipe(process.stdout);
-    process.stdin.pipe(telnetOutput).pipe(qsyssocket).pipe(ws);
+    process.stdin.pipe(telnetOutput).pipe(qsyssocket).pipe(logfile);
 });
 
 function alive(){
@@ -43,7 +43,6 @@ function alive(){
 }
 
 function init(){
-    //qsyssocket.write('1WCV\n');
     qsyssocket.write('cgc 1\n');
     qsyssocket.write('cga 1 "Input 1 Mute"\n');
     qsyssocket.write('cga 1 "Input 2 Mute"\n');
