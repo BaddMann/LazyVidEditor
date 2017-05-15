@@ -219,8 +219,8 @@ def quickedit(Scenes,Requests,Files,secssync):
 					            temp_audiofile=("scene{0}-temp-audio-{1}.m4a".format(str(startscene),timestr)), 
 					            preset="ultrafast", 
 					            remove_temp=True ) # Many options. ## .set_duration(8) ##test only 8 secs
-        with open((Files[0]+".txt"), "a") as myfile:
-            myfile.append("file {0}\\{1}_Scene{2}-{3}.mp4".format(video1path,videofilenamepart1,str(startscene), timestr))
+        #with open((Files[0]+".txt"), "a") as myfile:
+        #    myfile.append("file {0}\\{1}_Scene{2}-{3}.mp4".format(video1path,videofilenamepart1,str(startscene), timestr))
 
 def allscenesarevalid(Scenes,Requests,Files,secssync):
    allRequests = []
