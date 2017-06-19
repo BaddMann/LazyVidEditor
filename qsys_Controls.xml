@@ -1,0 +1,92 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Design DesignName="Oliver Test schematic" CompileGUID="Z9yh78b4ocnd">
+  <Snapshots>
+    <Snapshot Name="Global" Count="4" />
+    <Snapshot Name="Power On/Off" Count="2" />
+    <Snapshot Name="Audio Reset" Count="1" />
+    <Snapshot Name="Preview Audio Routing" Count="2" />
+    <Snapshot Name="Wireless Mic's On/Off" Count="2" />
+    <Snapshot Name="Audio System On/Off" Count="2" />
+    <Snapshot Name="Audio Player BGM Mode" Count="2" />
+    <Snapshot Name="Sunday Service Presets" Count="4" />
+    <Snapshot Name="Analog Mixer Mode" Count="2" />
+    <Snapshot Name="Fixed System Presets" Count="8" />
+    <Snapshot Name="Calibrated Settings" Count="1" />
+    <Snapshot Name="Distribution Audio Normal/Only" Count="2" />
+  </Snapshots>
+  <ExternalControls>
+    <Control Id="Preset 1" ControlId="load_1" ControlName="Load 1" ComponentId="--&amp;UX-@-(r]mgGQCg?DH" ComponentName="Snapshot Controller Power On/Off" ComponentLabel="" Type="Trigger" Mode="RW" Size="1" />
+    <Control Id="Preset 2" ControlId="load_2" ControlName="Load 2" ComponentId="--&amp;UX-@-(r]mgGQCg?DH" ComponentName="Snapshot Controller Power On/Off" ComponentLabel="" Type="Trigger" Mode="RW" Size="1" />
+    <Control Id="Preset 3" ControlId="load_1" ControlName="Load 1" ComponentId="#?+o#;(gBnQQFQYLkgq'" ComponentName="Snapshot Controller Audio System On/Off" ComponentLabel="" Type="Trigger" Mode="RW" Size="1" />
+    <Control Id="Preset 4" ControlId="load_2" ControlName="Load 2" ComponentId="#?+o#;(gBnQQFQYLkgq'" ComponentName="Snapshot Controller Audio System On/Off" ComponentLabel="" Type="Trigger" Mode="RW" Size="1" />
+    <Control Id="Preset 5" ControlId="load_1" ControlName="Load 1" ComponentId="0N91_&quot;Y.&amp;OV=7EF&quot;00$&quot;" ComponentName="Snapshot Controller Wireless Mic's On/Off" ComponentLabel="" Type="Trigger" Mode="RW" Size="1" />
+    <Control Id="Preset 6" ControlId="load_2" ControlName="Load 2" ComponentId="0N91_&quot;Y.&amp;OV=7EF&quot;00$&quot;" ComponentName="Snapshot Controller Wireless Mic's On/Off" ComponentLabel="" Type="Trigger" Mode="RW" Size="1" />
+    <Control Id="Preset 7" ControlId="load_1" ControlName="Load 1" ComponentId="&gt;:Dl#jG%&gt;?[+#k&quot;bC2$N" ComponentName="Snapshot Controller Audio Reset" ComponentLabel="" Type="Trigger" Mode="RW" Size="1" />
+    <Control Id="Preset 8" ControlId="load_1" ControlName="Load 1" ComponentId="A9Ec'SmL_XLnR11P'1,C" ComponentName="Snapshot Controller Calibrated Settings" ComponentLabel="" Type="Trigger" Mode="RW" Size="1" />
+    <Control Id="Preset 9" ControlId="load_1" ControlName="Load 1" ComponentId="):UcgYH-bTUo_=+FtYef" ComponentName="Snapshot Controller Analog Mixer Mode" ComponentLabel="" Type="Trigger" Mode="RW" Size="1" />
+    <Control Id="Preset 10" ControlId="load_2" ControlName="Load 2" ComponentId="):UcgYH-bTUo_=+FtYef" ComponentName="Snapshot Controller Analog Mixer Mode" ComponentLabel="" Type="Trigger" Mode="RW" Size="1" />
+    <Control Id="Preset 11" ControlId="load_1" ControlName="Load 1" ComponentId="FtS*-LBe&amp;X[!R;]Ou]Qj" ComponentName="Snapshot Controller Preview Audio Routing" ComponentLabel="" Type="Trigger" Mode="RW" Size="1" />
+    <Control Id="Preset 12" ControlId="load_2" ControlName="Load 2" ComponentId="FtS*-LBe&amp;X[!R;]Ou]Qj" ComponentName="Snapshot Controller Preview Audio Routing" ComponentLabel="" Type="Trigger" Mode="RW" Size="1" />
+    <Control Id="Preset 13" ControlId="load_1" ControlName="Load 1" ComponentId="pGKa0_2os9Ue75D_8;6W" ComponentName="Snapshot Controller Audio Player BGM Mode" ComponentLabel="" Type="Trigger" Mode="RW" Size="1" />
+    <Control Id="Preset 14" ControlId="load_2" ControlName="Load 2" ComponentId="pGKa0_2os9Ue75D_8;6W" ComponentName="Snapshot Controller Audio Player BGM Mode" ComponentLabel="" Type="Trigger" Mode="RW" Size="1" />
+    <Control Id="Preset 15" ControlId="load_1" ControlName="Load 1" ComponentId="H`@&lt;*M$fqJP),a=#?Fdq" ComponentName="Snapshot Controller Distribution Audio Normal/Only" ComponentLabel="" Type="Trigger" Mode="RW" Size="1" />
+    <Control Id="Preset 16" ControlId="load_2" ControlName="Load 2" ComponentId="H`@&lt;*M$fqJP),a=#?Fdq" ComponentName="Snapshot Controller Distribution Audio Normal/Only" ComponentLabel="" Type="Trigger" Mode="RW" Size="1" />
+    <Control Id="Input 1 Mute" ControlId="input_1_mute" ControlName="Input 1 Mute" ComponentId="JAHJr,K^!ZS_+VjY)22T" ComponentName="Mixer 16x6" ComponentLabel="" Type="Boolean" Mode="RW" Size="1" />
+    <Control Id="Input 1 Gain" ControlId="input_1_gain" ControlName="Input 1 Gain" ComponentId="JAHJr,K^!ZS_+VjY)22T" ComponentName="Mixer 16x6" ComponentLabel="" Type="Float" Mode="RW" MinimumValue="-100" MaximumValue="10" Size="1" />
+    <Control Id="Input 2 Mute" ControlId="input_2_mute" ControlName="Input 2 Mute" ComponentId="JAHJr,K^!ZS_+VjY)22T" ComponentName="Mixer 16x6" ComponentLabel="" Type="Boolean" Mode="RW" Size="1" />
+    <Control Id="Input 2 Gain" ControlId="input_2_gain" ControlName="Input 2 Gain" ComponentId="JAHJr,K^!ZS_+VjY)22T" ComponentName="Mixer 16x6" ComponentLabel="" Type="Float" Mode="RW" MinimumValue="-100" MaximumValue="10" Size="1" />
+    <Control Id="Input 3 Mute" ControlId="input_3_mute" ControlName="Input 3 Mute" ComponentId="JAHJr,K^!ZS_+VjY)22T" ComponentName="Mixer 16x6" ComponentLabel="" Type="Boolean" Mode="RW" Size="1" />
+    <Control Id="Input 3 Gain" ControlId="input_3_gain" ControlName="Input 3 Gain" ComponentId="JAHJr,K^!ZS_+VjY)22T" ComponentName="Mixer 16x6" ComponentLabel="" Type="Float" Mode="RW" MinimumValue="-100" MaximumValue="10" Size="1" />
+    <Control Id="Input 4 Mute" ControlId="input_4_mute" ControlName="Input 4 Mute" ComponentId="JAHJr,K^!ZS_+VjY)22T" ComponentName="Mixer 16x6" ComponentLabel="" Type="Boolean" Mode="RW" Size="1" />
+    <Control Id="Input 4 Gain" ControlId="input_4_gain" ControlName="Input 4 Gain" ComponentId="JAHJr,K^!ZS_+VjY)22T" ComponentName="Mixer 16x6" ComponentLabel="" Type="Float" Mode="RW" MinimumValue="-100" MaximumValue="10" Size="1" />
+    <Control Id="Input 5 Mute" ControlId="input_5_mute" ControlName="Input 5 Mute" ComponentId="JAHJr,K^!ZS_+VjY)22T" ComponentName="Mixer 16x6" ComponentLabel="" Type="Boolean" Mode="RW" Size="1" />
+    <Control Id="Input 5 Gain" ControlId="input_5_gain" ControlName="Input 5 Gain" ComponentId="JAHJr,K^!ZS_+VjY)22T" ComponentName="Mixer 16x6" ComponentLabel="" Type="Float" Mode="RW" MinimumValue="-100" MaximumValue="10" Size="1" />
+    <Control Id="Input 6 Mute" ControlId="input_6_mute" ControlName="Input 6 Mute" ComponentId="JAHJr,K^!ZS_+VjY)22T" ComponentName="Mixer 16x6" ComponentLabel="" Type="Boolean" Mode="RW" Size="1" />
+    <Control Id="Input 6 Gain" ControlId="input_6_gain" ControlName="Input 6 Gain" ComponentId="JAHJr,K^!ZS_+VjY)22T" ComponentName="Mixer 16x6" ComponentLabel="" Type="Float" Mode="RW" MinimumValue="-100" MaximumValue="10" Size="1" />
+    <Control Id="Input 7 Mute" ControlId="input_7_mute" ControlName="Input 7 Mute" ComponentId="JAHJr,K^!ZS_+VjY)22T" ComponentName="Mixer 16x6" ComponentLabel="" Type="Boolean" Mode="RW" Size="1" />
+    <Control Id="Input 7 Gain" ControlId="input_7_gain" ControlName="Input 7 Gain" ComponentId="JAHJr,K^!ZS_+VjY)22T" ComponentName="Mixer 16x6" ComponentLabel="" Type="Float" Mode="RW" MinimumValue="-100" MaximumValue="10" Size="1" />
+    <Control Id="Input 8 Mute" ControlId="input_8_mute" ControlName="Input 8 Mute" ComponentId="JAHJr,K^!ZS_+VjY)22T" ComponentName="Mixer 16x6" ComponentLabel="" Type="Boolean" Mode="RW" Size="1" />
+    <Control Id="Input 8 Gain" ControlId="input_8_gain" ControlName="Input 8 Gain" ComponentId="JAHJr,K^!ZS_+VjY)22T" ComponentName="Mixer 16x6" ComponentLabel="" Type="Float" Mode="RW" MinimumValue="-100" MaximumValue="10" Size="1" />
+    <Control Id="Input 9 Mute" ControlId="input_9_mute" ControlName="Input 9 Mute" ComponentId="JAHJr,K^!ZS_+VjY)22T" ComponentName="Mixer 16x6" ComponentLabel="" Type="Boolean" Mode="RW" Size="1" />
+    <Control Id="Input 9 Gain" ControlId="input_9_gain" ControlName="Input 9 Gain" ComponentId="JAHJr,K^!ZS_+VjY)22T" ComponentName="Mixer 16x6" ComponentLabel="" Type="Float" Mode="RW" MinimumValue="-100" MaximumValue="10" Size="1" />
+    <Control Id="Input 10 Mute" ControlId="input_10_mute" ControlName="Input 10 Mute" ComponentId="JAHJr,K^!ZS_+VjY)22T" ComponentName="Mixer 16x6" ComponentLabel="" Type="Boolean" Mode="RW" Size="1" />
+    <Control Id="Input 10 Gain" ControlId="input_10_gain" ControlName="Input 10 Gain" ComponentId="JAHJr,K^!ZS_+VjY)22T" ComponentName="Mixer 16x6" ComponentLabel="" Type="Float" Mode="RW" MinimumValue="-100" MaximumValue="10" Size="1" />
+    <Control Id="Input 11 Mute" ControlId="input_11_mute" ControlName="Input 11 Mute" ComponentId="JAHJr,K^!ZS_+VjY)22T" ComponentName="Mixer 16x6" ComponentLabel="" Type="Boolean" Mode="RW" Size="1" />
+    <Control Id="Input 11 Gain" ControlId="input_11_gain" ControlName="Input 11 Gain" ComponentId="JAHJr,K^!ZS_+VjY)22T" ComponentName="Mixer 16x6" ComponentLabel="" Type="Float" Mode="RW" MinimumValue="-100" MaximumValue="10" Size="1" />
+    <Control Id="Input 12 Mute" ControlId="input_12_mute" ControlName="Input 12 Mute" ComponentId="JAHJr,K^!ZS_+VjY)22T" ComponentName="Mixer 16x6" ComponentLabel="" Type="Boolean" Mode="RW" Size="1" />
+    <Control Id="Input 12 Gain" ControlId="input_12_gain" ControlName="Input 12 Gain" ComponentId="JAHJr,K^!ZS_+VjY)22T" ComponentName="Mixer 16x6" ComponentLabel="" Type="Float" Mode="RW" MinimumValue="-100" MaximumValue="10" Size="1" />
+    <Control Id="Input 13 Mute" ControlId="input_13_mute" ControlName="Input 13 Mute" ComponentId="JAHJr,K^!ZS_+VjY)22T" ComponentName="Mixer 16x6" ComponentLabel="" Type="Boolean" Mode="RW" Size="1" />
+    <Control Id="Input 13 Gain" ControlId="input_13_gain" ControlName="Input 13 Gain" ComponentId="JAHJr,K^!ZS_+VjY)22T" ComponentName="Mixer 16x6" ComponentLabel="" Type="Float" Mode="RW" MinimumValue="-100" MaximumValue="10" Size="1" />
+    <Control Id="Input 14 Mute" ControlId="input_14_mute" ControlName="Input 14 Mute" ComponentId="JAHJr,K^!ZS_+VjY)22T" ComponentName="Mixer 16x6" ComponentLabel="" Type="Boolean" Mode="RW" Size="1" />
+    <Control Id="Input 14 Gain" ControlId="input_14_gain" ControlName="Input 14 Gain" ComponentId="JAHJr,K^!ZS_+VjY)22T" ComponentName="Mixer 16x6" ComponentLabel="" Type="Float" Mode="RW" MinimumValue="-100" MaximumValue="10" Size="1" />
+    <Control Id="Input 15 Mute" ControlId="input_15_mute" ControlName="Input 15 Mute" ComponentId="JAHJr,K^!ZS_+VjY)22T" ComponentName="Mixer 16x6" ComponentLabel="" Type="Boolean" Mode="RW" Size="1" />
+    <Control Id="Input 15 Gain" ControlId="input_15_gain" ControlName="Input 15 Gain" ComponentId="JAHJr,K^!ZS_+VjY)22T" ComponentName="Mixer 16x6" ComponentLabel="" Type="Float" Mode="RW" MinimumValue="-100" MaximumValue="10" Size="1" />
+    <Control Id="Output 2 Mute" ControlId="output_2_mute" ControlName="Output 2 Mute" ComponentId="JAHJr,K^!ZS_+VjY)22T" ComponentName="Mixer 16x6" ComponentLabel="" Type="Boolean" Mode="RW" Size="1" />
+    <Control Id="Output 2 Gain" ControlId="output_2_gain" ControlName="Output 2 Gain" ComponentId="JAHJr,K^!ZS_+VjY)22T" ComponentName="Mixer 16x6" ComponentLabel="" Type="Float" Mode="RW" MinimumValue="-100" MaximumValue="10" Size="1" />
+    <Control Id="Output 3 Mute" ControlId="output_3_mute" ControlName="Output 3 Mute" ComponentId="JAHJr,K^!ZS_+VjY)22T" ComponentName="Mixer 16x6" ComponentLabel="" Type="Boolean" Mode="RW" Size="1" />
+    <Control Id="Output 3 Gain" ControlId="output_3_gain" ControlName="Output 3 Gain" ComponentId="JAHJr,K^!ZS_+VjY)22T" ComponentName="Mixer 16x6" ComponentLabel="" Type="Float" Mode="RW" MinimumValue="-100" MaximumValue="10" Size="1" />
+    <Control Id="Output 4 Mute" ControlId="output_4_mute" ControlName="Output 4 Mute" ComponentId="JAHJr,K^!ZS_+VjY)22T" ComponentName="Mixer 16x6" ComponentLabel="" Type="Boolean" Mode="RW" Size="1" />
+    <Control Id="Output 4 Gain" ControlId="output_4_gain" ControlName="Output 4 Gain" ComponentId="JAHJr,K^!ZS_+VjY)22T" ComponentName="Mixer 16x6" ComponentLabel="" Type="Float" Mode="RW" MinimumValue="-100" MaximumValue="10" Size="1" />
+    <Control Id="Output 5 Mute" ControlId="output_5_mute" ControlName="Output 5 Mute" ComponentId="JAHJr,K^!ZS_+VjY)22T" ComponentName="Mixer 16x6" ComponentLabel="" Type="Boolean" Mode="RW" Size="1" />
+    <Control Id="Output 5 Gain" ControlId="output_5_gain" ControlName="Output 5 Gain" ComponentId="JAHJr,K^!ZS_+VjY)22T" ComponentName="Mixer 16x6" ComponentLabel="" Type="Float" Mode="RW" MinimumValue="-100" MaximumValue="10" Size="1" />
+    <Control Id="Output 6 Mute" ControlId="output_6_mute" ControlName="Output 6 Mute" ComponentId="JAHJr,K^!ZS_+VjY)22T" ComponentName="Mixer 16x6" ComponentLabel="" Type="Boolean" Mode="RW" Size="1" />
+    <Control Id="Output 6 Gain" ControlId="output_6_gain" ControlName="Output 6 Gain" ComponentId="JAHJr,K^!ZS_+VjY)22T" ComponentName="Mixer 16x6" ComponentLabel="" Type="Float" Mode="RW" MinimumValue="-100" MaximumValue="10" Size="1" />
+    <Control Id="Output 1 Mute" ControlId="output_1_mute" ControlName="Output 1 Mute" ComponentId="JAHJr,K^!ZS_+VjY)22T" ComponentName="Mixer 16x6" ComponentLabel="" Type="Boolean" Mode="RW" Size="1" />
+    <Control Id="TruePeak/RMSMeterInput1Meter" ControlId="meter_1" ControlName="Input 1 Meter" ComponentId="29_a_-Q_hPRW!dre*[Np" ComponentName="True Peak/RMS Meter" ComponentLabel="" Type="Float" Mode="R" MinimumValue="-120" MaximumValue="20" Size="2" />
+    <Control Id="TruePeak/RMSMeterInput2Meter" ControlId="meter_2" ControlName="Input 2 Meter" ComponentId="29_a_-Q_hPRW!dre*[Np" ComponentName="True Peak/RMS Meter" ComponentLabel="" Type="Float" Mode="R" MinimumValue="-120" MaximumValue="20" Size="2" />
+    <Control Id="TruePeak/RMSMeterInput3Meter" ControlId="meter_3" ControlName="Input 3 Meter" ComponentId="29_a_-Q_hPRW!dre*[Np" ComponentName="True Peak/RMS Meter" ComponentLabel="" Type="Float" Mode="R" MinimumValue="-120" MaximumValue="20" Size="2" />
+    <Control Id="TruePeak/RMSMeterInput4Meter" ControlId="meter_4" ControlName="Input 4 Meter" ComponentId="29_a_-Q_hPRW!dre*[Np" ComponentName="True Peak/RMS Meter" ComponentLabel="" Type="Float" Mode="R" MinimumValue="-120" MaximumValue="20" Size="2" />
+    <Control Id="TruePeak/RMSMeterInput5Meter" ControlId="meter_5" ControlName="Input 5 Meter" ComponentId="29_a_-Q_hPRW!dre*[Np" ComponentName="True Peak/RMS Meter" ComponentLabel="" Type="Float" Mode="R" MinimumValue="-120" MaximumValue="20" Size="2" />
+    <Control Id="TruePeak/RMSMeterInput6Meter" ControlId="meter_6" ControlName="Input 6 Meter" ComponentId="29_a_-Q_hPRW!dre*[Np" ComponentName="True Peak/RMS Meter" ComponentLabel="" Type="Float" Mode="R" MinimumValue="-120" MaximumValue="20" Size="2" />
+    <Control Id="TruePeak/RMSMeterInput7Meter" ControlId="meter_7" ControlName="Input 7 Meter" ComponentId="29_a_-Q_hPRW!dre*[Np" ComponentName="True Peak/RMS Meter" ComponentLabel="" Type="Float" Mode="R" MinimumValue="-120" MaximumValue="20" Size="2" />
+    <Control Id="TruePeak/RMSMeterInput8Meter" ControlId="meter_8" ControlName="Input 8 Meter" ComponentId="29_a_-Q_hPRW!dre*[Np" ComponentName="True Peak/RMS Meter" ComponentLabel="" Type="Float" Mode="R" MinimumValue="-120" MaximumValue="20" Size="2" />
+    <Control Id="TruePeak/RMSMeterInput9Meter" ControlId="meter_9" ControlName="Input 9 Meter" ComponentId="29_a_-Q_hPRW!dre*[Np" ComponentName="True Peak/RMS Meter" ComponentLabel="" Type="Float" Mode="R" MinimumValue="-120" MaximumValue="20" Size="2" />
+    <Control Id="TruePeak/RMSMeterInput10Meter" ControlId="meter_10" ControlName="Input 10 Meter" ComponentId="29_a_-Q_hPRW!dre*[Np" ComponentName="True Peak/RMS Meter" ComponentLabel="" Type="Float" Mode="R" MinimumValue="-120" MaximumValue="20" Size="2" />
+    <Control Id="TruePeak/RMSMeterInput11Meter" ControlId="meter_11" ControlName="Input 11 Meter" ComponentId="29_a_-Q_hPRW!dre*[Np" ComponentName="True Peak/RMS Meter" ComponentLabel="" Type="Float" Mode="R" MinimumValue="-120" MaximumValue="20" Size="2" />
+    <Control Id="TruePeak/RMSMeterInput12Meter" ControlId="meter_12" ControlName="Input 12 Meter" ComponentId="29_a_-Q_hPRW!dre*[Np" ComponentName="True Peak/RMS Meter" ComponentLabel="" Type="Float" Mode="R" MinimumValue="-120" MaximumValue="20" Size="2" />
+    <Control Id="TruePeak/RMSMeterInput13Meter" ControlId="meter_13" ControlName="Input 13 Meter" ComponentId="29_a_-Q_hPRW!dre*[Np" ComponentName="True Peak/RMS Meter" ComponentLabel="" Type="Float" Mode="R" MinimumValue="-120" MaximumValue="20" Size="2" />
+    <Control Id="TruePeak/RMSMeterInput14Meter" ControlId="meter_14" ControlName="Input 14 Meter" ComponentId="29_a_-Q_hPRW!dre*[Np" ComponentName="True Peak/RMS Meter" ComponentLabel="" Type="Float" Mode="R" MinimumValue="-120" MaximumValue="20" Size="2" />
+    <Control Id="TruePeak/RMSMeterInput15Meter" ControlId="meter_15" ControlName="Input 15 Meter" ComponentId="29_a_-Q_hPRW!dre*[Np" ComponentName="True Peak/RMS Meter" ComponentLabel="" Type="Float" Mode="R" MinimumValue="-120" MaximumValue="20" Size="2" />
+    <Control Id="TruePeak/RMSMeterInput16Meter" ControlId="meter_16" ControlName="Input 16 Meter" ComponentId="29_a_-Q_hPRW!dre*[Np" ComponentName="True Peak/RMS Meter" ComponentLabel="" Type="Float" Mode="R" MinimumValue="-120" MaximumValue="20" Size="2" />
+  </ExternalControls>
+</Design>

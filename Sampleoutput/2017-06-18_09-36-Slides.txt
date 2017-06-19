@@ -1,0 +1,219 @@
+cv "Input 1 Mute" "muted" 1 1
+cv "Input 2 Mute" "muted" 1 1
+cv "Input 3 Mute" "muted" 1 1
+cv "Input 4 Mute" "muted" 1 1
+cv "Input 5 Mute" "muted" 1 1
+cv "Input 6 Mute" "muted" 1 1
+cv "Input 7 Mute" "muted" 1 1
+cv "Input 8 Mute" "unmuted" 0 0
+cv "Input 9 Mute" "unmuted" 0 0
+cv "Input 10 Mute" "muted" 1 1
+cv "Input 11 Mute" "muted" 1 1
+cv "Input 12 Mute" "unmuted" 0 0
+cv "Input 13 Mute" "muted" 1 1
+cv "Input 14 Mute" "muted" 1 1
+cv "Input 15 Mute" "muted" 1 1
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-84.3dB" "-81.6dB" 2 -84.2934 -81.5725 2 0 0
+
+(c) Copyright 2013, Extron Electronics, IPCP 505, V1.02, 60-1071-02
+Sun, 18 Jun 2017 09:35:03
+Vrb1
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-82.4dB" "-82.1dB" 2 -82.4364 -82.1273 2 0 0
+2017-06-18 09:36:17 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.7dB" "-81.8dB" 2 -83.6986 -81.8132 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-82.5dB" "-80.8dB" 2 -82.4524 -80.7938 2 0 0
+2017-06-18 09:36:18 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.8dB" "-80.8dB" 2 -83.8349 -80.7938 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.7dB" "-82.4dB" 2 -83.7303 -82.3938 2 0 0
+2017-06-18 09:36:19 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-82.0dB" "-81.4dB" 2 -82.0399 -81.384 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.6dB" "-81.4dB" 2 -83.58 -81.384 2 0 0
+2017-06-18 09:36:20 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-84.0dB" "-80.4dB" 2 -84.0199 -80.3654 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-84.1dB" "-80.4dB" 2 -84.1219 -80.3654 2 0 0
+2017-06-18 09:36:21 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-84.0dB" "-82.2dB" 2 -84.0155 -82.236 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-82.8dB" "-82.2dB" 2 -82.7836 -82.2313 2 0 0
+2017-06-18 09:36:22 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-82.7dB" "-82.2dB" 2 -82.6826 -82.1611 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.9dB" "-81.8dB" 2 -83.9266 -81.8467 2 0 0
+2017-06-18 09:36:23 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-84.9dB" "-81.8dB" 2 -84.8592 -81.8467 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.9dB" "-81.8dB" 2 -83.8792 -81.7741 2 0 0
+2017-06-18 09:36:24 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-82.2dB" "-81.8dB" 2 -82.1993 -81.7741 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.8dB" "-81.7dB" 2 -83.7793 -81.7233 2 0 0
+2017-06-18 09:36:25 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.8dB" "-81.7dB" 2 -83.7678 -81.7233 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-84.6dB" "-81.6dB" 2 -84.5948 -81.5563 2 0 0
+2017-06-18 09:36:26 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-84.6dB" "-81.6dB" 2 -84.5513 -81.5563 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-84.1dB" "-82.6dB" 2 -84.1386 -82.6142 2 0 0
+2017-06-18 09:36:27 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.9dB" "-81.2dB" 2 -83.9087 -81.152 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-82.9dB" "-81.2dB" 2 -82.9185 -81.152 2 0 0
+2017-06-18 09:36:28 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-84.2dB" "-83.2dB" 2 -84.157 -83.152 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-84.1dB" "-81.8dB" 2 -84.1152 -81.8377 2 0 0
+2017-06-18 09:36:29 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-84.1dB" "-81.8dB" 2 -84.1087 -81.8377 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.7dB" "-81.6dB" 2 -83.7191 -81.575 2 0 0
+2017-06-18 09:36:30 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-84.5dB" "-80.4dB" 2 -84.5122 -80.3633 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.2dB" "-80.4dB" 2 -83.2364 -80.3633 2 0 0
+2017-06-18 09:36:31 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.8dB" "-81.8dB" 2 -83.8154 -81.7871 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.7dB" "-81.8dB" 2 -83.7247 -81.7871 2 0 0
+2017-06-18 09:36:32 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.2dB" "-81.7dB" 2 -83.1615 -81.7141 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.5dB" "-81.6dB" 2 -83.5049 -81.5562 2 0 0
+2017-06-18 09:36:33 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.3dB" "-79.6dB" 2 -83.2949 -79.5665 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.8dB" "-79.6dB" 2 -83.8345 -79.5665 2 0 0
+2017-06-18 09:36:34 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.4dB" "-80.8dB" 2 -83.4105 -80.7664 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.0dB" "-81.3dB" 2 -82.9774 -81.348 2 0 0
+2017-06-18 09:36:35 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.5dB" "-81.3dB" 2 -83.5345 -81.2718 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.5dB" "-80.9dB" 2 -83.4813 -80.8831 2 0 0
+2017-06-18 09:36:36 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-84.2dB" "-80.9dB" 2 -84.2021 -80.8831 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.0dB" "-81.3dB" 2 -83.0022 -81.2831 2 0 0
+2017-06-18 09:36:37 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.4dB" "-81.4dB" 2 -83.4088 -81.4449 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-84.1dB" "-81.4dB" 2 -84.104 -81.4449 2 0 0
+2017-06-18 09:36:38 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-84.3dB" "-82.1dB" 2 -84.2588 -82.0796 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.7dB" "-81.6dB" 2 -83.6843 -81.6322 2 0 0
+2017-06-18 09:36:39 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.9dB" "-80.9dB" 2 -83.9388 -80.8808 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.3dB" "-80.9dB" 2 -83.2559 -80.8808 2 0 0
+2017-06-18 09:36:40 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.2dB" "-82.3dB" 2 -83.2178 -82.3292 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-81.8dB" "-81.4dB" 2 -81.769 -81.3752 2 0 0
+2017-06-18 09:36:41 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.4dB" "-81.4dB" 2 -83.4275 -81.3752 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-82.0dB" "-81.5dB" 2 -82.0037 -81.5497 2 0 0
+2017-06-18 09:36:42 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-84.6dB" "-80.8dB" 2 -84.5772 -80.7636 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.7dB" "-80.8dB" 2 -83.6553 -80.7636 2 0 0
+2017-06-18 09:36:43 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-84.3dB" "-82.4dB" 2 -84.3348 -82.3635 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-82.8dB" "-81.4dB" 2 -82.8438 -81.3564 2 0 0
+2017-06-18 09:36:44 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.5dB" "-81.4dB" 2 -83.51 -81.3564 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-84.3dB" "-83.2dB" 2 -84.2912 -83.1564 2 0 0
+2017-06-18 09:36:45 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-84.0dB" "-81.5dB" 2 -83.9553 -81.4706 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-84.5dB" "-81.5dB" 2 -84.4756 -81.4706 2 0 0
+2017-06-18 09:36:46 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-84.0dB" "-82.3dB" 2 -83.9851 -82.2706 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-84.3dB" "-81.0dB" 2 -84.3173 -80.9744 2 0 0
+2017-06-18 09:36:47 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.0dB" "-81.0dB" 2 -83.0228 -80.9744 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-84.3dB" "-82.7dB" 2 -84.3168 -82.7405 2 0 0
+2017-06-18 09:36:48 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-84.1dB" "-81.5dB" 2 -84.1458 -81.4859 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.6dB" "-81.5dB" 2 -83.552 -81.4859 2 0 0
+2017-06-18 09:36:49 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.1dB" "-81.5dB" 2 -83.0573 -81.5295 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-82.7dB" "-81.5dB" 2 -82.6508 -81.5295 2 0 0
+2017-06-18 09:36:50 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-84.3dB" "-83.5dB" 2 -84.3281 -83.5295 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.1dB" "-81.9dB" 2 -83.1319 -81.9342 2 0 0
+2017-06-18 09:36:51 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.9dB" "-81.9dB" 2 -83.9202 -81.9342 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-84.3dB" "-81.6dB" 2 -84.3258 -81.6197 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-82.6dB" "-81.6dB" 2 -82.6253 -81.6197 2 0 0
+2017-06-18 09:36:52 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.8dB" "-82.5dB" 2 -83.7955 -82.4581 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.6dB" "-81.4dB" 2 -83.644 -81.4154 2 0 0
+2017-06-18 09:36:53 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.4dB" "-81.2dB" 2 -83.4298 -81.171 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-81.0dB" "-81.0dB" 2 -80.978 -80.9587 2 0 0
+2017-06-18 09:36:54 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-84.2dB" "-81.0dB" 2 -84.1705 -80.9587 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.3dB" "-81.0dB" 2 -83.2772 -80.9587 2 0 0
+2017-06-18 09:36:55 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.9dB" "-83.5dB" 2 -83.8945 -83.4951 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.4dB" "-82.0dB" 2 -83.4096 -82.0468 2 0 0
+2017-06-18 09:36:56 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-84.2dB" "-82.0dB" 2 -84.1942 -82.0468 2 0 0
+2017-06-18 09:36:57 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.3dB" "-81.8dB" 2 -83.3249 -81.7814 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.4dB" "-81.1dB" 2 -83.4115 -81.0696 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.1dB" "-81.1dB" 2 -83.1428 -81.0696 2 0 0
+2017-06-18 09:36:58 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-84.2dB" "-81.7dB" 2 -84.2157 -81.6696 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-84.1dB" "-81.4dB" 2 -84.1218 -81.3758 2 0 0
+2017-06-18 09:36:59 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-84.7dB" "-81.4dB" 2 -84.7209 -81.3758 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.4dB" "-81.7dB" 2 -83.3514 -81.7361 2 0 0
+2017-06-18 09:37:00 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.6dB" "-81.6dB" 2 -83.6089 -81.6401 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-82.5dB" "-81.1dB" 2 -82.5317 -81.1471 2 0 0
+2017-06-18 09:37:01 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.7dB" "-81.1dB" 2 -83.6658 -81.1471 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-82.7dB" "-81.4dB" 2 -82.6916 -81.4441 2 0 0
+2017-06-18 09:37:02 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-82.6dB" "-81.4dB" 2 -82.5897 -81.4441 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-84.0dB" "-81.8dB" 2 -84.0057 -81.8441 2 0 0
+2017-06-18 09:37:03 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.4dB" "-81.0dB" 2 -83.4056 -80.9716 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-84.0dB" "-81.0dB" 2 -84.0453 -80.9716 2 0 0
+2017-06-18 09:37:04 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.7dB" "-81.4dB" 2 -83.7032 -81.3716 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.5dB" "-82.1dB" 2 -83.4911 -82.0611 2 0 0
+2017-06-18 09:37:05 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.5dB" "-82.0dB" 2 -83.4701 -82.0372 2 0 0
+sr "Oliver Test schematic" "Z9yh78b4ocnd" 1 1
+1.02
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-81.2dB" "-80.7dB" 2 -81.1711 -80.7107 2 0 0
+2017-06-18 09:37:06 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-85.0dB" "-80.7dB" 2 -85.0246 -80.7107 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.3dB" "-82.5dB" 2 -83.3053 -82.5107 2 0 0
+2017-06-18 09:37:07 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.2dB" "-81.8dB" 2 -83.2295 -81.8384 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-82.5dB" "-81.8dB" 2 -82.4777 -81.8384 2 0 0
+2017-06-18 09:37:08 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-84.5dB" "-81.7dB" 2 -84.5395 -81.662 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-82.4dB" "-81.4dB" 2 -82.3691 -81.4418 2 0 0
+2017-06-18 09:37:09 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-82.1dB" "-80.8dB" 2 -82.0615 -80.8445 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.2dB" "-80.8dB" 2 -83.191 -80.8445 2 0 0
+2017-06-18 09:37:10 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.7dB" "-81.0dB" 2 -83.6559 -81.0444 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-84.1dB" "-81.1dB" 2 -84.1279 -81.1486 2 0 0
+2017-06-18 09:37:11 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-82.7dB" "-81.1dB" 2 -82.6895 -81.1486 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.2dB" "-81.9dB" 2 -83.1807 -81.9485 2 0 0
+2017-06-18 09:37:12 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.4dB" "-81.5dB" 2 -83.4075 -81.495 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.9dB" "-81.5dB" 2 -83.8959 -81.495 2 0 0
+2017-06-18 09:37:13 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-82.8dB" "-81.1dB" 2 -82.8184 -81.1064 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-84.3dB" "-81.1dB" 2 -84.298 -81.1064 2 0 0
+2017-06-18 09:37:14 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.6dB" "-82.5dB" 2 -83.6214 -82.5064 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.5dB" "-81.4dB" 2 -83.4823 -81.4168 2 0 0
+2017-06-18 09:37:15 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-84.5dB" "-80.6dB" 2 -84.4601 -80.6461 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-82.6dB" "-80.6dB" 2 -82.6025 -80.5548 2 0 0
+2017-06-18 09:37:16 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.6dB" "-80.6dB" 2 -83.5733 -80.5548 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.7dB" "-81.0dB" 2 -83.7256 -80.9548 2 0 0
+2017-06-18 09:37:17 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.0dB" "-82.4dB" 2 -82.975 -82.3602 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.2dB" "-81.2dB" 2 -83.155 -81.1889 2 0 0
+2017-06-18 09:37:18 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.8dB" "-81.2dB" 2 -83.7668 -81.1889 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-82.8dB" "-81.4dB" 2 -82.8293 -81.4235 2 0 0
+2017-06-18 09:37:19 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.3dB" "-81.4dB" 2 -83.3354 -81.4235 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.9dB" "-82.8dB" 2 -83.9038 -82.8234 2 0 0
+2017-06-18 09:37:20 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-82.5dB" "-81.1dB" 2 -82.5124 -81.0744 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-84.3dB" "-81.1dB" 2 -84.3455 -81.0744 2 0 0
+2017-06-18 09:37:21 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.7dB" "-80.5dB" 2 -83.6993 -80.5479 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-83.2dB" "-80.5dB" 2 -83.243 -80.5479 2 0 0

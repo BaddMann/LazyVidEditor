@@ -1,0 +1,65 @@
+
+(c) Copyright 2013, Extron Electronics, IPCP 505, V1.02, 60-1071-02
+Sun, 18 Jun 2017 09:44:18
+cv "Input 1 Mute" "muted" 1 1
+cv "Input 2 Mute" "muted" 1 1
+cv "Input 3 Mute" "muted" 1 1
+cv "Input 4 Mute" "muted" 1 1
+cv "Input 5 Mute" "muted" 1 1
+cv "Input 6 Mute" "muted" 1 1
+cv "Input 7 Mute" "muted" 1 1
+cv "Input 8 Mute" "unmuted" 0 0
+cv "Input 9 Mute" "unmuted" 0 0
+cv "Input 10 Mute" "muted" 1 1
+cv "Input 11 Mute" "muted" 1 1
+cv "Input 12 Mute" "unmuted" 0 0
+cv "Input 13 Mute" "muted" 1 1
+cv "Input 14 Mute" "muted" 1 1
+cv "Input 15 Mute" "muted" 1 1
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-76.6dB" "-73.0dB" 2 -76.5663 -73.0099 2 0 0
+Vrb1
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-78.2dB" "-73.3dB" 2 -78.1945 -73.3323 2 0 0
+2017-06-18 09:45:32 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-77.8dB" "-73.3dB" 2 -77.8363 -73.3323 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-75.7dB" "-68.5dB" 2 -75.6625 -68.5149 2 0 0
+2017-06-18 09:45:33 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-77.1dB" "-68.5dB" 2 -77.1351 -68.5149 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-78.0dB" "-69.9dB" 2 -78.045 -69.9148 2 0 0
+2017-06-18 09:45:34 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-76.8dB" "-72.9dB" 2 -76.7922 -72.9148 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-74.9dB" "-74.5dB" 2 -74.861 -74.5422 2 0 0
+2017-06-18 09:45:35 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-76.5dB" "-73.6dB" 2 -76.5134 -73.592 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-76.7dB" "-73.6dB" 2 -76.7212 -73.592 2 0 0
+2017-06-18 09:45:36 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-74.7dB" "-71.7dB" 2 -74.7124 -71.7181 2 0 0
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-66.3dB" "-63.5dB" 2 -66.2576 -63.5241 2 0 0
+2017-06-18 09:45:37 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-55.4dB" "-54.9dB" 2 -55.358 -54.889 2 0.0232099 0.0255552
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-53.6dB" "-52.6dB" 2 -53.6301 -52.6308 2 0.0318497 0.036846
+2017-06-18 09:45:38 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-48.3dB" "-47.7dB" 2 -48.289 -47.6902 2 0.058555 0.0615492
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-61.0dB" "-47.0dB" 2 -61.0412 -47.0121 2 0 0.0649397
+2017-06-18 09:45:39 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-75.5dB" "-47.0dB" 2 -75.5296 -47.0121 2 0 0.0649397
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-74.7dB" "-49.8dB" 2 -74.6819 -49.8121 2 0 0.0509396
+2017-06-18 09:45:40 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-38.2dB" "-34.2dB" 2 -38.2245 -34.1871 2 0.117755 0.158129
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-52.7dB" "-34.2dB" 2 -52.7129 -34.1871 2 0.0364357 0.158129
+2017-06-18 09:45:41 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-67.2dB" "-35.0dB" 2 -67.2012 -34.9871 2 0 0.150129
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-74.4dB" "-38.0dB" 2 -74.4036 -37.9871 2 0 0.120129
+2017-06-18 09:45:42 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-76.5dB" "-41.0dB" 2 -76.4797 -40.9871 2 0 0.0950644
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-77.7dB" "-44.0dB" 2 -77.6588 -43.9871 2 0 0.0800644
+2017-06-18 09:45:43 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-77.3dB" "-47.0dB" 2 -77.346 -46.9871 2 0 0.0650643
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-76.8dB" "-50.0dB" 2 -76.8267 -49.9872 2 0 0.0500642
+2017-06-18 09:45:44 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-77.1dB" "-53.0dB" 2 -77.0712 -52.9872 2 0 0.0350642
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-77.5dB" "-56.0dB" 2 -77.5115 -55.9872 2 0 0.0200641
+2017-06-18 09:45:45 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-77.3dB" "-59.0dB" 2 -77.3098 -58.9872 2 0 0.00506407
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-77.1dB" "-62.0dB" 2 -77.1429 -61.9872 2 0 0
+2017-06-18 09:45:46 
+cvv "TruePeak/RMSMeterInput1Meter" 2 "-77.5dB" "-65.0dB" 2 -77.532 -64.9872 2 0 0

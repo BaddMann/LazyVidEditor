@@ -59,6 +59,7 @@ function init(){
     qsyssocket.write('cga 1 "Input 13 Mute"\n');
     qsyssocket.write('cga 1 "Input 14 Mute"\n');
     qsyssocket.write('cga 1 "Input 15 Mute"\n');
+    //qsyssocket.write('cga 1 "TruePeak/RMSMeterInput1Meter"\n');
     qsyssocket.write('cgpna 1\n');
     qsyssocket.write('cgsna 1 500\n');
     extronsocket.write('W1CV\r\n');
