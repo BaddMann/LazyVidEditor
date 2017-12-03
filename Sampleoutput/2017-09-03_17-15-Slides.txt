@@ -1,0 +1,23 @@
+
+(c) Copyright 2013, Extron Electronics, IPCP 505, V1.02, 60-1071-02
+Sun, 03 Sep 2017 17:15:10
+Vrb1
+cv "Input 1 Mute" "muted" 1 1
+cv "Input 2 Mute" "unmuted" 0 0
+cv "Input 3 Mute" "muted" 1 1
+cv "Input 4 Mute" "muted" 1 1
+cv "Input 5 Mute" "muted" 1 1
+cv "Input 6 Mute" "muted" 1 1
+cv "Input 7 Mute" "muted" 1 1
+cv "Input 8 Mute" "muted" 1 1
+cv "Input 9 Mute" "muted" 1 1
+cv "Input 10 Mute" "muted" 1 1
+cv "Input 11 Mute" "muted" 1 1
+cv "Input 12 Mute" "unmuted" 0 0
+cv "Input 13 Mute" "muted" 1 1
+cv "Input 14 Mute" "muted" 1 1
+cv "Input 15 Mute" "muted" 1 1
+cv "Input 9 Mute" "unmuted" 0 0
+cv "Input 9 Mute" "muted" 1 1
+cv "Input 9 Mute" "unmuted" 0 0
+cv "Input 9 Mute" "muted" 1 1
