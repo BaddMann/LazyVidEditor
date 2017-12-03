@@ -40,7 +40,7 @@ $Camera = Get-ChildItem -Path Z:\ -force -Filter *Camera.mp4 | sort-object LastW
 #Subtract Slides Creation Time From Camera Creation Time and put them In $Result
 $Result = $Slides[0].CreationTime - $Camera[0].CreationTime
 
-#See ReSult Deffierence
+#See ReSult Defference
 $Result
 
 #See Result Defference in Milliseconds...

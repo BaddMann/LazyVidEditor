@@ -2,7 +2,7 @@
 ## Using https://foxdeploy.com/2015/01/05/walkthrough-parsing-log-or-console-output-with-powershell/
 ### More Examples:
 
-$fileContents = Get-Content C:\Temp\2017-06-18_09-46-Slides.txt
+$fileContents = Get-Content C:\Users\glencroftplay\Documents\GitHub\LazyVidEditor\Sampleoutput\2017-12-03_09-41-Slides.txt
 
 ##$filecontents = $filecontents.Split("`n")
 
@@ -48,14 +48,44 @@ function Get-TimeStamps () {
             $result += $_.LineNumber
             #Write-Host $_.LineNumber ":" $_.Line.Trim()
         }
+        if ( $aScopeType -eq "MicTime" -And $aScope -And $_.LineNumber -gt $aScope[0] -And $_.LineNumber -lt $aScope[-1] ) {
+            $Datecode = $_.context.precontext + $_.context.postcontext | Select-String -pattern "([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])\s([0-1]?[0-9]|2?[0-3]):([0-5]\d):([0-5]\d))" | Select-Object -First 1 | % { $_.Matches } | % { $_.Value }
+            $result += $Datecode, $_.LineNumber, $_.Line.Trim()
+            #Write-Host $_.LineNumber ":" $_.Line.Trim()
+        }
     }
     return $result
 }
 
 $pattern="RecordingStarting|RecordingStopping"
-$StartStoplines = Get-TimeStamps  $fileContents  $pattern "RecordTime"
+$StartStoplines = Get-TimeStamps  $fileContents  $pattern "RecordTime" $
 
 $StartStoplines
+
+$RecordingScope= @($StartStoplines[1],$StartStoplines[4])
+
+#Lav1 Time(s)
+$pattern="Input 1 Mute"
+$StartStopMic = Get-TimeStamps  $fileContents  $pattern "MicTime" $RecordingScope
+
+Write-Host "Mic1 Lines:"
+$StartStopMic
+
+
+#Mic1 Calculate Recorded time
+Write-host "Mic1 Calculate Recorded time"
+
+Write-host ($StartStopMic[0]) - ($StartStopLines[0])
+$mic1start = [datetime]($StartStopMic[0]) - [datetime]($StartStopLines[0])
+$mic1start
+
+Write-host ($StartStopMic[3]) - ($StartStopLines[0])
+$mic1end = [datetime]($StartStopMic[3]) - [datetime]($StartStopLines[0])
+$mic1end
+
+
+Write-host $mic1end - $mic1start
+$mic1end - $mic1start
 
 # $StartStop | Format-Table
 
