@@ -2,7 +2,7 @@
 ## Using https://foxdeploy.com/2015/01/05/walkthrough-parsing-log-or-console-output-with-powershell/
 ### More Examples:
 
-$fileContents = Get-Content C:\Users\glencroftplay\Documents\GitHub\LazyVidEditor\Sampleoutput\2017-12-03_09-41-Slides.txt
+$fileContents = Get-Content C:\Users\glencroftplay\Documents\GitHub\LazyVidEditor\Sampleoutput\2017-11-19_09-49-Slides.txt
 
 ##$filecontents = $filecontents.Split("`n")
 
@@ -32,26 +32,30 @@ function Get-TimeStamps () {
     $aScope
     )
 
+    ### https://anandthearchitect.com/2014/03/18/powershell-how-to-return-multiple-values-from-a-function/
     $result = @()
     $afileContents | Select-String -pattern $apattern -Context 2 | ForEach-Object {
+     #Create an hashtable variable 
+     [hashtable]$Return = @{}
+
+        #standard Data in Object
+        $Return.Line = $_.LineNumber
+        $Return.ContextData = $_.context.precontext + $_.context.postcontext
+        $Return.MatchedData = $_.Line.Trim()
+        $Return.TimeStamp = $_.context.precontext + $_.context.postcontext | Select-String -pattern "([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])\s([0-1]?[0-9]|2?[0-3]):([0-5]\d):([0-5]\d))" | Select-Object -First 1 | % { $_.Matches } | % { $_.Value }
         if ($aScopeType -eq "RecordTime"){
-            ###$Datetime = $afileContents | Select-String -pattern  Somehow Retrieve Datetime before and After line.....
-            $Datecode = $_.context.precontext + $_.context.postcontext | Select-String -pattern "([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])\s([0-1]?[0-9]|2?[0-3]):([0-5]\d):([0-5]\d))" | Select-Object -First 1 | % { $_.Matches } | % { $_.Value }
-            ##($_.context.postcontext | Select-String -pattern "(?:rec-timecode)").ToString().split(":")
-            $result += $Datecode, $_.LineNumber, $_.Line.Trim()
+            if ($_.Line.Trim() -like "*RecordingStarting*"){ $Return.State = "Start" } else{ $Return.State = "Stop" }
+            $result += $Return
         }
         if ($aScopeType -eq "SlideTime"){
-            $result += $_.LineNumber
-            #Write-Host $_.LineNumber ":" $_.Line.Trim()
+            $result += $Return
         }
         if ( $aScopeType -eq "SubSlideTime" -And $aScope -And $_.LineNumber -gt $aScope[0] -And $_.LineNumber -lt $aScope[-1] ) {
-            $result += $_.LineNumber
-            #Write-Host $_.LineNumber ":" $_.Line.Trim()
+            $result += $Return
         }
         if ( $aScopeType -eq "MicTime" -And $aScope -And $_.LineNumber -gt $aScope[0] -And $_.LineNumber -lt $aScope[-1] ) {
-            $Datecode = $_.context.precontext + $_.context.postcontext | Select-String -pattern "([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])\s([0-1]?[0-9]|2?[0-3]):([0-5]\d):([0-5]\d))" | Select-Object -First 1 | % { $_.Matches } | % { $_.Value }
-            $result += $Datecode, $_.LineNumber, $_.Line.Trim()
-            #Write-Host $_.LineNumber ":" $_.Line.Trim()
+            if ($_.Line.Trim() -like "*unmuted*"){ $Return.State = "Start" } else{ $Return.State = "Stop" }
+            $result += $Return
         }
     }
     return $result
@@ -60,32 +64,34 @@ function Get-TimeStamps () {
 $pattern="RecordingStarting|RecordingStopping"
 $StartStoplines = Get-TimeStamps  $fileContents  $pattern "RecordTime" $
 
-$StartStoplines
 
-$RecordingScope= @($StartStoplines[1],$StartStoplines[4])
+$RecordingScope= @($StartStoplines[0].Line,$StartStoplines[1].Line)
+
+$RecordingScope
 
 #Lav1 Time(s)
-$pattern="Input 1 Mute"
-$StartStopMic = Get-TimeStamps  $fileContents  $pattern "MicTime" $RecordingScope
+ $pattern="Input 1 Mute"
+ $StartStopMic = Get-TimeStamps  $fileContents  $pattern "MicTime" $RecordingScope
 
-Write-Host "Mic1 Lines:"
-$StartStopMic
+ Write-Host ""
+ Write-Host "Mic1 Lines:"
+ $StartStopMic
 
 
 #Mic1 Calculate Recorded time
-Write-host "Mic1 Calculate Recorded time"
+# Write-host "Mic1 Calculate Recorded time"
 
-Write-host ($StartStopMic[0]) - ($StartStopLines[0])
-$mic1start = [datetime]($StartStopMic[0]) - [datetime]($StartStopLines[0])
-$mic1start
+# Write-host ($StartStopMic[0]) - ($StartStopLines[0])
+# $mic1start = [datetime]($StartStopMic[0]) - [datetime]($StartStopLines[0])
+# $mic1start
 
-Write-host ($StartStopMic[3]) - ($StartStopLines[0])
-$mic1end = [datetime]($StartStopMic[3]) - [datetime]($StartStopLines[0])
-$mic1end
+# Write-host ($StartStopMic[3]) - ($StartStopLines[0])
+# $mic1end = [datetime]($StartStopMic[3]) - [datetime]($StartStopLines[0])
+# $mic1end
 
 
-Write-host $mic1end - $mic1start
-$mic1end - $mic1start
+# Write-host $mic1end - $mic1start
+# $mic1end - $mic1start
 
 # $StartStop | Format-Table
 
