@@ -3,7 +3,7 @@
 ### Look into http://www.videoproductionslondon.com/blog/edl-to-html-with-thumbnails
 ### 
 
-$fileContents = Get-Content $PSScriptRoot\Sampleoutput\2017-11-19_09-49-Slides.txt
+$fileContents = Get-Content $PSScriptRoot\Sampleoutput\2017-12-10_09-22-Slides.txt
 
 [hashtable]$global:temptime = @{}
 
@@ -114,6 +114,23 @@ $StartStopMic = Get-TimeStamps  $fileContents  $pattern "MicTime" $RecordingScop
   $StartStopMic | Export-Clixml -path C:\Temp\test.xml
 
   $global:temptime
+
+  [System.Collections.ArrayList]$BatchFileContent = "REM Batch File For Testing", "echo testing batch"
+  $MicPattern = "Input 3 Mute"
+  $VidDiff = -5
+  $StartStopMic | ForEach-Object {  
+    if($_.MicName -eq $MicPattern){
+    $StartTCode=($_.StartTCode.TotalSeconds+$VidDiff).tostring()
+    $DurTCode=($_.Duration.TotalSeconds).tostring()
+    $MicName=($_.MicName).tostring().Replace(" ","")
+    $MicName
+
+    [string]$ffplayexestring = "ffplay.exe", "-ss", $StartTCode, "-t", $DurTCode, "-i Z:\2017-12-10-am-Camera.mp4"
+    Write-Host $MicName, "Executing: ", $ffplayexestring
+    $BatchFileContent.add($ffplayexestring)
+  } 
+ }
+  $BatchFileContent | Out-File -Encoding ascii -FilePath "Z:\$MicPattern.bat" > $null
 
 
 #Mic1 Calculate Recorded time
