@@ -1,12 +1,11 @@
 #### Powershell Bad Log Parsing.
 ## Using https://foxdeploy.com/2015/01/05/walkthrough-parsing-log-or-console-output-with-powershell/
-### More Examples:
+### Look into http://www.videoproductionslondon.com/blog/edl-to-html-with-thumbnails
+### 
 
-$fileContents = Get-Content C:\Users\glencroftplay\Documents\GitHub\LazyVidEditor\Sampleoutput\2017-11-19_09-49-Slides.txt
+$fileContents = Get-Content $PSScriptRoot\Sampleoutput\2017-11-19_09-49-Slides.txt
 
-##$filecontents = $filecontents.Split("`n")
-
-## $fileContents.GetType()
+[hashtable]$global:temptime = @{}
 
 function Get-TimeStamps () {
     Param(
@@ -54,8 +53,27 @@ function Get-TimeStamps () {
             $result += $Return
         }
         if ( $aScopeType -eq "MicTime" -And $aScope -And $_.LineNumber -gt $aScope[0] -And $_.LineNumber -lt $aScope[-1] ) {
-            if ($_.Line.Trim() -like "*unmuted*"){ $Return.State = "Start" } else{ $Return.State = "Stop" }
-            $result += $Return
+            $Return.MicName = $_.Line | % {$_.split('"')[1]}
+            $Return.TimeCode = [datetime]($Return.TimeStamp) - [datetime]($global:recStart)
+            if ($_.Line.Trim() -like "*unmuted*"){ 
+                $Return.State = "Start"
+                $global:temptime.Add($Return.MicName,$Return)
+            } 
+            else{
+                $Return.State = "Stop"
+                $Return.StartHash = $global:temptime[$Return.MicName]
+                $Return.StartTCode = $Return.StartHash.TimeCode
+                $global:temptime.Remove($Return.MicName)
+                $result += $Return
+            }
+        } 
+        else{
+            $MicName = $_.Line | % {$_.split('"')[1]}
+            if ($_.Line.Trim() -like "*unmuted*"){
+                 $global:temptime.Add($MicName,[hashtable]@{TimeCode="00:00:00"; "Line"="$aScope[0]"})
+            } else{
+                 $global:temptime.Remove($MicName)
+            }
         }
     }
     return $result
@@ -66,16 +84,20 @@ $StartStoplines = Get-TimeStamps  $fileContents  $pattern "RecordTime" $
 
 
 $RecordingScope= @($StartStoplines[0].Line,$StartStoplines[1].Line)
+$global:recStart=$StartStoplines[0].TimeStamp
 
-$RecordingScope
+#$global:recStart
+#$RecordingScope
 
-#Lav1 Time(s)
- $pattern="Input 1 Mute"
- $StartStopMic = Get-TimeStamps  $fileContents  $pattern "MicTime" $RecordingScope
+#Mic Time(s)
+$pattern="Input .* Mute"
+$StartStopMic = Get-TimeStamps  $fileContents  $pattern "MicTime" $RecordingScope
 
- Write-Host ""
- Write-Host "Mic1 Lines:"
- $StartStopMic
+  Write-Host ""
+  Write-Host "Mic1 Lines:"
+  $StartStopMic
+
+  $global:temptime
 
 
 #Mic1 Calculate Recorded time
