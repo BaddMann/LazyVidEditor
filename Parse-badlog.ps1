@@ -1,9 +1,9 @@
 #### Powershell Bad Log Parsing.
 ## Using https://foxdeploy.com/2015/01/05/walkthrough-parsing-log-or-console-output-with-powershell/
 ### Look into http://www.videoproductionslondon.com/blog/edl-to-html-with-thumbnails
-### 
+### Looki into http://www.itprotoday.com/management-mobility/user-friendly-time-spans-windows-powershell
 
-$fileContents = Get-Content $PSScriptRoot\Sampleoutput\2017-12-10_09-22-Slides.txt
+$fileContents = Get-Content $PSScriptRoot\Sampleoutput\2017-12-10_16-50-Slides.txt
 
 [hashtable]$global:temptime = @{}
 
@@ -110,22 +110,22 @@ $StartStopMic = Get-TimeStamps  $fileContents  $pattern "MicTime" $RecordingScop
 
   Write-Host ""
   Write-Host "Mic1 Lines:"
-  $StartStopMic
+  #$StartStopMic
   $StartStopMic | Export-Clixml -path C:\Temp\test.xml
 
-  $global:temptime
+  #$global:temptime
 
   [System.Collections.ArrayList]$BatchFileContent = "REM Batch File For Testing", "echo testing batch"
-  $MicPattern = "Input 3 Mute"
-  $VidDiff = -5
+  $MicPattern = "Input 2 Mute"
+  [timespan]$VidDiff = "00:00:00.47"
   $StartStopMic | ForEach-Object {  
     if($_.MicName -eq $MicPattern){
-    $StartTCode=($_.StartTCode.TotalSeconds+$VidDiff).tostring()
-    $DurTCode=($_.Duration.TotalSeconds).tostring()
+    [timespan]$StartTCode=($_.StartTCode+$VidDiff).tostring()
+    [timespan]$DurTCode=($_.Duration).tostring() 
     $MicName=($_.MicName).tostring().Replace(" ","")
-    $MicName
+    Write-Host $MicName, $StartTCode, $DurTCode, " From:", $_.StartTCode $_.Duration
 
-    [string]$ffplayexestring = "ffplay.exe", "-ss", $StartTCode, "-t", $DurTCode, "-i Z:\2017-12-10-am-Camera.mp4"
+    [string]$ffplayexestring = "ffplay.exe", "-ss", $StartTCode, "-t", $DurTCode, "-i 2017-12-10-pm-SoundsofSouthwestSingers-Camera.mp4"
     Write-Host $MicName, "Executing: ", $ffplayexestring
     $BatchFileContent.add($ffplayexestring)
   } 
