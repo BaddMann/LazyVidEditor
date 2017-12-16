@@ -143,18 +143,35 @@ $StartStopMic | Export-Clixml -path C:\Temp\test.xml
 
 [System.Collections.ArrayList]$BatchFileContent = "REM Batch File For Testing", "echo testing batch"
 $MicPattern = "Input 2 Mute"
-[timespan]$VidDiff = "00:00:00.47"
-$StartStopMic | ForEach-Object {  
+[timespan]$VidDiff = "00:00:00"
+$StartStopMic | ForEach-Object {$counter = 0}{  
     if ($_.MicName -eq $MicPattern) {
-        [timespan]$StartTCode = ($_.StartTCode + $VidDiff).tostring()
+        if ($VidDiff -ne "00:00:00" -OR $VidDiff -ne "") {
+        [timespan]$StartTCode = ([timespan]$_.StartTCode + [timespan]$VidDiff).tostring()} else {[timespan]$StartTCode = ($_.StartTCode).tostring()}
         [timespan]$DurTCode = ($_.Duration).tostring() 
-        $MicName = ($_.MicName).tostring().Replace(" ", "")
+        $MicName = ($_.MicName).tostring().Replace(" ", "").Replace("Mute", "")
         Write-Host $MicName, $StartTCode, $DurTCode, " From:", $_.StartTCode $_.Duration
 
         [string]$ffplayexestring = "ffplay.exe", "-autoexit -ss", $StartTCode, "-t", $DurTCode, "-i 2017-12-10-pm-SoundsofSouthwestSingers-Camera.mp4"
-        Write-Host $MicName, "Executing: ", $ffplayexestring
+        [string]$askuserstring = @"
+        SET /p MovieCut=Do you want this Cut? (y/n):
+        IF "%MovieCut%" == "n" (goto end$Counter)
+        SET /p MovieStart=Start ($StartTCode):
+        IF "%MovieStart%" == "" (SET MovieStart=$StartTCode)
+        SET /p MovieDur=Duration ($DurTCode):
+        IF "%MovieDur%" == "" (SET MovieDur=$DurTCode)
+"@
+        [string]$ffmpegexestring = "START ffmpeg.exe", "-ss", "%MovieStart%", "-t", "%MovieDur%", "-i 2017-12-10-pm-SoundsofSouthwestSingers-Camera.mp4", "{0}-{1}.mp4" -f $MicName, $counter
+        [string]$clearvarstring = "SET MovieStart=& SET MovieDur="
+        [string]$endstring = ":end$Counter"
+        Write-Host $MicName, "Executing: ", $ffmpegexestring
         $BatchFileContent.add($ffplayexestring)
+        $BatchFileContent.add($askuserstring)
+        $BatchFileContent.add($ffmpegexestring)
+        $BatchFileContent.add($clearvarstring)
+        $BatchFileContent.add($endstring)
     } 
+    $counter++
 }
 $BatchFileContent | Out-File -Encoding ascii -FilePath "Z:\$MicPattern.bat" > $null
 
