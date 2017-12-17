@@ -3,7 +3,7 @@
 ### Look into http://www.videoproductionslondon.com/blog/edl-to-html-with-thumbnails
 ### Look into http://www.itprotoday.com/management-mobility/user-friendly-time-spans-windows-powershell
 
-# Log To Parse
+##### Parameters. ####
 Param(
     [ValidateScript( {
             if (-Not ($_ | Test-Path) ) {
@@ -17,21 +17,41 @@ Param(
     [System.IO.FileInfo]$alog
 )
 
+#### INIT:  Find and Grab Files - Someday Configure with ini or xml files####
+$LogPath = $PSScriptRoot
+$VideoCameraPath = "Z:\"
+$VideoSlidePath = "Z:\"
+$OutPutPath = "Z:\"
+$WorkingPath = "C:\Temp"
+$MicstoCapture = "Input 1 Mute", "Input 2 Mute", "Input 3 Mute", "Input 4 Mute", "Input 7 Mute", "Input 14 Mute"
+
+[hashtable]$dafiles = @{}
+
+## IF Path is not a parameter find latest log and continue, else use path (Still Working on that else)
 if (-Not($alog) -or (-Not(Test-Path $alog))) {
-    $TimeLog = Get-ChildItem -Path $PSScriptRoot -recurse -force -Filter *Slides.txt | sort LastWriteTime -Descending 
-    #| ? {$_.CreationTime -gt (Get-Date).AddHours(-3)}
-    $dafile = ($TimeLog[0].FullName).tostring() | Resolve-Path
-    $dafile.Path
-    $fileContents = Get-Content -path $dafile.Path
+    $TimeLog = Get-ChildItem -Path $LogPath -recurse -force -Filter *Slides.txt | Sort-Object LastWriteTime -Descending 
+    $dafiles.Log = $TimeLog[0]
+    $fileContents = Get-Content -path $dafiles.Log.FullName
     #$fileContents #= Get-Content $PSScriptRoot\Sampleoutput\2017-12-10_16-50-Slides.txt
 }
-else {Write-Host $alog; exit 1}
+else {Write-Host "Set Path:", $alog; exit 1}
 
+$dafiles.Slides = Get-ChildItem -Path $VideoSlidePath -force -Filter *Slides.mp4 | Sort-Object LastWriteTime -Descending | ? {$_.CreationTime -gt ($dafiles.Log.CreationTime).AddHours(-1)}
+$dafiles.Camera = Get-ChildItem -Path $VideoCameraPath -force -Filter *Camera.mp4 | Sort-Object LastWriteTime -Descending | ? {$_.CreationTime -gt ($dafiles.Log.CreationTime).AddHours(-1)}
+#Subtract Slides Creation Time From Camera Creation Time and put them In
+$daSyncDiff = [timespan]($dafiles.Slides.CreationTime - $dafiles.Camera.CreationTime)
+
+## Making New Timspan without milliseconds the dumb way as I've not found the best way to round miliseconds in my google-fu
+$dafiles.SyncDiff = New-TimeSpan -Hour $daSyncDiff.Hours -Minute $daSyncDiff.Minutes -Second $daSyncDiff.Seconds
+
+Write-Host "The Sync Difference is", $dafiles.SyncDiff
+
+#exit 0
 ## readup on:
 #$PSDefaultParameterValues=@{ "Invoke-Command:ScriptBlock"={{Get-Process}} }
 
 [hashtable]$global:temptime = @{}
-
+## Main Function Processing Log ##
 function Get-TimeStamps () {
     Param(
         # File Contents Handler
@@ -58,8 +78,9 @@ function Get-TimeStamps () {
 
     ### https://anandthearchitect.com/2014/03/18/powershell-how-to-return-multiple-values-from-a-function/
     $result = @()
+    #### FOR LOOP Starts Here ####
     $afileContents | Select-String -pattern $apattern -Context 5 | ForEach-Object {
-        #Create an hashtable variable 
+        #Create an hashtable object for returns
         [hashtable]$Return = @{}
 
         #standard Data in Object
@@ -95,8 +116,10 @@ function Get-TimeStamps () {
             else {
                 $Return.State = "Stop"
                 $Return.StartHash = $global:temptime[$Return.MicName]
-                $Return.StartTCode = $Return.StartHash.TimeCode
-                $Return.Duration = $Return.TimeCode - $Return.StartTCode
+                if($Return.StartHash.TimeCode -ne $null) {
+                    $Return.StartTCode = $Return.StartHash.TimeCode
+                    $Return.Duration = [timespan]$Return.TimeCode - [timespan]$Return.StartTCode
+                }
                 $global:temptime.Remove($Return.MicName)
 
                 ## Go Fetch Slide Display Times from OBS Data, add as hash Slidehash on each Return Hash for each mic
@@ -110,7 +133,7 @@ function Get-TimeStamps () {
             $MicName = $_.Line | % {$_.split('"')[1]}
             if ($_.Line.Trim() -like "*unmuted*") {
                 $aline = [int]$aScope[0]
-                $global:temptime.Add($MicName, [hashtable]@{TimeCode = "00:00:00"; "Line" = "$aline"})
+                $global:temptime.Add($MicName, [hashtable]@{TimeCode = [timespan]"00:00:00"; "Line" = "$aline"})
             }
             else {
                 $global:temptime.Remove($MicName)
@@ -135,76 +158,59 @@ $pattern = "Input .* Mute"
 $StartStopMic = Get-TimeStamps  $fileContents  $pattern "MicTime" $RecordingScope
 
 Write-Host ""
-Write-Host "Mic1 Lines:"
+#Write-Host "Data:"
 #$StartStopMic
 $StartStopMic | Export-Clixml -path C:\Temp\test.xml
 
 #$global:temptime
+function Create-Runbooks () {
+    Param(
+        # Mics To Create RunBooks For
+        [Parameter(Position = 0)]
+        [Array]
+        $EditPatterns
+    )
+    #### FOR LOOP Starts Here ####
+    $EditPatterns | ForEach-Object {
+        Write-Host " Mic Pattern=", $_
+        [System.Collections.ArrayList]$BatchFileContent = "@echo off", "REM Batch File For Processing Cuts", "echo testing batch File"
+        $MicPattern = $_
+        [timespan]$VidDiff = $dafiles.SyncDiff
+        $StartStopMic | ForEach-Object {$counter = 0} {
+            Write-Host " Mic=", $_.MicName, "is Equal", $MicPattern
+            if ($_.MicName -eq $MicPattern) {
+                if ($VidDiff -ne "00:00:00" -OR $VidDiff -ne "") {
+                    [timespan]$StartTCode = ([timespan]$_.StartTCode + [timespan]$VidDiff).tostring()
+                }
+                else {[timespan]$StartTCode = ($_.StartTCode).tostring()}
+                [timespan]$DurTCode = ($_.Duration).tostring() 
+                $MicName = ($_.MicName).tostring().Replace(" ", "").Replace("Mute", "")
+                Write-Host $MicName, $StartTCode, $DurTCode, " From:", $_.StartTCode $_.Duration
 
-[System.Collections.ArrayList]$BatchFileContent = "REM Batch File For Testing", "echo testing batch"
-$MicPattern = "Input 2 Mute"
-[timespan]$VidDiff = "00:00:00"
-$StartStopMic | ForEach-Object {$counter = 0}{  
-    if ($_.MicName -eq $MicPattern) {
-        if ($VidDiff -ne "00:00:00" -OR $VidDiff -ne "") {
-        [timespan]$StartTCode = ([timespan]$_.StartTCode + [timespan]$VidDiff).tostring()} else {[timespan]$StartTCode = ($_.StartTCode).tostring()}
-        [timespan]$DurTCode = ($_.Duration).tostring() 
-        $MicName = ($_.MicName).tostring().Replace(" ", "").Replace("Mute", "")
-        Write-Host $MicName, $StartTCode, $DurTCode, " From:", $_.StartTCode $_.Duration
-
-        [string]$ffplayexestring = "ffplay.exe", "-autoexit -ss", $StartTCode, "-t", $DurTCode, "-i 2017-12-10-pm-SoundsofSouthwestSingers-Camera.mp4"
-        [string]$askuserstring = @"
-        SET /p MovieCut=Do you want this Cut? (y/n):
-        IF "%MovieCut%" == "n" (goto end$Counter)
-        SET /p MovieStart=Start ($StartTCode):
-        IF "%MovieStart%" == "" (SET MovieStart=$StartTCode)
-        SET /p MovieDur=Duration ($DurTCode):
-        IF "%MovieDur%" == "" (SET MovieDur=$DurTCode)
+                [string]$ffplayexestring = "ffplay.exe", "-autoexit -ss", $StartTCode, "-t", $DurTCode, "-i", $dafiles.Camera
+                [string]$askuserstring = @"
+SET /p MovieCut=Do you want this Cut? (y/n):
+IF "%MovieCut%" == "n" (goto end$Counter)
+SET /p MovieStart=Start ($StartTCode):
+IF "%MovieStart%" == "" (SET MovieStart=$StartTCode)
+SET /p MovieDur=Duration ($DurTCode):
+IF "%MovieDur%" == "" (SET MovieDur=$DurTCode)
 "@
-        [string]$ffmpegexestring = "START ffmpeg.exe", "-ss", "%MovieStart%", "-t", "%MovieDur%", "-i 2017-12-10-pm-SoundsofSouthwestSingers-Camera.mp4", "{0}-{1}.mp4" -f $MicName, $counter
-        [string]$clearvarstring = "SET MovieStart=& SET MovieDur="
-        [string]$endstring = ":end$Counter"
-        Write-Host $MicName, "Executing: ", $ffmpegexestring
-        $BatchFileContent.add($ffplayexestring)
-        $BatchFileContent.add($askuserstring)
-        $BatchFileContent.add($ffmpegexestring)
-        $BatchFileContent.add($clearvarstring)
-        $BatchFileContent.add($endstring)
-    } 
-    $counter++
+                [string]$ffmpegexestring = "START ffmpeg.exe", "-ss", "%MovieStart%", "-t", "%MovieDur%", "-i", $dafiles.Camera, "{0}-{1}.mp4" -f $MicName, $counter
+                [string]$clearvarstring = "SET MovieStart=& SET MovieDur="
+                [string]$endstring = ":end$Counter"
+                Write-Host $MicName, "Executing: ", $ffmpegexestring
+                $BatchFileContent.add($ffplayexestring)
+                $BatchFileContent.add($askuserstring)
+                $BatchFileContent.add($ffmpegexestring)
+                $BatchFileContent.add($clearvarstring)
+                $BatchFileContent.add($endstring)
+            } 
+            $counter++
+        }
+        $BatchFileContent | Out-File -Encoding ascii -FilePath "Z:\$MicPattern.bat" > $null
+    }
 }
-$BatchFileContent | Out-File -Encoding ascii -FilePath "Z:\$MicPattern.bat" > $null
 
 
-#Mic1 Calculate Recorded time
-# Write-host "Mic1 Calculate Recorded time"
-
-# Write-host ($StartStopMic[0]) - ($StartStopLines[0])
-# $mic1start = [datetime]($StartStopMic[0]) - [datetime]($StartStopLines[0])
-# $mic1start
-
-# Write-host ($StartStopMic[3]) - ($StartStopLines[0])
-# $mic1end = [datetime]($StartStopMic[3]) - [datetime]($StartStopLines[0])
-# $mic1end
-
-
-# Write-host $mic1end - $mic1start
-# $mic1end - $mic1start
-
-# $StartStop | Format-Table
-
-# $StartStop.GetType()
-
-# $StartStop[0]
-
-# $StartStop[1]
-
-# $StartStop.Length
-
-# $pattern="Evt00001"
-# [array]$ExtronEvents = Get-TimeStamps  -afileContents  $fileContents -apattern $pattern -aScope $StartStop -aScopeType "SubSlideTime"
-
-# $pattern="\{|\}"
-# [array]$SlideEvents = Get-TimeStamps  -afileContents  $fileContents -apattern $pattern -aScope $StartStop -aScopeType "SlideTime"
-
-# #$SlideEvents
+Create-Runbooks -EditPatterns $MicstoCapture
