@@ -37,7 +37,12 @@ if (-Not($alog) -or (-Not(Test-Path $alog))) {
 else {Write-Host "Set Path:", $alog; exit 1}
 
 $dafiles.Slides = Get-ChildItem -Path $VideoSlidePath -force -Filter *Slides.mp4 | Sort-Object LastWriteTime -Descending | ? {$_.CreationTime -gt ($dafiles.Log.CreationTime).AddHours(-1)}
-$dafiles.Camera = Get-ChildItem -Path $VideoCameraPath -force -Filter *Camera.mp4 | Sort-Object LastWriteTime -Descending | ? {$_.CreationTime -gt ($dafiles.Log.CreationTime).AddHours(-1)}
+$dafiles.Camera = Get-ChildItem -Path $VideoCameraPath\* -force -Include "*Camera.mp4", "Untitled*.mp4" | Sort-Object LastWriteTime -Descending | ? {$_.CreationTime -gt ($dafiles.Log.CreationTime).AddHours(-1)}
+
+if ($dafiles.Camera -like "Untitled*.mp4" ){Write-Host "Bad Camera Name, Exiting"; Exit 13}
+if ($dafiles.Camera -eq $null ){Write-Host "No Camera Detected, Exiting"; Exit 12}
+if ($dafiles.Slides -eq $null ){Write-Host "No Slides Detected, Exiting"; Exit 11}
+
 #Subtract Slides Creation Time From Camera Creation Time and put them In
 $daSyncDiff = [timespan]($dafiles.Slides.CreationTime - $dafiles.Camera.CreationTime)
 
