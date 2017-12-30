@@ -192,10 +192,14 @@ function Create-Runbooks () {
             #Write-Host " Mic=", $_.MicName, "is Equal", $MicPattern
             if ($_.MicName -eq $MicPattern) {
                 if ($VidDiff -ne "00:00:00" -OR $VidDiff -ne "") {
-                    [timespan]$StartTCode = ([timespan]$_.StartTCode + [timespan]$VidDiff).tostring()
+                    [timespan]$StartTCode = ([timespan]$_.StartTCode + [timespan]$VidDiff).tostring() #tostring?
                 }
                 else {[timespan]$StartTCode = ($_.StartTCode).tostring()}
                 [timespan]$DurTCode = ($_.Duration).tostring() 
+                [timespan]$EndTCode = ($_.TimeCode).tostring()
+                Write-Host " Start Time: ", $StartTCode.ToString()
+                Write-Host " End Time: ", $EndTCode.ToString()
+                Write-Host " Duration: ", $DurTCode.ToString()
                 $MicName = ($_.MicName).tostring().Replace(" ", "").Replace("Mute", "")
                 #Write-Host $MicName, $StartTCode, $DurTCode, " From:", $_.StartTCode $_.Duration
 
@@ -207,16 +211,21 @@ SET /p MovieStart=Start ($StartTCode):
 IF "%MovieStart%" == "" (SET MovieStart=$StartTCode)
 SET /p MovieDur=Duration ($DurTCode):
 IF "%MovieDur%" == "" (SET MovieDur=$DurTCode)
+SET logo="Z:\CoF-logo.png"
 "@
-                [string]$ffmpegexestring = "START ffmpeg.exe", "-ss", "%MovieStart%", "-t", "%MovieDur%", "-i", $dafiles.Camera, "{0}-{1}.mp4" -f $MicName, $counter
+                [string]$ffmpegOutFileName = (($dafiles.Camera).tostring().Replace(".mp4", "-")+($MicPattern).tostring().Replace(" ", "").Replace("Mute", ""))
+                [string]$ffmpegexestring = "START ffmpeg.exe", "-ss", "%MovieStart%", "-t", "%MovieDur%", "-i", $dafiles.Camera, "{0}-{1}.mp4" -f $ffmpegOutFileName, $counter
                 [string]$clearvarstring = "SET MovieStart=& SET MovieDur="
                 [string]$endstring = ":end$Counter"
                 #Write-Host $MicName, "Executing: ", $ffmpegexestring
-                $BatchFileContent.add($ffplayexestring)
-                $BatchFileContent.add($askuserstring)
-                $BatchFileContent.add($ffmpegexestring)
-                $BatchFileContent.add($clearvarstring)
-                $BatchFileContent.add($endstring)
+                if($DurTCode.TotalSeconds -gt 15){
+                    $BatchFileContent.add($ffplayexestring)
+                    $BatchFileContent.add($askuserstring)
+                    $BatchFileContent.add($ffmpegexestring)
+                    $BatchFileContent.add($clearvarstring)
+                    $BatchFileContent.add($endstring)
+                }
+                Else{Write-Host "Cut is too Short. Ignoring" }
             } 
             $counter++ > $null
         }
