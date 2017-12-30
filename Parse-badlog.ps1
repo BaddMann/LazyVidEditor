@@ -34,12 +34,19 @@ if (-Not($alog) -or (-Not(Test-Path $alog))) {
     $fileContents = Get-Content -path $dafiles.Log.FullName
     #$fileContents #= Get-Content $PSScriptRoot\Sampleoutput\2017-12-10_16-50-Slides.txt
 }
-else {Write-Host "Set Path:", $alog; exit 1}
+else {
+    $dafiles.Log = $alog
+    $fileContents = Get-Content -path $dafiles.Log.FullName
+}
 
-$dafiles.Slides = Get-ChildItem -Path $VideoSlidePath -force -Filter *Slides.mp4 | Sort-Object LastWriteTime -Descending | ? {$_.CreationTime -gt ($dafiles.Log.CreationTime).AddHours(-1)}
-$dafiles.Camera = Get-ChildItem -Path $VideoCameraPath\* -force -Include "*Camera.mp4", "Untitled*.mp4" | Sort-Object LastWriteTime -Descending | ? {$_.CreationTime -gt ($dafiles.Log.CreationTime).AddHours(-1)}
+$dafiles.Slides = Get-ChildItem -Path $VideoSlidePath\* -force -Include "*Slides.mp4" | Sort-Object LastWriteTime -Descending | ? {($_.CreationTime -gt ($dafiles.Log.CreationTime).AddMinutes(-15)) -and ($_.CreationTime  -lt ($dafiles.Log.CreationTime).AddMinutes(15))} | Select-Object -first 1
+$dafiles.Camera = Get-ChildItem -Path $VideoCameraPath\* -force -Include "*Camera.mp4", "Untitled*.mp4" | Sort-Object LastWriteTime -Descending | ? {($_.CreationTime -gt ($dafiles.Log.CreationTime).AddMinutes(-15)) -and ($_.CreationTime  -lt ($dafiles.Log.CreationTime).AddMinutes(15))} | Select-Object -first 1
 
-if ($dafiles.Camera -like "Untitled*.mp4" ){Write-Host "Bad Camera Name, Exiting"; Exit 13}
+Write-Host $dafiles.Log
+Write-Host $dafiles.Camera
+Write-Host $dafiles.Slides
+
+if ($dafiles.Camera -contains "Untitled" ){Write-Host "Bad Camera Name, Exiting"; Exit 13}
 if ($dafiles.Camera -eq $null ){Write-Host "No Camera Detected, Exiting"; Exit 12}
 if ($dafiles.Slides -eq $null ){Write-Host "No Slides Detected, Exiting"; Exit 11}
 
@@ -182,7 +189,7 @@ function Create-Runbooks () {
         $MicPattern = $_
         [timespan]$VidDiff = $dafiles.SyncDiff
         $StartStopMic | ForEach-Object {$counter = 0} {
-            Write-Host " Mic=", $_.MicName, "is Equal", $MicPattern
+            #Write-Host " Mic=", $_.MicName, "is Equal", $MicPattern
             if ($_.MicName -eq $MicPattern) {
                 if ($VidDiff -ne "00:00:00" -OR $VidDiff -ne "") {
                     [timespan]$StartTCode = ([timespan]$_.StartTCode + [timespan]$VidDiff).tostring()
@@ -190,7 +197,7 @@ function Create-Runbooks () {
                 else {[timespan]$StartTCode = ($_.StartTCode).tostring()}
                 [timespan]$DurTCode = ($_.Duration).tostring() 
                 $MicName = ($_.MicName).tostring().Replace(" ", "").Replace("Mute", "")
-                Write-Host $MicName, $StartTCode, $DurTCode, " From:", $_.StartTCode $_.Duration
+                #Write-Host $MicName, $StartTCode, $DurTCode, " From:", $_.StartTCode $_.Duration
 
                 [string]$ffplayexestring = "ffplay.exe", "-autoexit -ss", $StartTCode, "-t", $DurTCode, "-i", $dafiles.Camera
                 [string]$askuserstring = @"
@@ -204,16 +211,19 @@ IF "%MovieDur%" == "" (SET MovieDur=$DurTCode)
                 [string]$ffmpegexestring = "START ffmpeg.exe", "-ss", "%MovieStart%", "-t", "%MovieDur%", "-i", $dafiles.Camera, "{0}-{1}.mp4" -f $MicName, $counter
                 [string]$clearvarstring = "SET MovieStart=& SET MovieDur="
                 [string]$endstring = ":end$Counter"
-                Write-Host $MicName, "Executing: ", $ffmpegexestring
+                #Write-Host $MicName, "Executing: ", $ffmpegexestring
                 $BatchFileContent.add($ffplayexestring)
                 $BatchFileContent.add($askuserstring)
                 $BatchFileContent.add($ffmpegexestring)
                 $BatchFileContent.add($clearvarstring)
                 $BatchFileContent.add($endstring)
             } 
-            $counter++
+            $counter++ > $null
         }
-        $BatchFileContent | Out-File -Encoding ascii -FilePath "Z:\$MicPattern.bat" > $null
+        [string]$OutFileName = (($dafiles.Camera).tostring().Replace(".mp4", "-")+($MicPattern).tostring().Replace(" ", "").Replace("Mute", "")+".bat")
+        Write-Host $MicPattern
+        Write-Host $OutFileName
+        $BatchFileContent | Out-File -Encoding ascii -FilePath $OutFileName > $null
     }
 }
 
