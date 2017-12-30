@@ -42,9 +42,9 @@ else {
 $dafiles.Slides = Get-ChildItem -Path $VideoSlidePath\* -force -Include "*Slides.mp4" | Sort-Object LastWriteTime -Descending | ? {($_.CreationTime -gt ($dafiles.Log.CreationTime).AddMinutes(-15)) -and ($_.CreationTime  -lt ($dafiles.Log.CreationTime).AddMinutes(15))} | Select-Object -first 1
 $dafiles.Camera = Get-ChildItem -Path $VideoCameraPath\* -force -Include "*Camera.mp4", "Untitled*.mp4" | Sort-Object LastWriteTime -Descending | ? {($_.CreationTime -gt ($dafiles.Log.CreationTime).AddMinutes(-15)) -and ($_.CreationTime  -lt ($dafiles.Log.CreationTime).AddMinutes(15))} | Select-Object -first 1
 
-Write-Host $dafiles.Log
-Write-Host $dafiles.Camera
-Write-Host $dafiles.Slides
+Write-Host "Log Found:", $dafiles.Log
+Write-Host "Camera Found:", $dafiles.Camera
+Write-Host "Slides Found:", $dafiles.Slides
 
 if ($dafiles.Camera -contains "Untitled" ){Write-Host "Bad Camera Name, Exiting"; Exit 13}
 if ($dafiles.Camera -eq $null ){Write-Host "No Camera Detected, Exiting"; Exit 12}
@@ -192,29 +192,43 @@ function Create-Runbooks () {
             #Write-Host " Mic=", $_.MicName, "is Equal", $MicPattern
             if ($_.MicName -eq $MicPattern) {
                 if ($VidDiff -ne "00:00:00" -OR $VidDiff -ne "") {
-                    [timespan]$StartTCode = ([timespan]$_.StartTCode + [timespan]$VidDiff).tostring() #tostring?
+                    [timespan]$MovieStartTCode = ([timespan]$_.StartTCode + [timespan]$VidDiff).tostring() #tostring?
+                    [timespan]$SlidesStartTCode = ([timespan]$_.StartTCode).tostring()
                 }
-                else {[timespan]$StartTCode = ($_.StartTCode).tostring()}
+                else {
+                    [timespan]$MovieStartTCode = ($_.StartTCode).tostring()
+                    [timespan]$SlidesStartTCode = ([timespan]$_.StartTCode).tostring()
+                }
                 [timespan]$DurTCode = ($_.Duration).tostring() 
                 [timespan]$EndTCode = ($_.TimeCode).tostring()
-                Write-Host " Start Time: ", $StartTCode.ToString()
+                Write-Host " Start Time: ", $MovieStartTCode.ToString()
                 Write-Host " End Time: ", $EndTCode.ToString()
                 Write-Host " Duration: ", $DurTCode.ToString()
                 $MicName = ($_.MicName).tostring().Replace(" ", "").Replace("Mute", "")
-                #Write-Host $MicName, $StartTCode, $DurTCode, " From:", $_.StartTCode $_.Duration
+                #Write-Host $MicName, $MovieStartTCode, $DurTCode, " From:", $_.StartTCode $_.Duration
 
-                [string]$ffplayexestring = "ffplay.exe", "-autoexit -ss", $StartTCode, "-t", $DurTCode, "-i", $dafiles.Camera
+                [string]$ffplayexestring = "ffplay.exe", "-autoexit -ss", $MovieStartTCode, "-t", $DurTCode, "-i", $dafiles.Camera
                 [string]$askuserstring = @"
 SET /p MovieCut=Do you want this Cut? (y/n):
 IF "%MovieCut%" == "n" (goto end$Counter)
-SET /p MovieStart=Start ($StartTCode):
-IF "%MovieStart%" == "" (SET MovieStart=$StartTCode)
+SET /p MovieStart=Start ($MovieStartTCode):
+IF "%MovieStart%" == "" (SET MovieStart=$MovieStartTCode)
+SET /p SlidesStart=Start ($SlidesStartTCode a Time Diff of $($VidDiff.tostring())):
+IF "%SlidesStart%" == "" (SET SlidesStart=$SlidesStartTCode)
 SET /p MovieDur=Duration ($DurTCode):
 IF "%MovieDur%" == "" (SET MovieDur=$DurTCode)
 SET logo="Z:\CoF-logo.png"
 "@
-                [string]$ffmpegOutFileName = (($dafiles.Camera).tostring().Replace(".mp4", "-")+($MicPattern).tostring().Replace(" ", "").Replace("Mute", ""))
-                [string]$ffmpegexestring = "START ffmpeg.exe", "-ss", "%MovieStart%", "-t", "%MovieDur%", "-i", $dafiles.Camera, "{0}-{1}.mp4" -f $ffmpegOutFileName, $counter
+                [string]$ffmpegOutFileName = (($dafiles.Camera).tostring().Replace("Camera.mp4", "-")+($MicPattern).tostring().Replace(" ", "").Replace("Mute", ""))
+                ##Simple[string]$ffmpegexestring = "START ffmpeg.exe", "-ss", "%MovieStart%", "-t", "%MovieDur%", "-i", $dafiles.Camera, "{0}-{1}.mp4" -f $ffmpegOutFileName, $counter
+                [string]$ffmpegexestring = @"
+echo (ffmpeg.exe -y -ss %MovieStart% -t %MovieDur% -i "$($dafiles.Camera)" -i %logo% -ss 00:00:00 -c:v libx264 -pix_fmt yuv420p -preset faster -r 30 -g 60 -b:v 4500k -c:a aac -strict -2 -filter_complex "[1]scale=iw/2:-1[pip]; [0:a]compand=.3|.3:1|1:-90/-60|-60/-40|-40/-30|-20/-20:6:0:-90:0.2[audio];[vid][pip] overlay=main_w-overlay_w-10:main_h-overlay_h-10[out]" -map "[out]" -map "[audio]" -movflags +faststart "$ffmpegOutFileName-$counter-Camera.mp4")>$ffmpegOutFileName-$counter.bat
+echo (ffmpeg.exe -y -ss %SlidesStart% -t %MovieDur% -i "$($dafiles.Slides)" -i %logo% -ss 00:00:00 -c:v libx264 -pix_fmt yuv420p -preset faster -r 30 -g 60 -b:v 4500k -an -movflags +faststart "$ffmpegOutFileName-$counter-Slides.mp4") >> $ffmpegOutFileName-$counter.bat
+echo (ffmpeg.exe -y -i "$ffmpegOutFileName-$counter-Camera.mp4" -i "$ffmpegOutFileName-$counter-Slides.mp4" -filter_complex "[0:v]setpts=PTS-STARTPTS, pad=iw*2:ih[bg];[1:v]setpts=PTS-STARTPTS[fg]; [bg][fg]overlay=w" -map 0:a -c:a copy "$ffmpegOutFileName-$counter-Both.mp4") >> $ffmpegOutFileName-$counter.bat
+echo (ffmpeg.exe -y -i "$ffmpegOutFileName-$counter-Camera.mp4" -i "$ffmpegOutFileName-$counter-Slides.mp4" -filter_complex "[1]scale=iw/3:-1[low3]; [vid][low3] overlay=(main_w/2)-(overlay_w/2):main_h-(overlay_h*0.95)[out]" -map "[out]" -map 0:a -c:a copy "$ffmpegOutFileName-$counter-L3.mp4") >> $ffmpegOutFileName-$counter.bat
+echo (exit) >> $ffmpegOutFileName-$counter.bat
+  START $ffmpegOutFileName-$counter.bat                  
+"@
                 [string]$clearvarstring = "SET MovieStart=& SET MovieDur="
                 [string]$endstring = ":end$Counter"
                 #Write-Host $MicName, "Executing: ", $ffmpegexestring
