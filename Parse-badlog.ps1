@@ -208,6 +208,7 @@ function Create-Runbooks () {
                 #Write-Host $MicName, $MovieStartTCode, $DurTCode, " From:", $_.StartTCode $_.Duration
 
                 #Old, Simple [string]$ffplayexestring = "ffplay.exe", "-autoexit -ss", $MovieStartTCode, "-t", $DurTCode, "-i", $dafiles.Camera
+                [string]$ffmpegOutFileName = (($dafiles.Camera).tostring().Replace("Camera.mp4", "-")+($MicPattern).tostring().Replace(" ", "").Replace("Mute", ""))
                 [string]$ffplayexestring = @"
 ffmpeg -ss $MovieStartTCode -t 00:00:30 -i $($dafiles.Camera.tostring()) -ss $SlidesStartTCode -t 00:00:30 -i $($dafiles.Slides.tostring()) -filter_complex "[1]crop=in_w-70:in_h-120:35:60,scale=iw/2:-1,format=yuva420p,colorchannelmixer=aa=0.7[low3]; [vid][low3] overlay=(main_w/2)-(overlay_w/2):main_h-(overlay_h*0.90) [out]" -map "[out]" -map 0:a -c:a copy -f avi - | ffplay -autoexit -window_title "$ffmpegOutFileName-$counter Preview" - >> $ffmpegOutFileName-$counter.bat
 "@
@@ -223,7 +224,6 @@ IF "%MovieDur%" == "" (SET MovieDur=$DurTCode)
 SET logo="Z:\CoF-logo.png"
 SET vlcCommand=vlc.exe  --video-x=-1288 --video-y=86 --width=300 --height=300 --fullscreen --no-video-title-show --no-embedded-video --no-qt-fs-controller --one-instance --playlist-enqueue
 "@
-                [string]$ffmpegOutFileName = (($dafiles.Camera).tostring().Replace("Camera.mp4", "-")+($MicPattern).tostring().Replace(" ", "").Replace("Mute", ""))
                 ##Simple[string]$ffmpegexestring = "START ffmpeg.exe", "-ss", "%MovieStart%", "-t", "%MovieDur%", "-i", $dafiles.Camera, "{0}-{1}.mp4" -f $ffmpegOutFileName, $counter
                 [string]$ffmpegexestring = @"
 echo timeout /t 120 >>$ffmpegOutFileName-$counter.bat
