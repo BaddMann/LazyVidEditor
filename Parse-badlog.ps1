@@ -171,8 +171,9 @@ $StartStopMic = Get-TimeStamps  $fileContents  $pattern "MicTime" $RecordingScop
 
 Write-Host ""
 #Write-Host "Data:"
-#$StartStopMic
+$StartStopMic
 $StartStopMic | Export-Clixml -path C:\Temp\test.xml
+#exit 0
 
 #$global:temptime
 function Create-Runbooks () {
@@ -185,7 +186,7 @@ function Create-Runbooks () {
     #### FOR LOOP Starts Here ####
     $EditPatterns | ForEach-Object {
         Write-Host " Mic Pattern=", $_
-        [System.Collections.ArrayList]$BatchFileContent = "@echo off", "REM Batch File For Processing Cuts", "echo testing batch File", "SET PATH=%PATH%;C:\Program Files (x86)\VideoLAN\VLC\", "SET vlcCommand=vlc.exe  --video-x=-1288 --video-y=86 --width=300 --height=300 --fullscreen --no-video-title-show --no-embedded-video --no-qt-fs-controller --one-instance --playlist-enqueue", "START %vlcCommand% Z:\Progress.mp4"
+        [System.Collections.ArrayList]$BatchFileContent = "@echo off", "REM Batch File For Processing Cuts", "echo testing batch File", "SET PATH=%PATH%;C:\Program Files (x86)\VideoLAN\VLC\", "SET vlcCommand=vlc.exe  --video-x=-1288 --video-y=86 --width=300 --height=300 --fullscreen --no-video-title-show --no-embedded-video --no-qt-fs-controller --one-instance --playlist-enqueue"
         $MicPattern = $_
         [timespan]$VidDiff = $dafiles.SyncDiff
         $StartStopMic | ForEach-Object {$counter = 0} {
@@ -210,9 +211,12 @@ function Create-Runbooks () {
                 #Old, Simple [string]$ffplayexestring = "ffplay.exe", "-autoexit -ss", $MovieStartTCode, "-t", $DurTCode, "-i", $dafiles.Camera
                 [string]$ffmpegOutFileName = (($dafiles.Camera).tostring().Replace("Camera.mp4", "-")+($MicPattern).tostring().Replace(" ", "").Replace("Mute", ""))
                 [string]$ffplayexestring = @"
+ffplay.exe -autoexit -ss $MovieStartTCode -t $DurTCode -i $($dafiles.Camera.tostring())
 ffmpeg -ss $MovieStartTCode -t 00:00:30 -i $($dafiles.Camera.tostring()) -ss $SlidesStartTCode -t 00:00:30 -i $($dafiles.Slides.tostring()) -filter_complex "[1]crop=in_w-70:in_h-120:35:60,scale=iw/2:-1,format=yuva420p,colorchannelmixer=aa=0.7[low3]; [vid][low3] overlay=(main_w/2)-(overlay_w/2):main_h-(overlay_h*0.90) [out]" -map "[out]" -map 0:a -c:a copy -f avi - | ffplay -autoexit -window_title "$ffmpegOutFileName-$counter Preview" -
 "@
                 [string]$askuserstring = @"
+echo Movie Start: $MovieStartTCode  Duration: $DurTCode  Movie End: $EndTCode
+echo Slide Start: $SlidesStartTCode  Diff Time: $VidDiff
 SET /p MovieCut=Do you want this Cut? (y/n):
 IF "%MovieCut%" == "n" (goto end$Counter)
 SET /p MovieStart=Start ($MovieStartTCode):
@@ -229,13 +233,13 @@ SET vlcCommand=vlc.exe  --video-x=-1288 --video-y=86 --width=300 --height=300 --
 echo timeout /t 120 >>$ffmpegOutFileName-$counter.bat
 echo (ffmpeg.exe -y -ss %SlidesStart% -t %MovieDur% -i "$($dafiles.Slides)" -i %logo% -ss 00:00:00 -c:v libx264 -pix_fmt yuv420p -preset faster -r 30 -g 60 -b:v 4500k -an -movflags +faststart "$ffmpegOutFileName-$counter-Slides.mp4")>>$ffmpegOutFileName-$counter.bat
 echo (ffmpeg.exe -y -ss %MovieStart% -t %MovieDur% -i "$($dafiles.Camera)" -i %logo% -ss 00:00:00 -c:v libx264 -pix_fmt yuv420p -preset faster -r 30 -g 60 -b:v 4500k -c:a aac -strict -2 -filter_complex "[1]scale=iw/2:-1[pip]; [0:a]compand=.3|.3:1|1:-90/-60|-60/-40|-40/-30|-20/-20:6:0:-90:0.2[audio];[vid][pip] overlay=main_w-overlay_w-10:main_h-overlay_h-10[out]" -map "[out]" -map "[audio]" -movflags +faststart "$ffmpegOutFileName-$counter-Camera.mp4")>>$ffmpegOutFileName-$counter.bat
-echo START %vlcCommand% "$ffmpegOutFileName-$counter-Camera.mp4" >> $ffmpegOutFileName-$counter.bat
-echo (ffmpeg.exe -y -i "$ffmpegOutFileName-$counter-Camera.mp4" -i "$ffmpegOutFileName-$counter-Slides.mp4" -filter_complex "[0:v]setpts=PTS-STARTPTS, pad=iw*2:ih[bg];[1:v]setpts=PTS-STARTPTS[fg]; [bg][fg]overlay=w" -map 0:a -c:a copy "$ffmpegOutFileName-$counter-Both.mp4") >> $ffmpegOutFileName-$counter.bat
 echo (ffmpeg.exe -y -i "$ffmpegOutFileName-$counter-Camera.mp4" -i "$ffmpegOutFileName-$counter-Slides.mp4" -filter_complex "[1]crop=in_w-70:in_h-120:35:60,scale=iw/2:-1,format=yuva420p,colorchannelmixer=aa=0.7[low3]; [vid][low3] overlay=(main_w/2)-(overlay_w/2):main_h-(overlay_h*0.90)[out]" -map "[out]" -map 0:a -c:a copy "$ffmpegOutFileName-$counter-ovl.mp4") >> $ffmpegOutFileName-$counter.bat
 echo START %vlcCommand% "$ffmpegOutFileName-$counter-ovl.mp4" >> $ffmpegOutFileName-$counter.bat
 echo (exit) >> $ffmpegOutFileName-$counter.bat
-  START $ffmpegOutFileName-$counter.bat                  
+START $ffmpegOutFileName-$counter.bat
+START %vlcCommand% Z:\Progress.mp4
 "@
+#### Side by Side Video: echo (ffmpeg.exe -y -i "$ffmpegOutFileName-$counter-Camera.mp4" -i "$ffmpegOutFileName-$counter-Slides.mp4" -filter_complex "[0:v]setpts=PTS-STARTPTS, pad=iw*2:ih[bg];[1:v]setpts=PTS-STARTPTS[fg]; [bg][fg]overlay=w" -map 0:a -c:a copy "$ffmpegOutFileName-$counter-Both.mp4") >> $ffmpegOutFileName-$counter.bat
                 [string]$clearvarstring = "SET MovieStart=& SET MovieDur=& SET SlidesStart="
                 [string]$endstring = ":end$Counter"
                 #Write-Host $MicName, "Executing: ", $ffmpegexestring
