@@ -46,7 +46,7 @@ Write-Host "Log Found:", $dafiles.Log
 Write-Host "Camera Found:", $dafiles.Camera
 Write-Host "Slides Found:", $dafiles.Slides
 
-if ($dafiles.Camera -contains "Untitled" ){Write-Host "Bad Camera Name, Exiting"; Exit 13}
+if ($($dafiles.Camera.tostring()) -contains "Untitled" ){Write-Host "Bad Camera Name, Exiting"; Exit 13}
 if ($dafiles.Camera -eq $null ){Write-Host "No Camera Detected, Exiting"; Exit 12}
 if ($dafiles.Slides -eq $null ){Write-Host "No Slides Detected, Exiting"; Exit 11}
 
@@ -158,12 +158,31 @@ function Get-TimeStamps () {
 $pattern = "RecordingStarting|RecordingStopping"
 $StartStoplines = Get-TimeStamps  $fileContents  $pattern "RecordTime"
 
+# If Start or Stop of Recording are not Logged, base time codes on creation and Last Write.
+$LogStartExists = $false
+$LogEndExists = $false
+$StartStoplines | ForEach-Object {If ($_.State -match "Start") {$LogStartExists = $true}}
+$StartStoplines | ForEach-Object {If ($_.State -match "Stop") {$LogEndExists = $true}}
+
+If ($LogStartExists -eq $false)
+{
+    Write-Host "Recording Start does not exist. Creating start at beginning of file"
+    "RecordingStarting" + (Get-Content ($dafiles.Log.FullName) -Raw) | Set-Content ($dafiles.Log.FullName)
+    $StartStoplines = Get-TimeStamps  $fileContents  $pattern "RecordTime"
+}
+
+If ($LogEndExists -eq $false)
+{
+    Write-Host "Recording End does not exist. Adding to end of File"
+    Add-Content ($dafiles.Log.FullName) "RecordingStopping"
+    $StartStoplines = Get-TimeStamps  $fileContents  $pattern "RecordTime"
+}
 
 $RecordingScope = @($StartStoplines[0].Line, $StartStoplines[1].Line)
 $global:recStart = $StartStoplines[0].TimeStamp
 
 #$global:recStart
-#$RecordingScope
+$RecordingScope
 
 #Mic Time(s)
 $pattern = "Input .* Mute"
@@ -193,7 +212,7 @@ function Create-Runbooks () {
             #Write-Host " Mic=", $_.MicName, "is Equal", $MicPattern
             if ($_.MicName -eq $MicPattern) {
                 if ($VidDiff -ne "00:00:00" -OR $VidDiff -ne "") {
-                    [timespan]$MovieStartTCode = [timespan]$_.StartTCode - [timespan]$VidDiff
+                    [timespan]$MovieStartTCode = [timespan]$_.StartTCode + [timespan]$VidDiff
                     [timespan]$SlidesStartTCode = [timespan]$_.StartTCode 
                 }
                 else {
@@ -209,7 +228,7 @@ function Create-Runbooks () {
                 #Write-Host $MicName, $MovieStartTCode, $DurTCode, " From:", $_.StartTCode $_.Duration
 
                 #Old, Simple [string]$ffplayexestring = "ffplay.exe", "-autoexit -ss", $MovieStartTCode, "-t", $DurTCode, "-i", $dafiles.Camera
-                [string]$ffmpegOutFileName = (($dafiles.Camera).tostring().Replace("Camera.mp4", "-")+($MicPattern).tostring().Replace(" ", "").Replace("Mute", ""))
+                [string]$ffmpegOutFileName = (($dafiles.Camera).tostring().Replace("Camera.mp4", "-")+($MicName))
                 [string]$ffplayexestring = @"
 ffplay.exe -autoexit -ss $MovieStartTCode -t $DurTCode -i $($dafiles.Camera.tostring())
 ffmpeg -ss $MovieStartTCode -t 00:00:30 -i $($dafiles.Camera.tostring()) -ss $SlidesStartTCode -t 00:00:30 -i $($dafiles.Slides.tostring()) -filter_complex "[1]crop=in_w-70:in_h-120:35:60,scale=iw/2:-1,format=yuva420p,colorchannelmixer=aa=0.7[low3]; [vid][low3] overlay=(main_w/2)-(overlay_w/2):main_h-(overlay_h*0.90) [out]" -map "[out]" -map 0:a -c:a copy -f avi - | ffplay -autoexit -window_title "$ffmpegOutFileName-$counter Preview" -
@@ -257,7 +276,9 @@ START %vlcCommand% Z:\Progress.mp4
         [string]$OutFileName = (($dafiles.Camera).tostring().Replace(".mp4", "-")+($MicPattern).tostring().Replace(" ", "").Replace("Mute", "")+".bat")
         Write-Host $MicPattern
         Write-Host $OutFileName
-        $BatchFileContent | Out-File -Encoding ascii -FilePath $OutFileName > $null
+        #if ($BatchFileContent -contains "GOTO" ){
+            $BatchFileContent | Out-File -Encoding ascii -FilePath $OutFileName > $null
+        #}
     }
 }
 
