@@ -255,7 +255,7 @@ SET vlcCommand=vlc.exe  --video-x=-1288 --video-y=86 --width=300 --height=300 --
 "@
                 ##Simple[string]$ffmpegexestring = "START ffmpeg.exe", "-ss", "%MovieStart%", "-t", "%MovieDur%", "-i", $dafiles.Camera, "{0}-{1}.mp4" -f $ffmpegOutFileName, $counter
                 [string]$ffmpegexestring = @"
-rm $ffmpegOutFileName-$counter.bat
+remove $ffmpegOutFileName-$counter.bat
 echo timeout /t 120 >>$ffmpegOutFileName-$counter.bat
 echo (ffmpeg.exe -y -ss %SlidesStart% -t %MovieDur% -i "$($dafiles.Slides)" -i %logo% -ss 00:00:00 -c:v libx264 -pix_fmt yuv420p -preset faster -r 30 -g 60 -b:v 4500k -an -movflags +faststart "$ffmpegOutFileName-$counter-Slides.mp4")>>$ffmpegOutFileName-$counter.bat
 echo (ffmpeg.exe -y -ss %MovieStart% -t %MovieDur% -i "$($dafiles.Camera)" -i %logo% -ss 00:00:00 -c:v libx264 -pix_fmt yuv420p -preset faster -r 30 -g 60 -b:v 4500k -c:a aac -strict -2 -filter_complex "[1]scale=iw/2:-1[pip]; [0:a]compand=.3|.3:1|1:-90/-60|-60/-40|-40/-30|-20/-20:6:0:-90:0.2[audio];[vid][pip] overlay=main_w-overlay_w-10:main_h-overlay_h-10[out]" -map "[out]" -map "[audio]" -movflags +faststart "$ffmpegOutFileName-$counter-Camera.mp4")>>$ffmpegOutFileName-$counter.bat
