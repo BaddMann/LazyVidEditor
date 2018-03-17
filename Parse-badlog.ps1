@@ -210,6 +210,7 @@ function Create-Runbooks () {
         $EditPatterns
     )
     #### FOR LOOP Starts Here ####
+    [System.Collections.ArrayList]$EditsCSV = "Edit#, Start, Stop, Duration", "`r`n"
     $EditPatterns | ForEach-Object {
         Write-Host " Mic Pattern=", $_
         [System.Collections.ArrayList]$BatchFileContent = "@echo off", "REM Batch File For Processing Cuts", "echo testing batch File", "SET PATH=%PATH%;C:\Program Files (x86)\VideoLAN\VLC\", "SET vlcCommand=vlc.exe  --video-x=-1288 --video-y=86 --width=300 --height=300 --fullscreen --no-video-title-show --no-embedded-video --no-qt-fs-controller --one-instance --playlist-enqueue"
@@ -257,12 +258,17 @@ SET vlcCommand=vlc.exe  --video-x=-1288 --video-y=86 --width=300 --height=300 --
 "@
                 ##Simple[string]$ffmpegexestring = "START ffmpeg.exe", "-ss", "%MovieStart%", "-t", "%MovieDur%", "-i", $dafiles.Camera, "{0}-{1}.mp4" -f $ffmpegOutFileName, $counter
                 [string]$ffmpegexestring = @"
-delete $ffmpegOutFileName-$counterstring.bat
+del $ffmpegOutFileName-$counterstring.bat
+echo @echo off >>$ffmpegOutFileName-$counterstring.bat
+echo SET SH=ovl >>$ffmpegOutFileName-$counterstring.bat
+echo SET /p CamOrOvl=CAM Or OVL? (c/o): >>$ffmpegOutFileName-$counterstring.bat
 echo timeout /t 120 >>$ffmpegOutFileName-$counterstring.bat
+echo IF "%%CamOrOvl%%" == "c" (SET SH=Camera ^&^& goto CamOnly) >>$ffmpegOutFileName-$counterstring.bat
 echo (ffmpeg.exe -y -ss %SlidesStart% -t %MovieDur% -i "$($dafiles.Slides)" -i %logo% -ss 00:00:00 -c:v libx264 -pix_fmt yuv420p -preset faster -r 30 -g 60 -b:v 4500k -an -movflags +faststart "$ffmpegOutFileName-$counterstring-Slides.mp4")>>$ffmpegOutFileName-$counterstring.bat
+echo :CamOnly >>$ffmpegOutFileName-$counterstring.bat
 echo (ffmpeg.exe -y -ss %MovieStart% -t %MovieDur% -i "$($dafiles.Camera)" -i %logo% -ss 00:00:00 -c:v libx264 -pix_fmt yuv420p -preset faster -r 30 -g 60 -b:v 4500k -c:a aac -strict -2 -filter_complex "[1]scale=iw/2:-1[pip]; [0:a]compand=.3|.3:1|1:-90/-60|-60/-40|-40/-30|-20/-20:6:0:-90:0.2[audio];[vid][pip] overlay=main_w-overlay_w-10:main_h-overlay_h-10[out]" -map "[out]" -map "[audio]" -movflags +faststart "$ffmpegOutFileName-$counterstring-Camera.mp4")>>$ffmpegOutFileName-$counterstring.bat
-echo (ffmpeg.exe -y -i "$ffmpegOutFileName-$counterstring-Camera.mp4" -i "$ffmpegOutFileName-$counterstring-Slides.mp4" -filter_complex "[1]crop=in_w-70:in_h-120:35:60,scale=iw/2:-1,format=yuva420p,colorchannelmixer=aa=0.7[low3]; [vid][low3] overlay=(main_w/2)-(overlay_w/2):main_h-(overlay_h*0.90)[out]" -map "[out]" -map 0:a -c:a copy "$ffmpegOutFileName-$counterstring-ovl.mp4") >> $ffmpegOutFileName-$counterstring.bat
-echo START %vlcCommand% "$ffmpegOutFileName-$counterstring-ovl.mp4" >> $ffmpegOutFileName-$counterstring.bat
+echo IF NOT "%%CamOrOvl%%" == "c" (ffmpeg.exe -y -i "$ffmpegOutFileName-$counterstring-Camera.mp4" -i "$ffmpegOutFileName-$counterstring-Slides.mp4" -filter_complex "[1]crop=in_w-70:in_h-120:35:60,scale=iw/2:-1,format=yuva420p,colorchannelmixer=aa=0.7[low3]; [vid][low3] overlay=(main_w/2)-(overlay_w/2):main_h-(overlay_h*0.90)[out]" -map "[out]" -map 0:a -c:a copy "$ffmpegOutFileName-$counterstring-ovl.mp4") >> $ffmpegOutFileName-$counterstring.bat
+echo START %vlcCommand% "$ffmpegOutFileName-$counterstring-%%SH%%.mp4" >> $ffmpegOutFileName-$counterstring.bat
 echo START %vlcCommand% Z:\Progress.mp4 >> $ffmpegOutFileName-$counterstring.bat
 echo (exit) >> $ffmpegOutFileName-$counterstring.bat
 START $ffmpegOutFileName-$counterstring.bat
@@ -277,6 +283,7 @@ START $ffmpegOutFileName-$counterstring.bat
                     $BatchFileContent.add($ffmpegexestring)
                     $BatchFileContent.add($clearvarstring)
                     $BatchFileContent.add($endstring)
+                    $EditsCSV.add("$($counterstring,$MovieStartTCode.ToString(),$EndTCode.ToString(),$DurTCode.ToString())" + "`r`n")
                 }
                 Else{Write-Host "Cut is too Short. Ignoring" }
             } 
@@ -288,6 +295,8 @@ START $ffmpegOutFileName-$counterstring.bat
         if ($BatchFileContent.Count -gt 7 ){
             Write-host "This many Lines:", $BatchFileContent.Count
             $BatchFileContent | Out-File -Encoding ascii -FilePath $OutFileName > $null
+            ##$EditsCSV | Out-File -Encoding ascii -FilePath "$OutFileName.csv" > $null
+            Write-host $EditsCSV
         }
     }
 }
