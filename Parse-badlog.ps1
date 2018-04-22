@@ -45,12 +45,15 @@ else {
     $fileContents = Get-Content -path $dafiles.Log.FullName
 }
 
-$dafiles.Slides = Get-ChildItem -Path $VideoSlidePath\* -force -Include "*Slides.mp4" | Sort-Object LastWriteTime -Descending | ? {($_.CreationTime -gt ($dafiles.Log.CreationTime).AddMinutes(-15)) -and ($_.CreationTime  -lt ($dafiles.Log.CreationTime).AddMinutes(15))} | Select-Object -first 1
-$dafiles.Camera = Get-ChildItem -Path $VideoCameraPath\* -force -Include "*Camera.mp4", "Untitled*.mp4" | Sort-Object LastWriteTime -Descending | ? {($_.CreationTime -gt ($dafiles.Log.CreationTime).AddMinutes(-30)) -and ($_.CreationTime  -lt ($dafiles.Log.CreationTime).AddMinutes(30))} | Select-Object -first 1
+$dafiles.Slides = Get-ChildItem -Path $VideoSlidePath\* -force -Include "*Slides.mp4" | Sort-Object LastWriteTime -Descending | Where-Object {($_.CreationTime -gt ($dafiles.Log.CreationTime).AddMinutes(-30)) -and ($_.CreationTime  -lt ($dafiles.Log.CreationTime).AddMinutes(30))} | Select-Object -first 1
+$dafiles.Camera = Get-ChildItem -Path $VideoCameraPath\* -force -Include "*Camera.mp4", "Untitled*.mp4" | Sort-Object LastWriteTime -Descending |  Where-Object {($_.CreationTime -gt ($dafiles.Log.CreationTime).AddMinutes(-30)) -and ($_.CreationTime  -lt ($dafiles.Log.CreationTime).AddMinutes(30))} | Select-Object -first 1
 
 Write-Host "Log Found:", $dafiles.Log
 Write-Host "Camera Found:", $dafiles.Camera
 Write-Host "Slides Found:", $dafiles.Slides
+Write-Host "Log Creation Time:", $dafiles.Log.CreationTime
+Write-Host "Log Creation Time -15:", ($dafiles.Log.CreationTime).AddMinutes(-15)
+Write-Host "Log Creation Time +15:", ($dafiles.Log.CreationTime).AddMinutes(+15)
 
 if ($($dafiles.Camera.tostring()) -contains "Untitled" ){Write-Host "Bad Camera Name, Exiting"; Exit 13}
 if ($dafiles.Camera -eq $null ){Write-Host "No Camera Detected, Exiting"; Exit 12}
@@ -105,8 +108,8 @@ function Get-TimeStamps () {
         $Return.Line = $_.LineNumber
         $Return.ContextData = $_.context.precontext + $_.context.postcontext
         $Return.MatchedData = $_.Line.Trim()
-        $Return.TimeStamp = $_.context.precontext | Select-String -pattern "([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])\s([0-1]?[0-9]|2?[0-3]):([0-5]\d):([0-5]\d))" | Select-Object -Last 1 | % { $_.Matches } | % { $_.Value }
-        if ($Return.TimeStamp -eq $null) {$Return.TimeStamp = $_.context.postcontext | Select-String -pattern "([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])\s([0-1]?[0-9]|2?[0-3]):([0-5]\d):([0-5]\d))" | Select-Object -First 1 | % { $_.Matches } | % { $_.Value } }
+        $Return.TimeStamp = $_.context.precontext | Select-String -pattern "([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])\s([0-1]?[0-9]|2?[0-3]):([0-5]\d):([0-5]\d))" | Select-Object -Last 1 | ForEach-Object { $_.Matches } | ForEach-Object { $_.Value }
+        if ($Return.TimeStamp -eq $null) {$Return.TimeStamp = $_.context.postcontext | Select-String -pattern "([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])\s([0-1]?[0-9]|2?[0-3]):([0-5]\d):([0-5]\d))" | Select-Object -First 1 | ForEach-Object { $_.Matches } | ForEach-Object { $_.Value } }
         if ($aScopeType -eq "RecordTime") {
             if ($_.Line.Trim() -like "*RecordingStarting*") { $Return.State = "Start" } else { $Return.State = "Stop" }
             $result += $Return
@@ -115,7 +118,7 @@ function Get-TimeStamps () {
         if ($aScopeType -eq "SlideTime" -And $aScope -And $_.LineNumber -gt [int]$aScope[0] -And $_.LineNumber -lt [int]$aScope[1]) {
             [timespan]$Return.TimeCode = [datetime]($Return.TimeStamp) - [datetime]($global:recStart)
             # Write-host "TimeCode: " $Return.TimeCode
-            $Return.RecTCode = $_.context.precontext | % {$_.split('"')[3]}
+            $Return.RecTCode = $_.context.precontext | ForEach-Object {$_.split('"')[3]}
             # Write-host "RECTimeCode: " $Return.RecTCode
             $result += $Return
         }
@@ -125,7 +128,7 @@ function Get-TimeStamps () {
         ## Parse Q-SYS data for microphone "hot" events()within recorded time, 
         ## build other hashes from within each mic's hot period into a heirachy of events.
         if ( $aScopeType -eq "MicTime" -And $aScope -And $_.LineNumber -gt $aScope[0] -And $_.LineNumber -lt $aScope[-1] ) {
-            $Return.MicName = $_.Line | % {$_.split('"')[1]}
+            $Return.MicName = $_.Line | ForEach-Object {$_.split('"')[1]}
             $Return.TimeCode = [datetime]($Return.TimeStamp) - [datetime]($global:recStart)
             if ($_.Line.Trim() -like "*unmuted*") { 
                 $Return.State = "Start"
@@ -148,7 +151,7 @@ function Get-TimeStamps () {
             }
         } 
         else {
-            $MicName = $_.Line | % {$_.split('"')[1]}
+            $MicName = $_.Line | ForEach-Object {$_.split('"')[1]}
             if ($_.Line.Trim() -like "*unmuted*") {
                 $aline = [int]$aScope[0]
                 $global:temptime.Add($MicName, [hashtable]@{TimeCode = [timespan]"00:00:00"; "Line" = "$aline"})
@@ -258,16 +261,16 @@ SET vlcCommand=vlc.exe  --video-x=-1288 --video-y=86 --width=300 --height=300 --
 "@
                 ##Simple[string]$ffmpegexestring = "START ffmpeg.exe", "-ss", "%MovieStart%", "-t", "%MovieDur%", "-i", $dafiles.Camera, "{0}-{1}.mp4" -f $ffmpegOutFileName, $counter
                 [string]$ffmpegexestring = @"
-del $ffmpegOutFileName-$counterstring.bat
+del $ffmpegOutFileName-$counterstring.bat >nul 2>&1
 echo @echo off >>$ffmpegOutFileName-$counterstring.bat
-echo SET SH=ovl >>$ffmpegOutFileName-$counterstring.bat
-echo SET /p CamOrOvl=CAM Or OVL? (c/o): >>$ffmpegOutFileName-$counterstring.bat
+echo SET SH=overlay >>$ffmpegOutFileName-$counterstring.bat
+echo SET /p COO=CAM Or overlay? (c/o): >>$ffmpegOutFileName-$counterstring.bat
 echo timeout /t 120 >>$ffmpegOutFileName-$counterstring.bat
-echo IF "%%CamOrOvl%%" == "c" (SET SH=Camera ^&^& goto CamOnly) >>$ffmpegOutFileName-$counterstring.bat
+echo IF "%%COO%%" == "c" (SET SH=Camera ^&^& goto CamOnly) >>$ffmpegOutFileName-$counterstring.bat
 echo (ffmpeg.exe -y -ss %SlidesStart% -t %MovieDur% -i "$($dafiles.Slides)" -i %logo% -ss 00:00:00 -c:v libx264 -pix_fmt yuv420p -preset faster -r 30 -g 60 -b:v 4500k -an -movflags +faststart "$ffmpegOutFileName-$counterstring-Slides.mp4")>>$ffmpegOutFileName-$counterstring.bat
 echo :CamOnly >>$ffmpegOutFileName-$counterstring.bat
 echo (ffmpeg.exe -y -ss %MovieStart% -t %MovieDur% -i "$($dafiles.Camera)" -i %logo% -ss 00:00:00 -c:v libx264 -pix_fmt yuv420p -preset faster -r 30 -g 60 -b:v 4500k -c:a aac -strict -2 -filter_complex "[1]scale=iw/2:-1[pip]; [0:a]compand=.3|.3:1|1:-90/-60|-60/-40|-40/-30|-20/-20:6:0:-90:0.2[audio];[vid][pip] overlay=main_w-overlay_w-10:main_h-overlay_h-10[out]" -map "[out]" -map "[audio]" -movflags +faststart "$ffmpegOutFileName-$counterstring-Camera.mp4")>>$ffmpegOutFileName-$counterstring.bat
-echo IF NOT "%%CamOrOvl%%" == "c" (ffmpeg.exe -y -i "$ffmpegOutFileName-$counterstring-Camera.mp4" -i "$ffmpegOutFileName-$counterstring-Slides.mp4" -filter_complex "[1]crop=in_w-70:in_h-120:35:60,scale=iw/2:-1,format=yuva420p,colorchannelmixer=aa=0.7[low3]; [vid][low3] overlay=(main_w/2)-(overlay_w/2):main_h-(overlay_h*0.90)[out]" -map "[out]" -map 0:a -c:a copy "$ffmpegOutFileName-$counterstring-ovl.mp4") >> $ffmpegOutFileName-$counterstring.bat
+echo IF NOT "%%COO%%" == "c" (ffmpeg.exe -y -i "$ffmpegOutFileName-$counterstring-Camera.mp4" -i "$ffmpegOutFileName-$counterstring-Slides.mp4" -filter_complex "[1]crop=in_w-70:in_h-120:35:60,scale=iw/2:-1,format=yuva420p,colorchannelmixer=aa=0.7[low3]; [vid][low3] overlay=(main_w/2)-(overlay_w/2):main_h-(overlay_h*0.90)[out]" -map "[out]" -map 0:a -c:a copy "$ffmpegOutFileName-$counterstring-overlay.mp4") >> $ffmpegOutFileName-$counterstring.bat
 echo START %vlcCommand% "$ffmpegOutFileName-$counterstring-%%SH%%.mp4" >> $ffmpegOutFileName-$counterstring.bat
 echo START %vlcCommand% Z:\Progress.mp4 >> $ffmpegOutFileName-$counterstring.bat
 echo (exit) >> $ffmpegOutFileName-$counterstring.bat
