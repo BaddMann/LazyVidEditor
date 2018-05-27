@@ -278,15 +278,18 @@ $lstEvents.Items.Add('Organ')
 $lstEvents.Items.Add('PlayPc')
 
 ## Columns for Events List, From Array
+$lstEventCodes.Columns.Add('Mic')
 $lstEventCodes.Columns.Add('Start')
 $lstEventCodes.Columns.Add('End')
 
 
 ## Events in Events List, From Array
-$starttime01 = New-Object System.Windows.Forms.ListViewItem('00:00:00')
+$starttime01 = New-Object System.Windows.Forms.ListViewItem('HeadSet')
 $starttime01.SubItems.Add('00:00:05')
+$starttime01.SubItems.Add('00:00:15')
 
-$starttime02 = New-Object System.Windows.Forms.ListViewItem('01:00:00')
+$starttime02 = New-Object System.Windows.Forms.ListViewItem('Hand 1')
+$starttime02.SubItems.Add('01:00:05')
 $starttime02.SubItems.Add('01:00:05')
 
 $lstEventCodes.Items.AddRange(($starttime01, $starttime02))
@@ -301,3 +304,9 @@ $lstCuts.Columns.Add('End')
 $LazyVidEditorGUI.Dispose()
 
 #endregion
+
+$arr_listtest = @("Test","One", "Two", "Three")
+
+$arr_listtest | ForEach-Object {
+    $lstCuts.Items.Add($_) | Out-Null
+}

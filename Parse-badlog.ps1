@@ -116,11 +116,15 @@ function Get-TimeStamps () {
         }
         ## Slides start appearing timecodes, from OBS records, need to add end timecodes, somehow...
         if ($aScopeType -eq "SlideTime" -And $aScope -And $_.LineNumber -gt [int]$aScope[0] -And $_.LineNumber -lt [int]$aScope[1]) {
-            [timespan]$Return.TimeCode = [datetime]($Return.TimeStamp) - [datetime]($global:recStart)
-            # Write-host "TimeCode: " $Return.TimeCode
-            $Return.RecTCode = $_.context.precontext | ForEach-Object {$_.split('"')[3]}
-            # Write-host "RECTimeCode: " $Return.RecTCode
-            $result += $Return
+            if ($Return.TimeStamp -ne $null){
+                [timespan]$Return.TimeCode = [datetime]($Return.TimeStamp) - [datetime]($global:recStart)
+                # Write-host "TimeCode: " $Return.TimeCode
+                $Return.RecTCode = $_.context.precontext | ForEach-Object {$_.split('"')[3]}
+                Write-host "PRE/POST Context: ", $_.context.precontext, $_.context.postcontext
+                #if ($Return.RecTCode -eq $null) 
+                Write-host "RECTimeCode: " $Return.RecTCode
+                $result += $Return
+            }
         }
         if ( $aScopeType -eq "SubSlideTime" -And $aScope -And $_.LineNumber -gt $aScope[0] -And $_.LineNumber -lt $aScope[-1] ) {
             $result += $Return 
@@ -146,8 +150,11 @@ function Get-TimeStamps () {
                 ## Go Fetch Slide Display Times from OBS Data, add as hash Slidehash on each Return Hash for each mic
                 $pattern = "SwitchScenes"
                 $MicScope = @($Return.StartHash.Line, $Return.Line)
+                Write-Host "MicScope: $MicScope"
                 $Return.SlideHash = Get-TimeStamps  $fileContents  $pattern "SlideTime" $MicScope
+                Write-Host "SlideHash: ", $($Return.SlideHash|out-string)
                 $result += $Return
+                #Start-Sleep -s 15 
             }
         } 
         else {
@@ -191,17 +198,23 @@ If ($LogEndExists -eq $false)
 $RecordingScope = @($StartStoplines[0].Line, $StartStoplines[1].Line)
 $global:recStart = $StartStoplines[0].TimeStamp
 
-#$global:recStart
+
+Write-host "Global Record Time:", $global:recStart
 $RecordingScope
 
+#exit 0
 #Mic Time(s)
 $pattern = "Input .* Mute"
 $StartStopMic = Get-TimeStamps  $fileContents  $pattern "MicTime" $RecordingScope
 
+#$pattern = "rec-timecode"
+#$StartStopSlides = Get-TimeStamps  $fileContents  $pattern "SlideTime" $RecordingScope
+
 Write-Host ""
 #Write-Host "Data:"
 $StartStopMic
-$StartStopMic | Export-Clixml -path C:\Temp\test.xml
+$StartStopMic | Export-Clixml -path C:\Temp\mictest.xml
+$StartStopSlides | Export-Clixml -path C:\Temp\slidetest.xml
 #exit 0
 
 #$global:temptime
@@ -213,7 +226,7 @@ function Create-Runbooks () {
         $EditPatterns
     )
     #### FOR LOOP Starts Here ####
-    [System.Collections.ArrayList]$EditsCSV = "Edit#, Start, Stop, Duration", "`r`n"
+    [System.Collections.ArrayList]$EditsCSV = @("Edit#, Start, Stop, Duration, Mic, SlideDiff, SlideStart")
     $EditPatterns | ForEach-Object {
         Write-Host " Mic Pattern=", $_
         [System.Collections.ArrayList]$BatchFileContent = "@echo off", "REM Batch File For Processing Cuts", "echo testing batch File", "SET PATH=%PATH%;C:\Program Files (x86)\VideoLAN\VLC\", "SET vlcCommand=vlc.exe  --video-x=-1288 --video-y=86 --width=300 --height=300 --fullscreen --no-video-title-show --no-embedded-video --no-qt-fs-controller --one-instance --playlist-enqueue"
@@ -271,8 +284,8 @@ echo (ffmpeg.exe -y -ss %SlidesStart% -t %MovieDur% -i "$($dafiles.Slides)" -i %
 echo :CamOnly >>$ffmpegOutFileName-$counterstring.bat
 echo (ffmpeg.exe -y -ss %MovieStart% -t %MovieDur% -i "$($dafiles.Camera)" -i %logo% -ss 00:00:00 -c:v libx264 -pix_fmt yuv420p -preset faster -r 30 -g 60 -b:v 4500k -c:a aac -strict -2 -filter_complex "[1]scale=iw/2:-1[pip]; [0:a]compand=.3|.3:1|1:-90/-60|-60/-40|-40/-30|-20/-20:6:0:-90:0.2[audio];[vid][pip] overlay=main_w-overlay_w-10:main_h-overlay_h-10[out]" -map "[out]" -map "[audio]" -movflags +faststart "$ffmpegOutFileName-$counterstring-Camera.mp4")>>$ffmpegOutFileName-$counterstring.bat
 echo IF NOT "%%COO%%" == "c" (ffmpeg.exe -y -i "$ffmpegOutFileName-$counterstring-Camera.mp4" -i "$ffmpegOutFileName-$counterstring-Slides.mp4" -filter_complex "[1]crop=in_w-70:in_h-120:35:60,scale=iw/2:-1,format=yuva420p,colorchannelmixer=aa=0.7[low3]; [vid][low3] overlay=(main_w/2)-(overlay_w/2):main_h-(overlay_h*0.90)[out]" -map "[out]" -map 0:a -c:a copy "$ffmpegOutFileName-$counterstring-overlay.mp4") >> $ffmpegOutFileName-$counterstring.bat
-echo START %vlcCommand% "$ffmpegOutFileName-$counterstring-%%SH%%.mp4" >> $ffmpegOutFileName-$counterstring.bat
-echo START %vlcCommand% Z:\Progress.mp4 >> $ffmpegOutFileName-$counterstring.bat
+REM echo START %vlcCommand% "$ffmpegOutFileName-$counterstring-%%SH%%.mp4" >> $ffmpegOutFileName-$counterstring.bat
+REM echo START %vlcCommand% Z:\Progress.mp4 >> $ffmpegOutFileName-$counterstring.bat
 echo (exit) >> $ffmpegOutFileName-$counterstring.bat
 START $ffmpegOutFileName-$counterstring.bat
 "@
@@ -286,7 +299,8 @@ START $ffmpegOutFileName-$counterstring.bat
                     $BatchFileContent.add($ffmpegexestring)
                     $BatchFileContent.add($clearvarstring)
                     $BatchFileContent.add($endstring)
-                    $EditsCSV.add("$($counterstring,$MovieStartTCode.ToString(),$EndTCode.ToString(),$DurTCode.ToString())" + "`r`n")
+                    $eventcsv = "{0},{1},{2},{3},{4},{5},{6}" -f $counterstring.ToString(),$MovieStartTCode.ToString(),$EndTCode.ToString(),$DurTCode.ToString(),$MicName.ToString(),$VidDiff.tostring(),$SlidesStartTCode.tostring()
+                    if ($eventcsv -ne $null) {$EditsCSV.add($eventcsv)}
                 }
                 Else{Write-Host "Cut is too Short. Ignoring" }
             } 
@@ -296,11 +310,12 @@ START $ffmpegOutFileName-$counterstring.bat
         Write-Host $MicPattern
         Write-Host $OutFileName
         if ($BatchFileContent.Count -gt 7 ){
-            Write-host "This many Lines:", $BatchFileContent.Count
+            ##Write-host "This many Lines:", $BatchFileContent.Count
             $BatchFileContent | Out-File -Encoding ascii -FilePath $OutFileName > $null
-            ##$EditsCSV | Out-File -Encoding ascii -FilePath "$OutFileName.csv" > $null
-            Write-host $EditsCSV
         }
+        [string]$OutFileName = (($dafiles.Camera).tostring().Replace(".mp4", "").Replace("Camera", "")+".csv")
+        $EditsCSV | Out-File -Encoding ascii -FilePath "$OutFileName" > $null
+        Write-host $EditsCSV
     }
 }
 
