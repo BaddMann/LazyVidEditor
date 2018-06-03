@@ -57,13 +57,26 @@ Write-Host "Log Creation Time +15:", ($dafiles.Log.CreationTime).AddMinutes(+15)
 
 if ($($dafiles.Camera.tostring()) -contains "Untitled" ){Write-Host "Bad Camera Name, Exiting"; Exit 13}
 if ($dafiles.Camera -eq $null ){Write-Host "No Camera Detected, Exiting"; Exit 12}
-if ($dafiles.Slides -eq $null ){Write-Host "No Slides Detected, Exiting"; Exit 11}
+if ($dafiles.Slides -eq $null ) {
+    $prompt = Read-Host -Prompt 'Continue Without Slides? (y/n)'
+    if ($prompt -ieq "n") {
+        Write-Host "No Slides Detected, Exiting" 
+        Exit 11
+    }
+}
 
 #Subtract Slides Creation Time From Camera Creation Time and put them In
 $daSyncDiff = [timespan]($dafiles.Slides.CreationTime - $dafiles.Camera.CreationTime)
 
 ## Making New Timspan without milliseconds the dumb way as I've not found the best way to round miliseconds in my google-fu
-$dafiles.SyncDiff = New-TimeSpan -Hour $daSyncDiff.Hours -Minute $daSyncDiff.Minutes -Second $daSyncDiff.Seconds
+if ($dafiles.Slides -eq $null ){
+    Write-Host "No Slides, Please TimeStampd From PlayPC To Record-PC"
+    $prompt = Read-Host -Prompt 'Time Differnce? ("00:00:00")'
+    $dafiles.SyncDiff = [timespan]$prompt
+}Else{
+    $dafiles.SyncDiff = New-TimeSpan -Hour $daSyncDiff.Hours -Minute $daSyncDiff.Minutes -Second $daSyncDiff.Seconds
+}
+
 
 Write-Host "The Sync Difference is", $dafiles.SyncDiff
 
@@ -231,25 +244,32 @@ function Create-Runbooks () {
         Write-Host " Mic Pattern=", $_
         [System.Collections.ArrayList]$BatchFileContent = "@echo off", "REM Batch File For Processing Cuts", "echo testing batch File", "SET PATH=%PATH%;C:\Program Files (x86)\VideoLAN\VLC\", "SET vlcCommand=vlc.exe  --video-x=-1288 --video-y=86 --width=300 --height=300 --fullscreen --no-video-title-show --no-embedded-video --no-qt-fs-controller --one-instance --playlist-enqueue"
         $MicPattern = $_
-        [timespan]$VidDiff = $dafiles.SyncDiff
+        if ($dafiles.SyncDiff -ne $null) {[timespan]$VidDiff = $dafiles.SyncDiff}
+        #Write-host "dafiles.SyncDiff:", ($dafiles.SyncDiff).ToString()
+        #Write-host "VidDiff:", ($VidDiff).ToString()
+        #
         $StartStopMic | ForEach-Object {$counter = 0} {
             #Write-Host " Mic=", $_.MicName, "is Equal", $MicPattern
             if ($_.MicName -eq $MicPattern) {
-                if ($VidDiff -ne "00:00:00" -OR $VidDiff -ne "") {
+                if ($VidDiff -ne $null) {
                     [timespan]$MovieStartTCode = [timespan]$_.StartTCode + [timespan]$VidDiff
                     [timespan]$SlidesStartTCode = [timespan]$_.StartTCode 
+                    Write-host "VidDiff is Not Null"
                 }
                 else {
-                    [timespan]$MovieStartTCode = ($_.StartTCode)
+                    [timespan]$MovieStartTCode = ([timespan]$_.StartTCode)
                     [timespan]$SlidesStartTCode = ([timespan]$_.StartTCode)
+                    Write-host "VidDiff is  Null"
                 }
+                Write-host "StartTCode:", ([timespan]$_.StartTCode).tostring()
                 [timespan]$DurTCode = ($_.Duration).tostring() 
                 [timespan]$EndTCode = ($_.TimeCode).tostring()
                 Write-Host " Start Time: ", $MovieStartTCode.ToString()
                 Write-Host " End Time: ", $EndTCode.ToString()
                 Write-Host " Duration: ", $DurTCode.ToString()
                 $MicName = ($_.MicName).tostring().Replace(" ", "").Replace("Mute", "")
-                #Write-Host $MicName, $MovieStartTCode, $DurTCode, " From:", $_.StartTCode $_.Duration
+                Write-Host $MicName, $MovieStartTCode, $DurTCode, " From:", $_.StartTCode $_.Duration
+                #Start-Sleep -s 5
 
                 #Old, Simple [string]$ffplayexestring = "ffplay.exe", "-autoexit -ss", $MovieStartTCode, "-t", $DurTCode, "-i", $dafiles.Camera
                 [string]$ffmpegOutFileName = (($dafiles.Camera).tostring().Replace("Camera.mp4", "-")+($MicName))
