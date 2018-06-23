@@ -52,6 +52,7 @@ Write-Host "Log Found:", $dafiles.Log
 Write-Host "Camera Found:", $dafiles.Camera
 Write-Host "Slides Found:", $dafiles.Slides
 Write-Host "Log Creation Time:", $dafiles.Log.CreationTime
+Write-Host "Camera Creation Time:", $dafiles.Camera.CreationTime
 Write-Host "Log Creation Time -15:", ($dafiles.Log.CreationTime).AddMinutes(-15)
 Write-Host "Log Creation Time +15:", ($dafiles.Log.CreationTime).AddMinutes(+15)
 
@@ -59,6 +60,7 @@ if ($($dafiles.Camera.tostring()) -contains "Untitled" ){Write-Host "Bad Camera 
 if ($dafiles.Camera -eq $null ){Write-Host "No Camera Detected, Exiting"; Exit 12}
 if ($dafiles.Slides -eq $null ) {
     $prompt = Read-Host -Prompt 'Continue Without Slides? (y/n)'
+    $NoSlides = $true
     if ($prompt -ieq "n") {
         Write-Host "No Slides Detected, Exiting" 
         Exit 11
@@ -204,7 +206,12 @@ If ($LogStartExists -eq $false)
 If ($LogEndExists -eq $false)
 {
     Write-Host "Recording End does not exist. Adding to end of File"
-    Add-Content ($dafiles.Log.FullName) "RecordingStopping`r`n" + $dafiles.Slides.LastWriteTime.tostring("yyyy-MM-dd HH:mm:ss")+ "`r`n"
+    if ($NoSlides -eq $true){
+        Add-Content ($dafiles.Log.FullName) "RecordingStopping`r`n" 
+    }else{
+        Add-Content ($dafiles.Log.FullName) "RecordingStopping`r`n" + $dafiles.Slides.LastWriteTime.tostring("yyyy-MM-dd HH:mm:ss")+ "`r`n"
+    }
+    
     exit 1
 }
 
