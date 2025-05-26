@@ -1,0 +1,9 @@
+{
+    "LogPath": ".",
+    "VideoCameraPath": "Z:\\",
+    "VideoSlidePath": "Z:\\",
+    "OutPutPath": "Z:\\",
+    "WorkingPath": "C:\\Temp",
+    "DefaultLogoWaterMark": "Z:\\CoF-logo.png",
+    "AltLogoWaterMark": "Z:\\glencroft-logo.png"
+}

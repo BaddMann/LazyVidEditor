@@ -1,0 +1,13 @@
+moviepy
+google-api-python-client
+requests
+scipy
+numpy
+progressbar2
+Pillow
+pytimecode
+pyAudioAnalysis
+scikit-learn
+hmmlearn
+eyed3
+librosa

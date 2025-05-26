@@ -114,38 +114,92 @@ def find_delay(time_pairs):
     t_diffs = {}
     for i in range(len(time_pairs)):
         delta_t = time_pairs[i][0] - time_pairs[i][1]
-        if t_diffs.has_key(delta_t):
+        if delta_t in t_diffs: # Python 3 style check
             t_diffs[delta_t] += 1
         else:
             t_diffs[delta_t] = 1
+    
+    print(f"Time differences counts: {t_diffs}") # Added diagnostic print
+
+    if not t_diffs:
+        print("Warning: Time differences dictionary (t_diffs) is empty. Cannot determine delay.")
+        # Depending on desired behavior, might return a specific value or raise error
+        # For now, this will cause an error on the next line if t_diffs is empty.
+        # Let's handle it by returning a default or raising.
+        # Raising an error might be better to signal failure clearly.
+        # However, to match original behavior of possibly failing on sorted(),
+        # we'll let it proceed if not empty, or handle if empty.
+        # The original code would fail at t_diffs_sorted[-1][0] if t_diffs was empty.
+        # Let's make it explicit:
+        if not t_diffs:
+            print("Error: No time differences to sort, cannot find delay.")
+            # Or return a specific indicator e.g. None, and let caller handle
+            # For now, let's assume the expectation is it might raise an error if it can't find a delay.
+            # The original code would have raised an IndexError on an empty t_diffs_sorted.
+            # To prevent crash and align with returning (0,0) in align() for no pairs:
+            return 0 # Return 0 samples delay if no diffs found.
+
     t_diffs_sorted = sorted(t_diffs.items(), key=lambda x: x[1])
-    print t_diffs_sorted
+    print(f"Sorted time differences: {t_diffs_sorted}") # Updated existing print to Py3 and f-string
     time_delay = t_diffs_sorted[-1][0]
 
     return time_delay
 
 
 # Find time delay between two video files
-def align(video1, video2, dir, fft_bin_size=1024, overlap=0, box_height=512, box_width=43, samples_per_box=7):
+def align(video1, video2, dir, fft_bin_size=1024, overlap=0, box_height=512, box_width=43, samples_per_box=7, duration1_secs=120, duration2_secs=60):
+    print("--- Starting Alignment ---")
+    print(f"Video 1: {video1}, Video 2: {video2}, Dir: {dir}")
+    print(f"Parameters: fft_bin_size={fft_bin_size}, overlap={overlap}, box_height={box_height}, box_width={box_width}, samples_per_box={samples_per_box}")
+    print(f"Audio Durations: video1_secs={duration1_secs}, video2_secs={duration2_secs}")
+
     # Process first file
     wavfile1 = extract_audio(dir, video1)
-    raw_audio1, rate = read_audio(wavfile1)
-    bins_dict1 = make_horiz_bins(raw_audio1[:44100*120], fft_bin_size, overlap, box_height) #bins, overlap, box height
+    raw_audio1, rate1 = read_audio(wavfile1) # Use rate1 specific to this audio file
+    num_samples1 = int(rate1 * duration1_secs)
+    # Make sure we don't try to slice beyond the length of the audio
+    actual_samples1 = min(num_samples1, len(raw_audio1))
+    bins_dict1 = make_horiz_bins(raw_audio1[:actual_samples1], fft_bin_size, overlap, box_height) #bins, overlap, box height
     boxes1 = make_vert_bins(bins_dict1, box_width)  # box width
     ft_dict1 = find_bin_max(boxes1, samples_per_box)  # samples per box
 
     # Process second file
     wavfile2 = extract_audio(dir, video2)
-    raw_audio2, rate = read_audio(wavfile2)
-    bins_dict2 = make_horiz_bins(raw_audio2[:44100*60], fft_bin_size, overlap, box_height)
+    raw_audio2, rate2 = read_audio(wavfile2) # Use rate2 specific to this audio file
+    # It's assumed rate1 and rate2 will be similar for alignment purposes,
+    # but using the specific rate for sample calculation is more robust.
+    # The `samples_per_sec` calculation later uses `rate` which might be ambiguous if they differ.
+    # For now, let's assume the first `rate` (rate1) is the reference for `samples_per_sec` or they are the same.
+    # If rates can differ significantly, the `samples_per_sec` logic might need adjustment.
+    num_samples2 = int(rate2 * duration2_secs)
+    actual_samples2 = min(num_samples2, len(raw_audio2))
+    bins_dict2 = make_horiz_bins(raw_audio2[:actual_samples2], fft_bin_size, overlap, box_height)
     boxes2 = make_vert_bins(bins_dict2, box_width)
     ft_dict2 = find_bin_max(boxes2, samples_per_box)
 
-    # Determie time delay
+    # Determine time delay
     pairs = find_freq_pairs(ft_dict1, ft_dict2)
+    print(f"Found {len(pairs)} matching frequency time pairs.") # Added diagnostic print
+
+    if not pairs: # Handle case with no common frequency pairs
+        # Message updated to be more specific to this check's outcome
+        print("Warning: No matching frequency time pairs found between the audio files. Cannot determine delay.")
+        print("--- Alignment Finished (No Pairs Found) ---")
+        return (0, 0) # Or raise an exception, or return None
+        
     delay = find_delay(pairs)
-    samples_per_sec = float(rate) / float(fft_bin_size)
-    seconds= round(float(delay) / float(samples_per_sec), 4)
+    # Use rate1 as the reference for samples_per_sec, or average if they differ, or enforce same rate.
+    # Assuming rate1 is the primary reference here.
+    samples_per_sec = float(rate1) / float(fft_bin_size) 
+    
+    if samples_per_sec == 0: # Avoid division by zero if rate1 or fft_bin_size is zero
+        print("Error: samples_per_sec is zero, cannot calculate delay in seconds. Check audio rate and fft_bin_size.")
+        seconds = 0 # Or handle as an error case
+    else:
+        seconds = round(float(delay) / float(samples_per_sec), 4)
+
+    print(f"Calculated delay: {delay} samples, which is {seconds} seconds.") # Added diagnostic print
+    print("--- Alignment Finished ---")
 
     if seconds > 0:
         return (seconds, 0)

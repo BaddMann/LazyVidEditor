@@ -1,0 +1,10 @@
+{
+    "qsys_ip": "10.2.16.54",
+    "qsys_port": 1702,
+    "extron_ip": "10.2.16.50",
+    "extron_port": 23,
+    "obs_websocket_url": "ws://localhost:4444",
+    "log_file_prefix": "-Slides.txt",
+    "log_timestamp_interval_ms": 1000,
+    "keep_alive_interval_ms": 50000
+}

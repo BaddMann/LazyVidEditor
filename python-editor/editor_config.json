@@ -1,0 +1,16 @@
+{
+    "video_search_path": "Z:\\",
+    "obs_infowriter_log": "C:\\Users\\glencroftplay\\AppData\\Roaming\\obs-studio\\logs\\infowriterlog.txt",
+    "logo_bug_path": "Z:\\glencroft-logo.png",
+    "output_path_prefix": "Z:\\OutputFolder\\",
+    "alignment_settings": {
+        "fft_bin_size": 1024,
+        "overlap": 0,
+        "box_height": 512,
+        "box_width": 43,
+        "samples_per_box": 7,
+        "duration1_secs": 120,
+        "duration2_secs": 60,
+        "plausible_offset_threshold_secs": 600
+    }
+}
