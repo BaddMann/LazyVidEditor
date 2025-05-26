@@ -41,8 +41,9 @@ This directory contains Python scripts used for video editing, audio processing,
 
 -   **`audio_analyzer.py`:**
     -   **Purpose:** A command-line script for exploring audio analysis capabilities using the `pyAudioAnalysis` library. It allows for feature extraction, speaker diarization, and basic sound event detection.
+    -   **Input Handling:** The script now accepts both video files (from which audio is extracted to a temporary WAV file for analysis) and direct audio files as input.
     -   **Functionality:**
-        -   **Usage:** `python audio_analyzer.py <audio_file_path> [--features] [--diarize --num_speakers <N>] [--sound_events]`
+        -   **Usage:** `python audio_analyzer.py <input_file_path> [--features] [--diarize --num_speakers <N>] [--sound_events]`
         -   **Short-Term Feature Extraction (`--features`):** Extracts and displays a summary of short-term audio features (e.g., MFCCs, Chroma, Zero Crossing Rate, etc.) from the input audio file. It lists all feature names and shows example values for the initial windows of the audio.
         -   **Speaker Diarization (`--diarize`):** Performs speaker diarization using `pyAudioAnalysis.audioSegmentation.speaker_diarization()`. It segments the audio by speaker and prints timed segments with speaker labels (e.g., "Speaker_0", "Speaker_1"). Requires the `--num_speakers <N>` argument to specify the expected number of speakers.
         -   **Sound Event Detection (`--sound_events`):** Demonstrates basic sound event detection using `pyAudioAnalysis.audioSegmentation.silence_removal()`. This identifies and prints segments of sound versus silence.
@@ -90,6 +91,9 @@ This directory contains Python scripts used for video editing, audio processing,
 
 -   **`GUI_CONCEPT.md`:**
     -   Outlines a conceptual design for a future graphical user interface for the Python tools in this directory. It describes potential UI elements, workflow, and backend interactions for a more user-friendly experience.
+-   **`AUDIO_INTEGRATION_CONCEPT.md`:**
+    -   Provides a conceptual framework for merging timed audio events (from `audio_analyzer.py`) with the main log events (from `log_parser.py`).
+    -   Discusses establishing a common timeline, a master event list structure, and how combined events could enable more sophisticated editing decisions.
 
 ## Dependencies
 
@@ -114,7 +118,7 @@ A `requirements.txt` file is included in this directory to simplify the installa
 Standard Python libraries are also used (e.g., `os`, `sys`, `argparse`, `json`, `re`, `pprint`, `datetime`, `subprocess`, `shlex`).
 
 **External Tools:**
--   `ffmpeg`: Essential for audio extraction (used by `autosub_app.py`, `pyaudioeditsinit.py`, `alignment_by_row_channels.py`) and video rendering (via `moviepy`). Must be installed and in the system's PATH.
+-   `ffmpeg`: Essential for audio extraction (used by `autosub_app.py`, `pyaudioeditsinit.py`, `alignment_by_row_channels.py`, and `audio_analyzer.py`) and video rendering (via `moviepy`). Must be installed and in the system's PATH.
 -   `imagemagick` (`convert` command): Used by `scenetest_friday.py` for image manipulation tasks like cropping and resizing preview PNGs. Must be installed and in the system's PATH for these features to work.
 
 **Note:** While `autosub_app.py` has been updated for Python 3, `scenetest_friday.py` has also undergone significant refactoring with new functions written in a Python 3 compatible style (e.g., using f-strings for new print statements). However, older parts of `scenetest_friday.py` and other utility scripts might still contain Python 2 syntax (e.g., `print` statements without parentheses). A full review and update for complete Python 3 compatibility across all scripts is recommended for the future.

@@ -2,10 +2,71 @@ import argparse
 import os
 import numpy as np
 import pprint # Added for standardized output
+import subprocess # For ffmpeg
+import tempfile   # For temporary WAV file
 
 from pyAudioAnalysis.ShortTermFeatures import feature_extraction
 from pyAudioAnalysis.audioBasicIO import read_audio_file, stereo_to_mono
 from pyAudioAnalysis import audioSegmentation as aS
+
+def extract_audio_from_video(video_file_path):
+    """
+    Extracts audio from a video file and saves it as a temporary WAV file.
+    Returns the path to the temporary WAV file, or None if extraction fails.
+    """
+    if not os.path.exists(video_file_path):
+        print(f"Error: Video file not found at {video_file_path}")
+        return None
+    
+    try:
+        # Create a temporary file to store the extracted audio
+        # delete=False is important on Windows, as the file cannot be opened by ffmpeg if it's still open by this script.
+        # We will manually delete it in a finally block.
+        with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as tmpfile:
+            temp_wav_path = tmpfile.name
+        
+        print(f"Attempting to extract audio to temporary file: {temp_wav_path}")
+
+        # Construct ffmpeg command
+        # -vn: disable video recording
+        # -acodec pcm_s16le: standard WAV audio codec (signed 16-bit little-endian PCM)
+        # -ar 16000: set audio sample rate to 16kHz (common for pyAudioAnalysis)
+        # -ac 1: set audio to mono
+        ffmpeg_command = [
+            'ffmpeg', '-y', # Overwrite output files without asking
+            '-i', video_file_path,
+            '-vn', 
+            '-acodec', 'pcm_s16le',
+            '-ar', '16000',
+            '-ac', '1',
+            temp_wav_path
+        ]
+        
+        print(f"Executing ffmpeg command: {' '.join(ffmpeg_command)}")
+        
+        # Execute the command
+        process = subprocess.run(ffmpeg_command, capture_output=True, text=True, check=False)
+        
+        if process.returncode == 0:
+            print("Audio extracted successfully.")
+            return temp_wav_path
+        else:
+            print(f"Error during ffmpeg audio extraction:")
+            print(f"FFmpeg STDOUT: {process.stdout}")
+            print(f"FFmpeg STDERR: {process.stderr}")
+            # Clean up the temp file if ffmpeg failed but the file was created
+            if os.path.exists(temp_wav_path):
+                os.remove(temp_wav_path)
+            return None
+    except Exception as e:
+        print(f"An exception occurred during audio extraction: {e}")
+        import traceback
+        traceback.print_exc()
+        # Clean up if temp_wav_path was defined and file exists
+        if 'temp_wav_path' in locals() and os.path.exists(temp_wav_path):
+             os.remove(temp_wav_path)
+        return None
+
 
 def extract_short_term_features(audio_file_path):
     """
@@ -73,7 +134,7 @@ def perform_speaker_diarization(audio_file_path, num_speakers):
     standardized_events = []
     if not os.path.exists(audio_file_path):
         print(f"Error: Audio file not found at {audio_file_path}")
-        return standardized_events # Return empty list
+        return standardized_events
 
     try:
         print(f"\n--- Performing Speaker Diarization for {num_speakers} speakers on {os.path.basename(audio_file_path)} ---")
@@ -90,7 +151,6 @@ def perform_speaker_diarization(audio_file_path, num_speakers):
                                                 lda_dim=lda_dim, plot_results=False)
 
         if speaker_labels is not None and len(speaker_labels) > 0:
-            print("\n--- Processed Speaker Segments (Raw) ---") # Info before standardization
             current_speaker_label = int(speaker_labels[0])
             segment_start_time_sec = 0.0
             
@@ -107,9 +167,6 @@ def perform_speaker_diarization(audio_file_path, num_speakers):
                         'duration_sec': round(duration_sec, 3),
                         'details': {'speaker_id': speaker_id_str}
                     })
-                    # For verbose printing during development/testing (can be removed for cleaner output)
-                    # print(f"{speaker_id_str}: From {segment_start_time_sec:.2f}s to {segment_end_time_sec:.2f}s (Duration: {duration_sec:.2f}s)")
-
                     current_speaker_label = int(speaker_labels[i])
                     segment_start_time_sec = segment_end_time_sec
             
@@ -124,11 +181,8 @@ def perform_speaker_diarization(audio_file_path, num_speakers):
                 'duration_sec': round(final_duration_sec, 3),
                 'details': {'speaker_id': final_speaker_id_str}
             })
-            # print(f"{final_speaker_id_str}: From {segment_start_time_sec:.2f}s to {final_segment_end_time_sec:.2f}s (Duration: {final_duration_sec:.2f}s)")
-            # print(f"(Note: Diarization segments are based on mid-term windows of {mid_step_s:.2f}s step size.)")
         else:
             print("Speaker diarization did not return any labels or failed.")
-        
         print("--- End of Speaker Diarization ---")
 
     except Exception as e:
@@ -144,7 +198,7 @@ def perform_sound_event_detection(audio_file_path):
     standardized_events = []
     if not os.path.exists(audio_file_path):
         print(f"Error: Audio file not found at {audio_file_path}")
-        return standardized_events # Return empty list
+        return standardized_events
 
     try:
         print(f"\n--- Performing Sound Event Detection (Silence Removal example) on {os.path.basename(audio_file_path)} ---")
@@ -171,7 +225,6 @@ def perform_sound_event_detection(audio_file_path):
         
         segments = aS.silence_removal(signal, sampling_rate, st_win_secs, st_step_secs, smooth_window_secs, weight_param, plot_results=False)
         
-        # print("\nDetected sound segments (i.e., non-silence regions):") # Old print
         if segments.size == 0 or segments.shape[0] == 0:
             print("No distinct sound segments detected (file might be all silence or all sound based on current parameters).")
         else:
@@ -184,7 +237,6 @@ def perform_sound_event_detection(audio_file_path):
                     'duration_sec': round(duration, 3),
                     'details': {'segment_type': 'sound'}
                 })
-                # print(f"  Sound detected: From {s_start:.2f}s to {s_end:.2f}s (Duration: {duration:.2f}s)") # Old print
         
         print("\nNote: This example uses silence removal. Detecting specific events like 'piano' or 'singing' accurately typically requires custom-trained models and more advanced techniques.")
         print("pyAudioAnalysis provides tools for training such classifiers if you have labeled data.")
@@ -198,11 +250,11 @@ def perform_sound_event_detection(audio_file_path):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Extract audio features, perform speaker diarization, and/or detect sound events."
+        description="Extract audio features, perform speaker diarization, and/or detect sound events from an audio or video file."
     )
     parser.add_argument(
-        "audio_file", 
-        help="Path to the audio file (e.g., WAV, MP3)."
+        "input_file", 
+        help="Path to the input audio or video file (e.g., WAV, MP3, MP4, MOV)."
     )
     parser.add_argument(
         "--features", 
@@ -228,26 +280,59 @@ if __name__ == "__main__":
     
     args = parser.parse_args()
 
-    if not args.features and not args.diarize and not args.sound_events:
-        print("No action specified. Use --features, --diarize, or --sound_events.")
-        parser.print_help()
-    
-    if args.features:
-        extract_short_term_features(args.audio_file)
+    if not os.path.exists(args.input_file):
+        print(f"Error: Input file not found at {args.input_file}")
+        sys.exit(1) # Use sys.exit for cleaner exit with error status
 
-    if args.diarize:
-        if args.num_speakers <= 0:
-            print("Error: --num_speakers must be a positive integer for diarization.")
-            print("Please specify the number of speakers using --num_speakers (e.g., --num_speakers 2).")
-        else:
-            diarization_events = perform_speaker_diarization(args.audio_file, args.num_speakers)
-            if diarization_events: # Check if list is not empty
-                print("\n--- Standardized Speaker Diarization Output ---")
-                pprint.pprint(diarization_events)
-    
-    if args.sound_events:
-        sound_events = perform_sound_event_detection(args.audio_file)
-        if sound_events: # Check if list is not empty
-            print("\n--- Standardized Sound Event Detection Output ---")
-            pprint.pprint(sound_events)
+    # Determine if input is video or audio
+    # Simple heuristic based on common video extensions
+    video_extensions = ['.mp4', '.mov', '.avi', '.mkv', '.flv', '.wmv']
+    file_name, file_ext = os.path.splitext(args.input_file)
+    is_video_file = file_ext.lower() in video_extensions
+
+    temp_audio_path = None
+    actual_audio_path_to_analyze = args.input_file
+
+    if is_video_file:
+        print(f"Input file '{args.input_file}' appears to be a video. Attempting audio extraction.")
+        temp_audio_path = extract_audio_from_video(args.input_file)
+        if not temp_audio_path:
+            print("Audio extraction failed. Cannot proceed with analysis.")
+            sys.exit(1)
+        actual_audio_path_to_analyze = temp_audio_path
+    else:
+        print(f"Input file '{args.input_file}' assumed to be an audio file.")
+
+    try:
+        if not args.features and not args.diarize and not args.sound_events:
+            print("No action specified. Use --features, --diarize, or --sound_events.")
+            parser.print_help()
+        
+        if args.features:
+            extract_short_term_features(actual_audio_path_to_analyze)
+
+        if args.diarize:
+            if args.num_speakers <= 0:
+                print("Error: --num_speakers must be a positive integer for diarization.")
+                print("Please specify the number of speakers using --num_speakers (e.g., --num_speakers 2).")
+            else:
+                diarization_events = perform_speaker_diarization(actual_audio_path_to_analyze, args.num_speakers)
+                if diarization_events:
+                    print("\n--- Standardized Speaker Diarization Output ---")
+                    pprint.pprint(diarization_events)
+        
+        if args.sound_events:
+            sound_events = perform_sound_event_detection(actual_audio_path_to_analyze)
+            if sound_events:
+                print("\n--- Standardized Sound Event Detection Output ---")
+                pprint.pprint(sound_events)
+    finally:
+        if temp_audio_path and os.path.exists(temp_audio_path):
+            print(f"Deleting temporary audio file: {temp_audio_path}")
+            try:
+                os.remove(temp_audio_path)
+            except Exception as e:
+                print(f"Error deleting temporary file {temp_audio_path}: {e}")
+
+    print("\nAudio analysis script finished.")
 ```
