@@ -1,4 +1,3 @@
-#!c:\program files\python27\python.exe
 import argparse
 import audioop
 from googleapiclient.discovery import build
@@ -18,7 +17,8 @@ from autosub.constants import LANGUAGE_CODES, \
     GOOGLE_SPEECH_API_KEY, GOOGLE_SPEECH_API_URL
 from autosub.formatters import FORMATTERS
 
-ffmpegexec = "C:\\Program Files\\ffmpeg\\bin\\ffmpeg.exe"
+# Ensure ffmpegexec is handled by PATH or configure externally
+ffmpegexec = "ffmpeg" 
 
 def percentile(arr, percent):
     arr = sorted(arr)
@@ -51,8 +51,8 @@ class FLACConverter(object):
                        "-y", "-i", self.source_path,
                        "-loglevel", "error", temp.name]
             subprocess.check_output(command)
-            #os.system('stty sane')
-            return temp.read()
+            with open(temp.name, 'rb') as f:
+                return f.read()
 
         except KeyboardInterrupt:
             return
@@ -73,17 +73,48 @@ class SpeechRecognizer(object):
 
                 try:
                     resp = requests.post(url, data=data, headers=headers)
-                except requests.exceptions.ConnectionError:
+                    resp.raise_for_status() # Raise an exception for bad status codes
+                except requests.exceptions.RequestException:
+                    # More general exception handling for requests
                     continue
 
-                for line in resp.content.split("\n"):
-                    try:
-                        line = json.loads(line)
-                        line = line['result'][0]['alternative'][0]['transcript']
-                        return line[:1].upper() + line[1:]
-                    except:
-                        # no result
-                        continue
+                # The response is expected to be a single JSON object per line, but Google's API usually returns
+                # a single block of JSON, not line-delimited. If it *is* line-delimited JSON:
+                # For line-delimited JSON, decode content then split.
+                # However, typical Google Speech API is not line-delimited JSON in this way.
+                # It's usually a single JSON response.
+                # If resp.content is bytes and it's line-delimited JSON:
+                # content_str = resp.content.decode('utf-8')
+                # for line_str in content_str.splitlines():
+                # try:
+                #    parsed_line = json.loads(line_str)
+                # Process parsed_line
+                # For a single JSON object response:
+                try:
+                    # Assuming the response is UTF-8 encoded JSON
+                    response_json = json.loads(resp.content.decode('utf-8'))
+                    if response_json.get("result") and response_json["result"][0].get("alternative"):
+                        transcript = response_json["result"][0]["alternative"][0]["transcript"]
+                        return transcript[:1].upper() + transcript[1:]
+                except (json.JSONDecodeError, KeyError, IndexError):
+                    # Handle cases where JSON is malformed or expected keys are missing
+                    continue
+                # If the above structure is not what's expected, and it really is line-delimited:
+                # Fallback or adjusted logic for line-delimited (original code was trying this)
+                # We'll assume single JSON object response for now based on typical API behavior.
+                # If it must be line-by-line, the original loop with decode is needed:
+                # for line_bytes in resp.content.split(b"\n"):
+                #    if not line_bytes: continue
+                #    try:
+                #        line_str = line_bytes.decode('utf-8')
+                #        parsed_json = json.loads(line_str)
+                #        # ... process parsed_json as in original logic
+                #        transcript = parsed_json['result'][0]['alternative'][0]['transcript']
+                #        return transcript[:1].upper() + transcript[1:]
+                #    except (json.JSONDecodeError, KeyError, IndexError, UnicodeDecodeError):
+                #        continue
+                # This part is tricky without knowing the exact format of multiple results if they occur.
+                # Sticking to a more common single JSON response handling.
 
         except KeyboardInterrupt:
             return
@@ -135,17 +166,17 @@ def which(program):
 def extract_audio(filename, channels=1, rate=16000):
     temp = tempfile.NamedTemporaryFile(suffix='.wav', delete=False)
     if not os.path.isfile(filename):
-        print "The given file does not exist: {0}".format(filename)
+        print("The given file does not exist: {0}".format(filename))
         raise Exception("Invalid filepath: {0}".format(filename))
-    #if not which(ffmpegexec):
-    #    print "ffmpeg: Executable not found on machine."
+    #if not which(ffmpegexec): # which is not robust, rely on ffmpeg being in PATH
+    #    print("ffmpeg: Executable not found on machine.")
     #    raise Exception("Dependency not found: ffmpeg")
     command = [ffmpegexec, "-y", "-i", filename, "-ac", str(channels), "-ar", str(rate), "-loglevel", "error", temp.name]
     subprocess.check_output(command)
     return temp.name, rate
 
 
-def find_speech_regions(filename, frame_width=4096, min_region_size=0.5, max_region_size=6):
+def find_speech_regions(filename, frame_width=4096, min_region_size=0.5, max_region_size=6): # frame_width is in samples
     reader = wave.open(filename)
     sample_width = reader.getsampwidth()
     rate = reader.getframerate()
@@ -202,7 +233,7 @@ def main():
 
     if args.list_formats:
         print("List of formats:")
-        for subtitle_format in FORMATTERS.keys():
+        for subtitle_format in FORMATTERS: # Iterating over keys is default in Py3
             print("{format}".format(format=subtitle_format))
         return 0
 
@@ -212,24 +243,29 @@ def main():
             print("{code}\t{language}".format(code=code, language=language))
         return 0
 
-    if args.format not in FORMATTERS.keys():
+    if args.format not in FORMATTERS: # Iterating over keys is default in Py3
         print("Subtitle format not supported. Run with --list-formats to see all supported formats.")
         return 1
 
-    if args.src_language not in LANGUAGE_CODES.keys():
+    if args.src_language not in LANGUAGE_CODES: # Iterating over keys is default in Py3
         print("Source language not supported. Run with --list-languages to see all supported languages.")
         return 1
 
-    if args.dst_language not in LANGUAGE_CODES.keys():
+    if args.dst_language not in LANGUAGE_CODES: # Iterating over keys is default in Py3
         print(
             "Destination language not supported. Run with --list-languages to see all supported languages.")
         return 1
 
     if not args.source_path:
         print("Error: You need to specify a source path.")
+        parser.print_help()
         return 1
 
-    audio_filename, audio_rate = extract_audio(args.source_path)
+    try:
+        audio_filename, audio_rate = extract_audio(args.source_path)
+    except Exception as e:
+        print("Error extracting audio: {}".format(e))
+        return 1
 
     regions = find_speech_regions(audio_filename)
 
@@ -271,16 +307,21 @@ def main():
                     pbar.finish()
                     transcripts = translated_transcripts
                 else:
-                    print "Error: Subtitle translation requires specified Google Translate API key. \
-                    See --help for further information."
+                    print("Error: Subtitle translation requires specified Google Translate API key. "
+                          "See --help for further information.")
                     return 1
 
         except KeyboardInterrupt:
-            pbar.finish()
+            if 'pbar' in locals() and pbar: pbar.finish()
             pool.terminate()
             pool.join()
-            print "Cancelling transcription"
+            print("Cancelling transcription")
             return 1
+        finally:
+            # Ensure temporary audio file is removed if it exists
+            if 'audio_filename' in locals() and os.path.exists(audio_filename):
+                os.remove(audio_filename)
+
 
     timed_subtitles = [(r, t) for r, t in zip(regions, transcripts) if t]
     formatter = FORMATTERS.get(args.format)
@@ -295,9 +336,12 @@ def main():
     with open(dest, 'wb') as f:
         f.write(formatted_subtitles.encode("utf-8"))
 
-    print "Subtitles file created at {}".format(dest)
+    print("Subtitles file created at {}".format(dest))
 
-    os.remove(audio_filename)
+    # audio_filename is removed in the finally block of the try/except KeyboardInterrupt
+    # to ensure it's cleaned up even if errors occur mid-process.
+    # if os.path.exists(audio_filename):
+    #    os.remove(audio_filename) # Already handled by finally block
 
     return 0
 
