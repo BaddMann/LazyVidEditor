@@ -31,10 +31,36 @@ This directory contains Python scripts used for video editing, audio processing,
     -   Features enhanced error handling for robustness against malformed timestamps and JSON entries.
     -   Its output is the primary source for `scenetest_friday.py` to inform editing decisions and generate a timeline of events.
 
+-   **`ffmpeg_command_generator.py`:**
+    -   Generates `ffmpeg` command strings for video processing based on structured segment data.
+    -   Takes segment definitions (typically produced by `scenetest_friday.py` from `log_parser.py`'s output), video file information, and configuration settings as input.
+    -   Aims to replicate and replace the `ffmpeg` command generation logic previously found in the PowerShell script (`Parse-badlog.ps1`).
+    -   Includes features such as Picture-in-Picture (PiP) for slides, logo overlay, and audio companding.
+    -   Plays a key role in moving towards a more Python-centric video processing workflow by abstracting `ffmpeg` command creation.
+    -   Includes an example usage block (`if __name__ == "__main__":`) demonstrating how to generate commands for sample segments.
+
 -   **`alignment_by_row_channels.py`:**
-    -   Implements an audio fingerprinting algorithm to determine the time delay (synchronization) between two video files.
-    -   It extracts audio, performs FFT analysis, and compares frequency peaks to find the offset.
-    -   This script is intended for automated video synchronization but is currently not actively used by `scenetest_friday.py` due to noted performance/accuracy issues.
+    -   Implements an audio fingerprinting algorithm to determine the time delay (synchronization) between two video files (e.g., camera audio and slide audio).
+    -   **Methodology:**
+        -   Extracts audio from each video into temporary WAV files using `ffmpeg`.
+        -   Reads the raw audio data and performs a Fast Fourier Transform (FFT) on segments of the audio to analyze frequency intensities.
+        -   Creates horizontal "bins" based on frequency ranges and time, then further processes these into vertical "boxes" to identify points of maximum intensity (peaks) within defined time/frequency regions.
+        -   Compares these characteristic frequency peaks between the two audio files to find common patterns.
+        -   Calculates the time offset that best aligns these common patterns, representing the synchronization delay.
+    -   **Key Hardcoded Parameters:**
+        -   `fft_bin_size`: `1024` (Size of the FFT window)
+        -   `overlap`: `0` (Overlap between FFT windows)
+        -   `box_height`: `512` (Height of frequency bins for grouping FFT results)
+        -   `box_width`: `43` (Width of time bins for grouping FFT results)
+        -   `samples_per_box`: `7` (Number of maximum intensity points to consider per box)
+        -   Audio Processing Durations:
+            -   The first video (`video1`) is processed for its initial `120 seconds` (assuming 44100 Hz sample rate: `44100*120`).
+            -   The second video (`video2`, the sample to align) is processed for its initial `60 seconds` (`44100*60`).
+    -   **Known Issues:**
+        -   As noted in `scenetest_friday.py`, this script is not actively used due to performance and/or accuracy issues in reliably determining the sync offset.
+    -   **Comments/TODOs from script:**
+        -   Contains a comment `# !! CHECK TO SEE IF FILE IS IN UPLOADS DIRECTORY` in the `extract_audio` function, which might be a remnant or a note for specific usage contexts. The function itself accepts a directory path.
+        -   Includes a positive comment `##### Works Very well!` before a `pyAudioAnalysis` silence removal command example, which is external to this script's direct functionality.
 
 -   **`pyaudioeditsinit.py`:**
     -   A script for extracting audio from video files using `ffmpeg`.
@@ -57,19 +83,20 @@ This directory contains Python scripts used for video editing, audio processing,
 
 ## Dependencies
 
-The Python scripts rely on several libraries and external tools:
+The Python scripts rely on several libraries and external tools.
 
 **Python Packages:**
+A `requirements.txt` file is included in this directory to simplify the installation of necessary Python packages. Key packages include:
 -   `moviepy`: For core video editing functionalities.
 -   `google-api-python-client`: For accessing Google APIs (Speech-to-Text, Translate) in `autosub_app.py`.
 -   `requests`: For making HTTP requests, used by `autosub_app.py`.
 -   `scipy`: For numerical operations, specifically `scipy.io.wavfile` used in `alignment_by_row_channels.py`.
 -   `numpy`: A dependency for `scipy` and potentially `moviepy`, used for numerical array manipulations.
--   `progressbar`: Used in `autosub_app.py` to display command-line progress.
+-   `progressbar2`: Used in `autosub_app.py` to display command-line progress (updated from `progressbar`).
 -   Pillow (`PIL`): Used for image manipulation, often a dependency of `moviepy`.
--   `timecode`: For working with video timecodes in `scenetest_friday.py`.
+-   `pytimecode`: For working with video timecodes (replaces older `timecode` library if previously used by `scenetest_friday.py`, though direct datetime calculations are now more common in refactored parts).
 
-Standard Python libraries are also used (e.g., `os`, `sys`, `argparse`, `json`, `re`, `pprint`, `datetime`, `subprocess`).
+Standard Python libraries are also used (e.g., `os`, `sys`, `argparse`, `json`, `re`, `pprint`, `datetime`, `subprocess`, `shlex`).
 
 **External Tools:**
 -   `ffmpeg`: Essential for audio extraction (used by `autosub_app.py`, `pyaudioeditsinit.py`, `alignment_by_row_channels.py`) and video rendering (via `moviepy`). Must be installed and in the system's PATH.

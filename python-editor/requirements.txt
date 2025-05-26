@@ -1,0 +1,8 @@
+moviepy
+google-api-python-client
+requests
+scipy
+numpy
+progressbar2
+Pillow
+pytimecode
