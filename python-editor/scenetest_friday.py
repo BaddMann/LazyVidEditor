@@ -22,15 +22,34 @@ DEFAULT_CONFIG = {
     "video_search_path": "Z:", # Note: JSON uses double backslashes, Python strings can use single or double
     "obs_infowriter_log": "C:/Users/glencroftplay/AppData/Roaming/obs-studio/logs/infowriterlog.txt",
     "logo_bug_path": "Z:/glencroft-logo.png",
-    "output_path_prefix": "./output/" 
+    "output_path_prefix": "./output/"
+    # alignment_settings will be added below
 }
+
+DEFAULT_ALIGNMENT_SETTINGS = {
+    "fft_bin_size": 1024,
+    "overlap": 0,
+    "box_height": 512,
+    "box_width": 43,
+    "samples_per_box": 7,
+    "duration1_secs": 120,
+    "duration2_secs": 60,
+    "plausible_offset_threshold_secs": 600 
+}
+
 config = DEFAULT_CONFIG.copy() # Start with defaults
+config['alignment_settings'] = DEFAULT_ALIGNMENT_SETTINGS.copy() # Add default alignment settings
+
 try:
     # Try to determine the script's directory to make config file path more robust
     script_dir = os.path.dirname(os.path.abspath(__file__))
     config_file_path = os.path.join(script_dir, CONFIG_FILE)
     with open(config_file_path, 'r') as f:
-        config.update(json.load(f))
+        loaded_file_config = json.load(f)
+        config.update(loaded_file_config) # Update top-level keys
+        # Specifically update alignment_settings if present in file, to merge nested dictionary
+        if 'alignment_settings' in loaded_file_config:
+            config['alignment_settings'].update(loaded_file_config['alignment_settings'])
     print(f"Loaded configuration from {config_file_path}")
 except FileNotFoundError:
     print(f"Warning: {CONFIG_FILE} not found in {script_dir if 'script_dir' in locals() else 'current directory'}. Using default configuration.")
@@ -46,15 +65,19 @@ except FileNotFoundError:
 except json.JSONDecodeError:
     print(f"Error: Could not decode {CONFIG_FILE}. Using default configuration.")
 except NameError: # __file__ might not be defined in some execution contexts
-    print(f"Warning: Could not determine script directory to find {CONFIG_FILE}. Trying current directory. Using default configuration if not found.")
+    print(f"Warning: Could not determine script directory to find {CONFIG_FILE}. Trying current directory.")
     try:
         with open(CONFIG_FILE, 'r') as f: # Fallback to current directory
-            config.update(json.load(f))
-        print(f"Loaded configuration from {CONFIG_FILE} (current directory)")
+            loaded_file_config_cwd = json.load(f)
+            config.update(loaded_file_config_cwd) # Update top-level keys
+            # Specifically update alignment_settings if present in file from CWD
+            if 'alignment_settings' in loaded_file_config_cwd:
+                config['alignment_settings'].update(loaded_file_config_cwd['alignment_settings'])
+            print(f"Loaded configuration from {CONFIG_FILE} (current directory)")
     except FileNotFoundError:
-        print(f"Warning: {CONFIG_FILE} not found in current directory. Using default configuration.")
+        print(f"Warning: {CONFIG_FILE} not found in current directory. Using default configuration for all settings.")
     except json.JSONDecodeError:
-        print(f"Error: Could not decode {CONFIG_FILE} from current directory. Using default configuration.")
+        print(f"Error: Could not decode {CONFIG_FILE} from current directory. Using default configuration for all settings.")
 
 
 N = 1
@@ -134,37 +157,103 @@ def userpromptssync(videosyncoutput):
         print("You entered", val)
         return val
     except ValueError:
-        print("Invalid input. Please enter a number. Using 0.0 as default.")
+        print("Invalid input. Please enter a number. Using 0.0 as default.") # Python 3 print
         return 0.0
+
+# Refined userpromptssync
+def userpromptssync(calculated_offset): # calculated_offset is now a float or None
+    prompt_text = "Enter Sync Seconds (e.g., 2.5 if slides are 2.5s ahead of camera, -1.0 if camera is 1s ahead): "
+    if calculated_offset is not None:
+        prompt_text = f"Enter Sync Seconds (calculated: {calculated_offset:.2f}s, press Enter to use this value): "
+    
+    while True:
+        try:
+            # Use input() for Python 3
+            user_input_str = input(prompt_text).strip()
+            if not user_input_str and calculated_offset is not None:
+                print(f"Using calculated offset: {calculated_offset:.2f}s")
+                return calculated_offset
+            val = float(user_input_str)
+            print(f"User entered sync offset: {val:.2f}s")
+            return val
+        except ValueError:
+            # This condition is tricky if calculated_offset is None and user enters nothing.
+            # The above `if not user_input_str and calculated_offset is not None:` handles the primary case.
+            # If user_input_str is empty AND calculated_offset is None, float() will raise ValueError.
+            if not user_input_str and calculated_offset is None:
+                 print("No input provided and no calculated offset available. Please enter a number.")
+            else: # Input was non-empty but not a valid float
+                print("Invalid input. Please enter a number (e.g., 3.5 or -2.0).")
+        except EOFError: # Handle case where input stream is closed (e.g. script piped)
+            if calculated_offset is not None:
+                print(f"EOF reached. Using calculated offset: {calculated_offset:.2f}s")
+                return calculated_offset
+            print("EOF reached. No input provided and no calculated offset. Using offset 0.0s")
+            return 0.0
 
 # This function might be deprecated or changed if edits are fully automated
 # def userpromptsslides(timecodes):
 #     listofedits=[]
-#     howmanyedits =  int(raw_input("How Many edits are we performing? " ))
-#     print "Editing", howmanyedits, "times"
+#     howmanyedits =  int(input("How Many edits are we performing? " )) # Py3 input
+#     print(f"Editing {howmanyedits} times") # Py3 print
 #     return listofedits
 
-def VideoSynccall(video1, video2):
+def VideoSynccall(video1, video2, alignment_config):
     import alignment_by_row_channels
     video1path = os.path.dirname(video1)
     video1file = os.path.basename(video1)
     video2file = os.path.basename(video2)
     
-    ##bad duration code
-    #camera_video = VideoFileClip(video1file)
-    #slides_video = VideoFileClip(video2file)
-    #camdur = camera_video.duration
-    #slidedur = slides_video.duration
-    #diffdur = slidedur - camdur
-    #print "Camera Duration " + str(camdur)
-    #print "Slides Duration " + str(slidedur)
-    #print "Slides minus Camera " + str(diffdur)
+    align_params = alignment_config if isinstance(alignment_config, dict) else {}
     
-    if os.path.isfile(video1[0:-4] + "WAV.wav"):
-        t = (0)
-        return t
-    t=alignment_by_row_channels.align(video1file,video2file,video1path)
-    return t
+    try:
+        print(f"Calling alignment script for {video1file} and {video2file}...")
+        print(f"Using alignment parameters: fft_bin_size={align_params.get('fft_bin_size', DEFAULT_ALIGNMENT_SETTINGS['fft_bin_size'])}, "
+              f"duration1_secs={align_params.get('duration1_secs', DEFAULT_ALIGNMENT_SETTINGS['duration1_secs'])}, "
+              f"duration2_secs={align_params.get('duration2_secs', DEFAULT_ALIGNMENT_SETTINGS['duration2_secs'])}")
+
+        # alignment_by_row_channels.align returns a tuple (cam_ahead_by, slides_ahead_by)
+        # one of the values is 0, the other is the offset.
+        t = alignment_by_row_channels.align(
+            video1file,
+            video2file,
+            video1path,
+            fft_bin_size=align_params.get('fft_bin_size', DEFAULT_ALIGNMENT_SETTINGS['fft_bin_size']),
+            overlap=align_params.get('overlap', DEFAULT_ALIGNMENT_SETTINGS['overlap']),
+            box_height=align_params.get('box_height', DEFAULT_ALIGNMENT_SETTINGS['box_height']),
+            box_width=align_params.get('box_width', DEFAULT_ALIGNMENT_SETTINGS['box_width']),
+            samples_per_box=align_params.get('samples_per_box', DEFAULT_ALIGNMENT_SETTINGS['samples_per_box']),
+            duration1_secs=align_params.get('duration1_secs', DEFAULT_ALIGNMENT_SETTINGS['duration1_secs']),
+            duration2_secs=align_params.get('duration2_secs', DEFAULT_ALIGNMENT_SETTINGS['duration2_secs'])
+        )
+
+        if t is None: # If align script itself returns None (e.g. no pairs found in its internal logic)
+             print("Warning: VideoSynccall received no valid offset tuple from alignment script.")
+             return None
+
+        # offset = slides_ahead_by - cam_ahead_by
+        # If t = (cam_ahead, 0), offset = 0 - cam_ahead = -cam_ahead (negative, camera is ahead)
+        # If t = (0, slides_ahead), offset = slides_ahead - 0 = slides_ahead (positive, slides are ahead)
+        offset = t[1] - t[0] 
+        
+        plausible_threshold = align_params.get('plausible_offset_threshold_secs', DEFAULT_ALIGNMENT_SETTINGS['plausible_offset_threshold_secs'])
+        
+        print(f"Alignment script returned raw tuple: {t}, calculated offset (slides_ahead - cam_ahead): {offset:.2f}s")
+
+        if abs(offset) > plausible_threshold:
+            print(f"Warning: Calculated offset {offset:.2f}s is outside plausible threshold of +/-{plausible_threshold}s. Ignoring this value.")
+            return None # Offset is implausible
+            
+        print(f"VideoSynccall determined a plausible offset: {offset:.2f}s")
+        return offset # Return the single float offset
+
+    except Exception as e:
+        print(f"Error during VideoSynccall execution: {e}")
+        import traceback
+        traceback.print_exc()
+        return None
+
+
 def createpreview_from_events(slides_video_path, scene_events, video_zero_time_dt, output_image_prefix):
     """
     Generates preview PNGs from SceneChange events.
@@ -586,12 +675,35 @@ if not generated_segments:
     sys.exit(0) # Not an error, but nothing to do
 
 # 6. Get Sync Offset (Camera to Slides)
-# This part remains manual or based on previous sync logic for now.
-# videosync = VideoSynccall(camera_video_file, slides_video_file) # This was slow
-videosync_offset_seconds = 0.0 # Default if VideoSynccall is disabled or fails
-# os.system('cls') # Consider removing for non-Windows or if not needed
-secssync = userpromptssync(videosync_offset_seconds) # User provides the sync in seconds
-print(f"Using Camera-to-Slides Sync Offset: {secssync} seconds")
+print("\n--- Sync Offset Determination ---")
+alignment_settings_for_call = config.get('alignment_settings', {}) # Use loaded or default alignment settings
+
+# Call VideoSynccall, which now returns a single offset (float) or None
+calculated_sync_offset = None # Initialize
+# Toggle for enabling/disabling actual call to VideoSynccall
+enable_auto_sync_call = False # Set to True to attempt automatic sync calculation
+
+if enable_auto_sync_call:
+    try:
+        print("Attempting automatic sync calculation via VideoSynccall...")
+        calculated_sync_offset = VideoSynccall(camera_video_file, slides_video_file, alignment_settings_for_call)
+        if calculated_sync_offset is not None:
+            print(f"Automatic sync calculation successful. Calculated offset: {calculated_sync_offset:.2f}s")
+        else:
+            print("Automatic sync calculation did not yield a plausible offset.")
+    except Exception as e:
+        print(f"Error during automatic VideoSynccall: {e}. Proceeding with manual input.")
+        calculated_sync_offset = None # Ensure it's None if an error occurred
+else:
+    print("Automatic sync calculation (VideoSynccall) is currently disabled.")
+
+# Pass the calculated_sync_offset (which can be None) to userpromptssync
+secssync = userpromptssync(calculated_sync_offset)
+
+print(f"Final Sync Offset (secssync) to be used: {secssync:.2f} seconds")
+print("(Positive secsync means slides are ahead of camera; camera footage will be shifted by +secssync)")
+print("(Negative secsync means camera is ahead of slides; camera footage will be shifted by +secssync)")
+print("-----------------------------")
 
 
 # 7. Process Segments with quickedit_event_driven

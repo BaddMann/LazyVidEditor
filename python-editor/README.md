@@ -16,7 +16,7 @@ This directory contains Python scripts used for video editing, audio processing,
     -   The previous method of directly parsing `infowriterlog.txt` via `findscenes` is now a secondary/fallback mechanism if the main event-driven flow is not used.
     -   Key paths (like video sources, OBS log location, logo path, and output prefix) are configurable via `editor_config.json`.
     -   Capabilities include loading video clips, sub-clipping based on scenes, compositing camera and slide footage, applying effects (masking, opacity), adding image overlays (logos), and rendering final videos.
-    -   Synchronization (e.g., camera to slides offset) is still handled via user input or a default offset.
+    -   Synchronization (e.g., camera to slides offset) is now first attempted automatically by `VideoSynccall` using `alignment_by_row_channels.py`. The parameters for this alignment are loaded from `editor_config.json` (under `"alignment_settings"`). If a plausible offset is calculated, it is suggested as the default in the user prompt, allowing the user to accept or override it. The automatic sync call can be toggled via the `enable_auto_sync_call` variable in the script.
 
 -   **`autosub_app.py`:**
     -   A command-line tool to automatically generate subtitles for video/audio files.
@@ -47,17 +47,13 @@ This directory contains Python scripts used for video editing, audio processing,
         -   Creates horizontal "bins" based on frequency ranges and time, then further processes these into vertical "boxes" to identify points of maximum intensity (peaks) within defined time/frequency regions.
         -   Compares these characteristic frequency peaks between the two audio files to find common patterns.
         -   Calculates the time offset that best aligns these common patterns, representing the synchronization delay.
-    -   **Key Hardcoded Parameters:**
-        -   `fft_bin_size`: `1024` (Size of the FFT window)
-        -   `overlap`: `0` (Overlap between FFT windows)
-        -   `box_height`: `512` (Height of frequency bins for grouping FFT results)
-        -   `box_width`: `43` (Width of time bins for grouping FFT results)
-        -   `samples_per_box`: `7` (Number of maximum intensity points to consider per box)
-        -   Audio Processing Durations:
-            -   The first video (`video1`) is processed for its initial `120 seconds` (assuming 44100 Hz sample rate: `44100*120`).
-            -   The second video (`video2`, the sample to align) is processed for its initial `60 seconds` (`44100*60`).
+    -   **Key Algorithmic Parameters:**
+        -   Parameters such as `fft_bin_size`, `overlap`, `box_height`, `box_width`, `samples_per_box`, `duration1_secs` (audio duration from video 1 to process), and `duration2_secs` (audio duration from video 2) have default values within `alignment_by_row_channels.py`.
+        -   When called from `scenetest_friday.py` (via `VideoSynccall`), these parameters can be overridden by settings in `editor_config.json` under the `"alignment_settings"` key. This allows for tuning the alignment process without modifying the alignment script directly.
+    -   **Diagnostic Output:**
+        -   The script now includes more verbose print statements to output its working parameters, the number of frequency pairs found, the distribution of time differences, and the final calculated offset. This aids in debugging and understanding its operation.
     -   **Known Issues:**
-        -   As noted in `scenetest_friday.py`, this script is not actively used due to performance and/or accuracy issues in reliably determining the sync offset.
+        -   As noted in `scenetest_friday.py`, this script's automatic offset calculation may still have performance or accuracy issues, so its use is optional and defaults to being bypassed in `scenetest_friday.py`.
     -   **Comments/TODOs from script:**
         -   Contains a comment `# !! CHECK TO SEE IF FILE IS IN UPLOADS DIRECTORY` in the `extract_audio` function, which might be a remnant or a note for specific usage contexts. The function itself accepts a directory path.
         -   Includes a positive comment `##### Works Very well!` before a `pyAudioAnalysis` silence removal command example, which is external to this script's direct functionality.
@@ -75,6 +71,7 @@ This directory contains Python scripts used for video editing, audio processing,
 -   **`editor_config.json`:**
     -   A JSON configuration file used by `scenetest_friday.py` to manage external paths and settings.
     -   Example keys: `video_search_path`, `obs_infowriter_log`, `logo_bug_path`, `output_path_prefix`.
+    -   It also manages `"alignment_settings"` for the `alignment_by_row_channels.py` script when called from `scenetest_friday.py`. Example alignment parameters include `fft_bin_size`, `duration1_secs`, `duration2_secs`, and `plausible_offset_threshold_secs`.
 
 ## Design Documents
 
