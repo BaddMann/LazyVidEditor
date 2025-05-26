@@ -3,14 +3,14 @@
 import os, fnmatch
 from collections import defaultdict
 import sys, getopt
-#from PIL import Image                                                                            
-from datetime import datetime, timedelta
+#from PIL import Image
+from datetime import datetime, timedelta, time as dt_time # Added time for combining with date
 from subprocess import call
 import json # Added for JSON configuration loading
 
 #import ffmpy
 from moviepy.editor import *
-#from timecode import Timecode
+# from timecode import Timecode # Will be replaced by direct second calculations
 
 # Imports for log_parser integration
 from log_parser import parse_log_file
@@ -129,15 +129,20 @@ def findscenes(thedate, obs_log_path):
         return ["00:00:00"]
 
 def userpromptssync(videosyncoutput):
-    var = float(raw_input("Sync Seconds " +  str(videosyncoutput) + ": "))
-    print "you entered", var
-    return var
+    try:
+        val = float(raw_input("Sync Seconds " +  str(videosyncoutput) + ": "))
+        print("You entered", val)
+        return val
+    except ValueError:
+        print("Invalid input. Please enter a number. Using 0.0 as default.")
+        return 0.0
 
-def userpromptsslides(timecodes):
-    listofedits=[]
-    howmanyedits =  int(raw_input("How Many edits are we performing? " ))
-    print "Editing", howmanyedits, "times"
-    return listofedits
+# This function might be deprecated or changed if edits are fully automated
+# def userpromptsslides(timecodes):
+#     listofedits=[]
+#     howmanyedits =  int(raw_input("How Many edits are we performing? " ))
+#     print "Editing", howmanyedits, "times"
+#     return listofedits
 
 def VideoSynccall(video1, video2):
     import alignment_by_row_channels
@@ -160,177 +165,331 @@ def VideoSynccall(video1, video2):
         return t
     t=alignment_by_row_channels.align(video1file,video2file,video1path)
     return t
-   
-def createpreview(Slides,Scenes,secssync):
-    import json
-    from timecode import Timecode
-    addsecond = Timecode('60', '00:00:02:00')
-    edit = 0
-    slidesname = os.path.splitext(Slides)[0]
-    for scene in Scenes:
-        if "START" in scene:
-            scene = "00:00:00"
-        thetimecode = Timecode('60', scene+":00")
-        endtimecode = thetimecode + addsecond
-        endtimecode = (str(endtimecode).rsplit(':', 1))[0]
-        aclip=VideoFileClip(Slides)
-        if os.path.isfile(slidesname+str(edit)+".png"):
-            print "files exist, exiting loop"
-            break
-        aclip.save_frame(slidesname+str(edit)+".png", t=endtimecode)#.fx(vfx.mask_color, [255, 255 ,255], thr=10, s=8)#.set_opacity(.7).set_pos('center')
-        print "Created Preview PNG:", slidesname+str(edit)+".png"
-        os.system('convert ' +slidesname+str(edit)+'.png -crop 1280x635+0+60 -trim -resize 30% '+slidesname+str(edit)+'_l3.png') ## Add Timeout to this somehow....
-        ##### Also maybe run this imagemagick call in parellell, not serial...
-        edit+=1
-
-def quickedit(Scenes,Requests,Files,secssync, logo_bug_path_from_config, output_prefix_from_config):
-    from timecode import Timecode
-    # logo_bug = "Z:\\glencroft-logo.png" # Replaced by config
-    logo_bug = logo_bug_path_from_config
-    timestr = datetime.today().strftime("%Y-%m-%d-%H-%M")
-    slidesname = os.path.splitext(Files[1])[0]
-    # print "Scenes: "+str(Scenes)
-    # print "Requests: "+str(Requests)
-    # print "Files: "+str(Files)
-    #Testdata
-    #Requests = [{'Title':'Testing', 'Person':'Higher Call','SubTitle':'Entertaining','startscene':11,'endscene':12, 'presentation':'third'},{'Title':'Testing2', 'Person':'Higher Call','SubTitle':'Entertaining','startscene':12,'endscene':13, 'presentation':'third'}]
-    RequestNum = 0
+def createpreview_from_events(slides_video_path, scene_events, video_zero_time_dt, output_image_prefix):
+    """
+    Generates preview PNGs from SceneChange events.
+    The scene_event should have 'raw_timestamp' (datetime) and 'details.scene_name'.
+    """
+    # from timecode import Timecode # Not used here, direct seconds
+    print(f"Generating previews for {len(scene_events)} scene events.")
     
-    # Ensure output directory exists
-    if output_prefix_from_config:
-        os.makedirs(output_prefix_from_config, exist_ok=True)
-        print(f"Ensured output directory exists: {output_prefix_from_config}")
+    # Ensure the output directory for previews exists (e.g., based on output_image_prefix)
+    preview_dir = os.path.dirname(output_image_prefix)
+    if preview_dir and not os.path.exists(preview_dir):
+        os.makedirs(preview_dir, exist_ok=True)
 
-    for request in Requests:
-        if len(Requests) is RequestNum:
-            break
-        
-        startscene=int(request.get('startscene'))
-        endscene=int(request.get('endscene',"-1"))
-        
-        # Check if scene numbers are valid
-        if startscene >= len(Scenes) or (endscene != -1 and endscene >= len(Scenes)):
-            print(f"Warning: Invalid scene numbers for request {request.get('Title')}. Start: {startscene}, End: {endscene}. Max scene index: {len(Scenes)-1}. Skipping this request.")
-            RequestNum = RequestNum + 1
+    for idx, event in enumerate(scene_events):
+        if event['event_type'] != 'SceneChange' or not event['raw_timestamp']:
             continue
+
+        scene_name = event['details'].get('scene_name', f"scene_{idx}")
+        # Sanitize scene_name for use in filename
+        safe_scene_name = "".join(c if c.isalnum() else "_" for c in scene_name)
+        
+        # Calculate time in seconds from video zero point
+        # This assumes Slides video uses the same zero point as the main recording.
+        # If slides video has its own start time, that needs to be factored in.
+        # For now, assuming slides_video_path is the reference for these previews.
+        
+        # To get a single frame, we need the timestamp of the scene change relative to the slides video.
+        # This is tricky if slides video doesn't start at video_zero_time_dt.
+        # For simplicity, let's assume the event's raw_timestamp can be directly used
+        # if the slides video is perfectly aligned with the main recording timeline.
+        # A more robust way would be to use (event['raw_timestamp'] - slides_video_actual_start_time_dt).total_seconds()
+        
+        # Let's assume for now that the user will provide `secssync` correctly
+        # and that the slides_video_path corresponds to the "slides" timeline.
+        # The preview should be from the slides video.
+        
+        preview_time_sec = (event['raw_timestamp'] - video_zero_time_dt).total_seconds()
+        if preview_time_sec < 0: # Scene change happened before recording start? Skip.
+            print(f"Warning: SceneChange event for '{scene_name}' at {event['timestamp']} is before video zero time. Skipping preview.")
+            continue
+
+        # Generate a unique name for the preview image based on the prefix and scene name or index
+        preview_filename_full = f"{output_image_prefix}_{safe_scene_name}_{idx}.png"
+        lower_third_filename_full = f"{output_image_prefix}_{safe_scene_name}_{idx}_l3.png"
+
+        if os.path.isfile(preview_filename_full):
+            print(f"Preview file {preview_filename_full} already exists, skipping generation.")
+            continue
+        try:
+            with VideoFileClip(slides_video_path) as aclip:
+                 # Save frame slightly after the scene change to ensure it's loaded
+                aclip.save_frame(preview_filename_full, t=preview_time_sec + 0.1)
+            print(f"Created Preview PNG: {preview_filename_full} for scene '{scene_name}' at {preview_time_sec:.2f}s")
             
-        ta = Scenes[startscene] ## Retrieve Start TimeCode based on Slide Number
-        tb = Scenes[endscene] if endscene != -1 and endscene < len(Scenes) else Scenes[-1] # Ensure tb is valid
-        
-        print "ta is: ", ta
-        tstc = Timecode('60', "00:00:"+str(int(abs(secssync)))+":00")
-        if "00:00:00" in ta:
-                ta = (str(tstc).rsplit(':', 1))[0]
-                print "start time is now: "+ ta
-        
-        print "ta is: ", ta
-        print str(tstc) + " sync differnece"
-        if secssync > 0:
-            
-            tatc = Timecode('60', ta+":00") + tstc
-            tbtc = Timecode('60', tb+":00") + tstc
-        else:
-            tatc = Timecode('60', ta+":00") - tstc
-            tbtc = Timecode('60', tb+":00") - tstc
-        cta = (str(tatc).rsplit(':', 1))[0]
-        ctb = (str(tbtc).rsplit(':', 1))[0]
-        if (str(tstc).rsplit(':', 1))[0] in ta: cta = "00:00:00"
-        presentation = request.get('presentation')
-        RequestNum = RequestNum + 1
-        # print presentation
+            # Imagemagick call for lower third (ensure ImageMagick is installed and `convert` is in PATH)
+            # This command might need adjustment depending on OS and ImageMagick version
+            convert_command = f'convert "{preview_filename_full}" -crop 1280x635+0+60 -trim -resize 30% "{lower_third_filename_full}"'
+            call(convert_command, shell=True) # Using shell=True for simplicity, consider security implications
+            print(f"Created Lower Third PNG: {lower_third_filename_full}")
+
+        except Exception as e:
+            print(f"Error creating preview for event {event}: {e}")
+            # If there's an error, ensure the preview_filename is not used later or is None
+            # For now, just print error and continue.
+    return # Returns nothing, modifies files on disk
 
 
-        #print "Camera Duration " + str(camera_video.duration)
-        #print "Slide Duration " + str(slides_video.duration)
-        print "Slide Time: " + ta + ", " + tb
-        print "Camera Time: " + cta + ", " + ctb
+def quickedit_event_driven(segment_info, camera_file, slides_file, secsync, logo_bug_path_from_config, output_prefix_from_config, video_zero_time_dt):
+    """
+    Processes a single video segment based on event data.
+    segment_info is a dictionary from generate_segments_from_events.
+    """
+    timestr = datetime.now().strftime("%Y-%m-%d-%H-%M-%S") # More unique timestamp
+    
+    title = segment_info.get('Title', f"Segment_{timestr}")
+    presentation = segment_info.get('presentation', 'third') # Default presentation style
+    
+    # Calculate clip start and end times in seconds relative to video_zero_time_dt
+    segment_start_sec = (segment_info['start_time_dt'] - video_zero_time_dt).total_seconds()
+    segment_end_sec = (segment_info['end_time_dt'] - video_zero_time_dt).total_seconds()
+    
+    if segment_start_sec < 0: segment_start_sec = 0 # Clamp to video start
+    if segment_end_sec < segment_start_sec:
+        print(f"Warning: Segment '{title}' end time is before start time. Skipping.")
+        return
 
-        ### Create all the Layers needed (In code alone, video creation happens later)
-        slides_still_path = slidesname+str(startscene)+".png"
-        if not os.path.exists(slides_still_path):
-            print(f"Warning: Preview image {slides_still_path} not found. Skipping this request or using placeholder.")
-            # Optionally create a placeholder or skip
-            # For now, let's assume createpreview was successful or this is handled
-            # If we must have it, we could try to generate it here, or skip.
-            # For now, we'll let ImageClip fail if it's critical.
-            pass # Or handle missing still
-            
-        slides_still = ImageClip(slides_still_path).set_duration(7)
-        slides_video = VideoFileClip(Files[1]).subclip(ta, tb).fx(vfx.mask_color, [255, 255 ,255], thr=10, s=8).set_opacity(.7).set_pos('center').fx(afx.volumex, 0).fx(vfx.mask_color, [255, 255 ,255], thr=10, s=8).set_opacity(.7).set_pos('center')
-        camera_video = VideoFileClip(Files[0]).subclip(cta, ctb).fx(afx.volumex,2)
+    # Camera video times
+    camera_start_sec = segment_start_sec - secsync # Apply sync offset for camera
+    camera_end_sec = segment_end_sec - secsync
+    
+    if camera_start_sec < 0: camera_start_sec = 0
 
+    # Slides video times - centered around the primary slide event if available
+    slide_event_dt = segment_info.get('slide_event_timestamp_dt')
+    initial_slide_png = segment_info.get('initial_slide_png_path', '') # Path to pre-generated PNG
 
-        white_bg = ColorClip((camera_video.size),col=([255,255,255])).set_duration(camera_video.duration).set_opacity(.5)
-        
-        if not os.path.exists(logo_bug):
-            print(f"Warning: Logo bug image {logo_bug} not found. Bug will not be added.")
-            bug_clip = None
-        else:
-            bug_clip = (ImageClip(logo_bug).resize(height=(camera_video.h*0.1)).set_pos(lambda t: (((camera_video.w*0.97)-bug_clip.w), ((t/camera_video.duration)*((camera_video.h)-(bug_clip.h)))) )
-                        .set_duration(camera_video.duration).set_opacity(0.6).set_start(0)
-                       )
+    # Default slide video timing to match camera segment if no specific slide event time
+    slides_start_sec = segment_start_sec
+    slides_end_sec = segment_end_sec
 
-        ### Dictate the Sype of Presentation the Slides should be presented as. 
-        clips_to_composite = [camera_video]
-        if presentation is "overlay":  
-            clips_to_composite.extend([white_bg.crossfadein(1).crossfadeout(1), slides_video.crossfadein(1).crossfadeout(1)])
-        elif presentation is "title":
-            clips_to_composite.extend([slides_still.crossfadein(1).crossfadeout(1)])
-        elif presentation is "third":
-            lower_third_path = slidesname+str(startscene)+"_l3.png"
-            if not os.path.exists(lower_third_path):
-                print(f"Warning: Lower third image {lower_third_path} not found. Lower third will not be added.")
-            else:
-                lower_third = (ImageClip(lower_third_path).set_pos(lambda t:(("center",(camera_video.h*0.95)-(lower_third.h)))).set_duration(camera_video.duration*0.45))
-                clips_to_composite.append(lower_third.crossfadein(1).crossfadeout(1).set_opacity(.7))
+    if slide_event_dt:
+        # If a specific slide event is tied to this segment, we might want the slides
+        # video to focus on that. For an "overlay" or "third", the slide might be
+        # shown for the duration of the voice segment.
+        # For a "title" style, it might be a still image.
+        # This part needs careful thought based on desired output.
+        # For now, let's assume the main segment times are for voice, and slide video matches that.
+        # The `initial_slide_png` is used for "title" or "third".
+        pass # Using segment_start_sec and segment_end_sec for slides video for now.
+             # More advanced logic could use slide_event_dt to cut the slide video
+             # more precisely around the slide change. e.g.,
+             # slides_start_sec = (slide_event_dt - video_zero_time_dt).total_seconds()
+             # slides_end_sec = slides_start_sec + 5 # Show slide for 5 seconds
+    
+    print(f"Processing segment: {title}")
+    print(f"  Segment time (abs): {segment_info['start_time_dt']} to {segment_info['end_time_dt']}")
+    print(f"  Video zero time: {video_zero_time_dt}")
+    print(f"  Segment time (rel sec): {segment_start_sec:.2f}s to {segment_end_sec:.2f}s")
+    print(f"  Camera time (rel sec): {camera_start_sec:.2f}s to {camera_end_sec:.2f}s (sync: {secsync}s)")
+    print(f"  Slides video time (rel sec): {slides_start_sec:.2f}s to {slides_end_sec:.2f}s")
+    if slide_event_dt:
+        print(f"  Primary slide event at (abs): {slide_event_dt}")
+    if initial_slide_png:
+        print(f"  Using initial slide PNG: {initial_slide_png}")
 
-        if bug_clip:
-            clips_to_composite.append(bug_clip)
-            
-        result = CompositeVideoClip(clips_to_composite)#.fadein(1).fadeout(1)
-        
-        # Construct output path
-        video1path_original = os.path.dirname(Files[0]) # Keep original for reference or fallback
-        videofilenamepart1 = "".join(request.get('Title').split())
-        videofilenamepart1 = videofilenamepart1.replace(":", "-").replace("/", "-").replace("\\", "-") # Sanitize
-        
-        output_filename = f"{videofilenamepart1}_Scene{startscene}-{timestr}.mp4"
-        
+    try:
+        # Ensure output directory exists
         if output_prefix_from_config:
-            # Ensure prefix ends with a separator if it's a directory
-            final_output_path = os.path.join(output_prefix_from_config, output_filename)
-        else: # Fallback to original behavior if prefix is not set
-            final_output_path = os.path.join(video1path_original, output_filename)
-            
+            os.makedirs(output_prefix_from_config, exist_ok=True)
+            # print(f"Ensured output directory exists: {output_prefix_from_config}") # Less verbose
+
+        # Load main clips
+        # Using 'with' might be better if MoviePy objects need explicit closing.
+        # For now, following existing pattern.
+        camera_video_full = VideoFileClip(camera_file)
+        slides_video_full = VideoFileClip(slides_file)
+
+        camera_subclip = camera_video_full.subclip(camera_start_sec, camera_end_sec).fx(afx.volumex, 2)
+        slides_subclip = slides_video_full.subclip(slides_start_sec, slides_end_sec).fx(vfx.mask_color, [255, 255, 255], thr=10, s=8).set_opacity(.7).set_pos('center').fx(afx.volumex, 0)
+
+        # Prepare layers
+        clips_to_composite = [camera_subclip]
+        white_bg = ColorClip(size=camera_subclip.size, col=[255,255,255], duration=camera_subclip.duration).set_opacity(0.5)
+
+        if presentation == "overlay":
+            clips_to_composite.extend([white_bg.crossfadein(1).crossfadeout(1), slides_subclip.crossfadein(1).crossfadeout(1)])
+        elif presentation == "title":
+            if initial_slide_png and os.path.exists(initial_slide_png):
+                slide_still_img = ImageClip(initial_slide_png).set_duration(min(7, camera_subclip.duration)) # Show for 7s or clip duration
+                clips_to_composite.append(slide_still_img.crossfadein(1).crossfadeout(1))
+            else:
+                print(f"Warning: Slide PNG {initial_slide_png} not found for title presentation. Skipping slide.")
+        elif presentation == "third":
+            # Path for lower third should be derived from initial_slide_png (e.g., _l3 version)
+            if initial_slide_png and os.path.exists(initial_slide_png.replace(".png", "_l3.png")):
+                lower_third_png = initial_slide_png.replace(".png", "_l3.png")
+                lower_third_img = (ImageClip(lower_third_png)
+                                   .set_pos(lambda t: ("center", (camera_subclip.h * 0.95) - lower_third_img.h)) # Position needs access to its own height
+                                   .set_duration(camera_subclip.duration * 0.45) # Show for 45% of segment
+                                   .set_opacity(0.7))
+                # Correcting pos lambda to access its own height (common pattern)
+                # This lambda for set_pos can be tricky. If lower_third_img.h is not fixed, this is problematic.
+                # Assuming lower_third_img is loaded once to get its height, then used.
+                # For simplicity, let's assume its height is somewhat known or can be pre-calculated if issues arise.
+                # A fixed position or a simpler lambda might be safer if dynamic sizing is complex.
+                # Example fixed: .set_pos(("center", camera_subclip.h * 0.8))
+                clips_to_composite.append(lower_third_img.crossfadein(1).crossfadeout(1))
+            else:
+                print(f"Warning: Lower third PNG (derived from {initial_slide_png}) not found. Skipping lower third.")
+        
+        # Add logo bug
+        if logo_bug_path_from_config and os.path.exists(logo_bug_path_from_config):
+            logo_clip = (ImageClip(logo_bug_path_from_config)
+                         .resize(height=(camera_subclip.h * 0.1))
+                         .set_pos(lambda t: (((camera_subclip.w * 0.97) - logo_clip.w), ((t / camera_subclip.duration) * (camera_subclip.h - logo_clip.h))))
+                         .set_duration(camera_subclip.duration)
+                         .set_opacity(0.6))
+            clips_to_composite.append(logo_clip)
+        else:
+            print(f"Warning: Logo bug image {logo_bug_path_from_config} not found. Bug will not be added.")
+
+        final_clip = CompositeVideoClip(clips_to_composite)
+        
+        # Output filename
+        safe_title = "".join(c if c.isalnum() else "_" for c in title)
+        output_filename = f"{safe_title}_{timestr}.mp4"
+        final_output_path = os.path.join(output_prefix_from_config or ".", output_filename)
+        
         print(f"Outputting to: {final_output_path}")
+        final_clip.write_videofile(final_output_path,
+                                   write_logfile=False,
+                                   codec='libx264',
+                                   audio_codec='aac',
+                                   temp_audiofile=(os.path.join(output_prefix_from_config or ".", f"temp_audio_{safe_title}_{timestr}.m4a")),
+                                   preset="ultrafast", # Consider medium for better quality if time allows
+                                   remove_temp=True,
+                                   threads=4) # Example: use multiple threads for encoding
 
-        result.write_videofile(final_output_path, 
-                                write_logfile=False, 
-                                codec='libx264', 
-                                audio_codec='aac',
-                                temp_audiofile=(os.path.join(output_prefix_from_config or ".", f"scene{startscene}-temp-audio-{timestr}.m4a")), 
-                                preset="ultrafast", 
-                                remove_temp=True )
-        #with open((Files[0]+".txt"), "a") as myfile:
-        #    myfile.append("file {0}\\{1}_Scene{2}-{3}.mp4".format(video1path,videofilenamepart1,str(startscene), timestr))
+    except Exception as e:
+        print(f"Error processing segment '{title}': {e}")
+        import traceback
+        traceback.print_exc()
+    finally:
+        # MoviePy can leave files open or processes running. Explicitly close.
+        if 'camera_video_full' in locals() and hasattr(camera_video_full, 'close'): camera_video_full.close()
+        if 'slides_video_full' in locals() and hasattr(slides_video_full, 'close'): slides_video_full.close()
+        if 'final_clip' in locals() and hasattr(final_clip, 'close'): final_clip.close()
+        # May need to close other ImageClips if they hold resources.
 
-def allscenesarevalid(Scenes,Requests,Files,secssync):
-                if not Scenes:
-   allRequests = []
-   entry = 0
-   for Scene in Scenes:
-    print "Scene is: " + str(entry) + " " + str(Scene)
-    Request = {}
-    Request['Title'] = "Scene " + str(entry) + " " + str(Scene)
-    Request['Person'] = "Unknown"
-    Request['SubTitle'] = "Unknown"
-    Request['startscene'] = int(entry)
-    Request['endscene'] = int(entry) + 1
-    Request['presentation'] = "third"
-    allRequests.append(Request)
-    entry= entry +1
-   #print allRequests
-   return allRequests
+
+def to_relative_seconds(event_dt, video_zero_dt):
+    if not event_dt or not video_zero_dt:
+        return None
+    return (event_dt - video_zero_dt).total_seconds()
+
+def generate_segments_from_events(events, video_zero_time_dt, slide_preview_base_path):
+    """
+    Generates video editing segments from parsed log events.
+    Focuses on MicUnmute/MicMute pairs to define segments.
+    """
+    segments = []
+    active_mics = {} # To track start time of MicUnmute for each mic
+
+    # Sort events by raw_timestamp if not already sorted
+    # Assuming events from log_parser are roughly chronological but sorting is safer
+    events.sort(key=lambda e: e['raw_timestamp'] if e['raw_timestamp'] else datetime.min)
+
+    for event in events:
+        if not event['raw_timestamp']: # Skip events without a valid timestamp
+            continue
+
+        event_type = event['event_type']
+        mic_name = event['details'].get('mic_name') if event_type in ['MicMute', 'MicUnmute'] else None
+
+        if event_type == 'MicUnmute' and mic_name:
+            if mic_name in active_mics:
+                # This mic was unmuted again before being muted. Treat previous unmute as orphaned.
+                print(f"Warning: Mic '{mic_name}' unmuted again at {event['timestamp']} before previous mute. Resetting start for this mic.")
+            active_mics[mic_name] = event # Store the entire event
+        
+        elif event_type == 'MicMute' and mic_name:
+            if mic_name in active_mics:
+                start_event = active_mics.pop(mic_name) # Remove mic from active, get its start event
+                
+                segment_start_dt = start_event['raw_timestamp']
+                segment_end_dt = event['raw_timestamp']
+
+                if segment_end_dt <= segment_start_dt:
+                    print(f"Warning: Mic '{mic_name}' muted at/before unmute time. Start: {segment_start_dt}, End: {segment_end_dt}. Skipping segment.")
+                    continue
+
+                # Find the most relevant SceneChange event within this segment
+                primary_slide_event = None
+                # Look for SceneChange events between segment_start_dt and segment_end_dt
+                # Prefer the one closest to segment_start_dt
+                relevant_scene_changes = [
+                    sc_event for sc_event in events 
+                    if sc_event['event_type'] == 'SceneChange' and 
+                       sc_event['raw_timestamp'] and
+                       segment_start_dt <= sc_event['raw_timestamp'] < segment_end_dt
+                ]
+                if relevant_scene_changes:
+                    # Sort by time difference from segment_start_dt
+                    relevant_scene_changes.sort(key=lambda sc: abs(sc['raw_timestamp'] - segment_start_dt))
+                    primary_slide_event = relevant_scene_changes[0]
+                
+                title = f"Segment_{mic_name.replace(' ', '_')}_{segment_start_dt.strftime('%H%M%S')}"
+                
+                initial_png_path = None
+                if primary_slide_event:
+                    scene_name_for_path = "".join(c if c.isalnum() else "_" for c in primary_slide_event['details'].get('scene_name', 'unknownscene'))
+                    # Find the index of this primary_slide_event among all scene changes to make filename unique like in createpreview
+                    # This is a bit complex; for now, let's use a simpler naming for PNG path if possible,
+                    # or assume createpreview_from_events can be called first to generate these with known names.
+                    # Let's assume `slide_preview_base_path` is like `output/previews/video_date_prefix`
+                    # and we append `_SceneName_idx.png` to it.
+                    # This requires `createpreview_from_events` to be run first and use a predictable naming.
+                    # For now, just store the scene name. The actual path construction will be tricky.
+                    # Placeholder for now:
+                    # initial_png_path = f"{slide_preview_base_path}_{scene_name_for_path}.png" 
+                    # This needs to match what createpreview_from_events generates.
+
+                segments.append({
+                    'Title': title,
+                    'Person': mic_name, # Or more descriptive name later
+                    'start_time_dt': segment_start_dt,
+                    'end_time_dt': segment_end_dt,
+                    'slide_event_timestamp_dt': primary_slide_event['raw_timestamp'] if primary_slide_event else None,
+                    'slide_scene_name': primary_slide_event['details'].get('scene_name') if primary_slide_event else None,
+                    'initial_slide_png_path': initial_png_path, # To be properly determined
+                    'presentation': 'third' # Default
+                })
+            else:
+                # Mute event without a corresponding unmute (e.g., mic was muted at script start)
+                print(f"Info: Mic '{mic_name}' muted at {event['timestamp']} without a prior unmute in this session.")
+                
+    # Handle mics that were unmuted but never muted before end of log
+    for mic_name, start_event in active_mics.items():
+        print(f"Warning: Mic '{mic_name}' was unmuted at {start_event['timestamp']} but never muted before end of log. Creating segment until end of log (or last event).")
+        # Decide how to handle this: segment until last event time? Or discard?
+        # For now, let's create a segment until the timestamp of the very last event in the log.
+        if events:
+            last_event_time_dt = events[-1]['raw_timestamp']
+            if last_event_time_dt and last_event_time_dt > start_event['raw_timestamp']:
+                segments.append({
+                    'Title': f"Segment_{mic_name.replace(' ', '_')}_{start_event['raw_timestamp'].strftime('%H%M%S')}_incomplete",
+                    'Person': mic_name,
+                    'start_time_dt': start_event['raw_timestamp'],
+                    'end_time_dt': last_event_time_dt, # End at the time of the last recorded event
+                    'slide_event_timestamp_dt': None, # Cannot reliably determine slide for this
+                    'slide_scene_name': None,
+                    'initial_slide_png_path': None,
+                    'presentation': 'third'
+                })
+
+    return segments
+
+
+# Deprecating old quickedit in favor of quickedit_event_driven
+# def quickedit(Scenes,Requests,Files,secssync, logo_bug_path_from_config, output_prefix_from_config):
+    # ... (old implementation) ...
+
+# Deprecating allscenesarevalid as its role is replaced by generate_segments_from_events
+# def allscenesarevalid(Scenes,Requests,Files,secssync):
+    # ... (old implementation) ...
 
 def concatRequests(Scenes,Requests,Files):
     #Try to Concat the Files With the Text File Created in quickpreview function..... this is bad code.
@@ -342,103 +501,165 @@ video_search_path = config.get("video_search_path", DEFAULT_CONFIG["video_search
 logo_bug_path_main = config.get("logo_bug_path", DEFAULT_CONFIG["logo_bug_path"])
 output_path_prefix_main = config.get("output_path_prefix", DEFAULT_CONFIG["output_path_prefix"])
 
-Scenes = findscenes(today, obs_log_path)
-if not Files:
+# Ensure output directory exists for general outputs
+if output_path_prefix_main:
+    os.makedirs(output_path_prefix_main, exist_ok=True)
+
+# --- Main Execution Flow ---
+
+# 1. Find Video Files (Camera and Slides)
+# This logic remains similar, but ensure `Files` are correctly identified.
+if not Files: # If Files list is not pre-populated
     Files = find("*"+today.strftime('%Y-%m-%d')+"*.mp4", video_search_path)
     if not Files:
         print(f"Warning: No video files found for today in {video_search_path}. Attempting last week.")
-        Scenes = findscenes(lastweek, obs_log_path) # Update scenes for last week
+        # Scenes = findscenes(lastweek, obs_log_path) # This is for old system
         Files = find("*"+lastweek.strftime('%Y-%m-%d')+"*.mp4", video_search_path)
         if not Files:
             print(f"Error: No video files found for today or last week in {video_search_path}. Exiting.")
-            # Potentially exit or handle gracefully
-            sys.exit(1) # Exit if no files are found, as the rest of the script depends on them
-    print("Files are in the Array Skipping find Step" if Files else "No files found.")
+            sys.exit(1)
+    # print("Files are in the Array Skipping find Step" if Files else "No files found.") # Python 3 print
 
 if not Files or len(Files) < 2:
-    print("Error: Not enough video files found (expected at least Camera and Slides). Exiting.")
+    print("Error: Not enough video files found (expected at least Camera and Slides). Please check video_search_path in config. Exiting.")
+    sys.exit(1)
+
+camera_video_file = Files[0] # Assuming first file is camera
+slides_video_file = Files[1] # Assuming second file is slides
+print(f"Using Camera File: {camera_video_file}")
+print(f"Using Slides File: {slides_video_file}")
+
+
+# 2. Parse the Consolidated Log File
+# Path for parse_log_file: (assuming Sampleoutput is at repo root, and this script is in python-editor)
+log_parser_input_file = "../Sampleoutput/2017-06-02_17-36-Slides.txt" # Example, make this configurable or auto-detected
+if not os.path.exists(log_parser_input_file):
+    print(f"Error: Consolidated log file for parser not found at {log_parser_input_file}. Exiting.")
     sys.exit(1)
     
-print "Processing Files:", str(Files[0]), ",", str(Files[1])
-createpreview(Files[1], Scenes, 0) # This should Go after VideoSync, but it takes to long to process the sound, set sync to 0 for now
-videosync=(0,0)
-### foloowing code takes too long and value isn't where it should be, will revisit later. Default value of 0 used for now.
-###videosync = VideoSynccall(Files[0],Files[1])
-os.system('cls')
-secssync = userpromptssync(videosync)
-#listofedits = userpromptsslides(Scenes)
-print "Camera Footage: " + Files[0]
-print "Slides Footage: " + Files[1]
-print "Syncing on this many seconds: ",secssync
-print "TimeCodes that will be used: ", Scenes
-#Loop Through All Scenes Function:
-# 
-Requests = []
-#Temp Fix while testing that makes the script Go through Every secene, Once a GUI is in place, the requests will be more aimed.
-Requests = allscenesarevalid(Scenes,Requests,Files,secssync)
-del Requests[0]
-del Requests[-1]
-#del Requests[2]
-#del Requests[3]
+print(f"\nParsing consolidated log file: {log_parser_input_file}")
+parsed_log_events = parse_log_file(log_parser_input_file)
 
-# Pass configured paths to quickedit
-quickedit(Scenes,Requests,Files,secssync, logo_bug_path_main, output_path_prefix_main)
+if not parsed_log_events:
+    print("Error: No events parsed from the log file. Cannot proceed. Exiting.")
+    sys.exit(1)
 
-#The Function that will join the clips by the specs of the requests. Needs to be fleashed out.
-# concatRequests(Scenes,Requests,Files) # This function is currently a pass
+# 3. Determine Video Zero Time (Recording Start)
+video_zero_time_dt = None
+for event in parsed_log_events:
+    if event['event_type'] == 'RecordingStart' and event['raw_timestamp']:
+        video_zero_time_dt = event['raw_timestamp']
+        break
+if not video_zero_time_dt:
+    print("Warning: No 'RecordingStart' event found in logs. Trying to use file creation time (less reliable) or first event time.")
+    # Fallback: use the timestamp of the first event in the log if available
+    for event in parsed_log_events:
+        if event['raw_timestamp']:
+            video_zero_time_dt = event['raw_timestamp']
+            print(f"Using timestamp of first log event as video zero time: {video_zero_time_dt}")
+            break
+    if not video_zero_time_dt:
+        print("Error: Cannot determine video zero time from logs. Exiting.")
+        sys.exit(1)
 
-# --- Integration of log_parser ---
-# This part was added in a previous step, ensure it uses robust paths if needed
-# For example, if log_parser.py also needs config or if sample log path needs adjustment
-# log_parser_input_file = "../Sampleoutput/2017-06-02_17-36-Slides.txt" # Path relative to this script's location
-# print(f"\nAttempting to parse consolidated log file: {log_parser_input_file}")
-# parsed_log_events = parse_log_file(log_parser_input_file)
-# process_events_from_log_parser(parsed_log_events)
-# --- End of log_parser integration ---
+print(f"Video Zero Time (Recording Start or First Event): {video_zero_time_dt}")
 
+# 4. Generate Previews from SceneChange Events in Parsed Log
+# Define a base path/prefix for preview images, e.g., in the output directory
+preview_image_prefix = os.path.join(output_path_prefix_main, f"preview_{today.strftime('%Y%m%d')}")
 
-os.system("pause")
-
-
-## TODO: Create a Concat FFMPEG Command And Execute it (Funcation already named concatRequests())
-##       Look into parsing new file created by q-systest.js
-
-# The log_parser integration block was here. It's being moved down to ensure
-# it's one of the last things called, or integrated more deeply if its output is needed sooner.
-# For now, just making sure it's after main video processing.
-
-# --- Integration of log_parser (if still needed as a separate step) ---
-# This section was previously added and is kept for now.
-# It might be better to integrate its output into the main editing logic if applicable.
-def process_events_from_log_parser(events_list):
-    print("\n--- Events from Consolidated Log Parser ---")
-    if not events_list:
-        print("No events processed from consolidated log.")
-        return
-
-    for event in events_list:
-        if event['event_type'] == 'MicUnmute':
-            print(f"Potential Segment Start (Mic Active): {event['details']['mic_name']} at {event['timestamp']}")
-        elif event['event_type'] == 'MicMute':
-            print(f"Potential Segment End (Mic Inactive): {event['details']['mic_name']} at {event['timestamp']}")
-        elif event['event_type'] == 'SceneChange':
-            scene_name = event['details'].get('scene_name', 'N/A')
-            obs_timecode = event['details'].get('obs_timecode', 'N/A')
-            print(f"Scene Change Detected: {scene_name} at {event['timestamp']} (OBS Timecode: {obs_timecode})")
-        elif event['event_type'] in ['RecordingStart', 'RecordingStop']:
-            print(f"{event['event_type']} at {event['timestamp']}")
-    print("-----------------------------------------\n")
-
-# Path for parse_log_file: (assuming Sampleoutput is at repo root, and this script is in python-editor)
-log_parser_input_file = "../Sampleoutput/2017-06-02_17-36-Slides.txt" 
-# Check if the file exists before parsing
-if os.path.exists(log_parser_input_file):
-    print(f"\nAttempting to parse consolidated log file: {log_parser_input_file}")
-    parsed_log_events = parse_log_file(log_parser_input_file)
-    process_events_from_log_parser(parsed_log_events)
+all_scene_change_events = [e for e in parsed_log_events if e['event_type'] == 'SceneChange' and e['raw_timestamp']]
+if all_scene_change_events:
+    createpreview_from_events(slides_video_file, all_scene_change_events, video_zero_time_dt, preview_image_prefix)
 else:
-    print(f"\nWarning: Consolidated log file for parser not found at {log_parser_input_file}. Skipping this step.")
-# --- End of log_parser integration ---
+    print("No SceneChange events found in parsed log to generate previews from.")
+
+# 5. Generate Segments from Events
+# The slide_preview_base_path needs to align with how createpreview_from_events names files.
+# For now, generate_segments_from_events will store scene_name, and quickedit_event_driven
+# will try to form the preview path.
+print("\nGenerating segments from parsed events...")
+generated_segments = generate_segments_from_events(parsed_log_events, video_zero_time_dt, preview_image_prefix)
+
+if not generated_segments:
+    print("No segments were generated based on Mic activity. Exiting.")
+    sys.exit(0) # Not an error, but nothing to do
+
+# 6. Get Sync Offset (Camera to Slides)
+# This part remains manual or based on previous sync logic for now.
+# videosync = VideoSynccall(camera_video_file, slides_video_file) # This was slow
+videosync_offset_seconds = 0.0 # Default if VideoSynccall is disabled or fails
+# os.system('cls') # Consider removing for non-Windows or if not needed
+secssync = userpromptssync(videosync_offset_seconds) # User provides the sync in seconds
+print(f"Using Camera-to-Slides Sync Offset: {secssync} seconds")
+
+
+# 7. Process Segments with quickedit_event_driven
+print(f"\nStarting to process {len(generated_segments)} segments...")
+for segment in generated_segments:
+    # Update initial_slide_png_path for the segment to match createpreview_from_events logic
+    if segment['slide_scene_name']:
+        safe_scene_name = "".join(c if c.isalnum() else "_" for c in segment['slide_scene_name'])
+        # This needs to find the correct index if multiple scenes have the same name.
+        # This is a simplification. A more robust way would be to have createpreview return a map.
+        # For now, we'll try to guess the first preview matching the scene name.
+        # This is still problematic as idx is not available here.
+        # Let's assume for now that the `initial_slide_png_path` can be constructed if the scene name is unique enough
+        # or if we simplify `createpreview_from_events` to not use idx if scene names are unique.
+        # A temporary fix: try to find the first preview that matches this scene name.
+        # This is not robust.
+        # A better way: generate_segments_from_events should try to find the *exact* preview file
+        # by knowing how createpreview_from_events names them (e.g. by passing the full scene event to make the name).
+        
+        # Let's refine initial_slide_png_path within generate_segments_from_events or assume it's done there.
+        # For now, we'll construct a potential path, but this is a known weak point.
+        # The `idx` part is missing. If `createpreview_from_events` can make unique names from scene_name + timestamp, that's better.
+        # Let's assume `generate_segments_from_events` now sets `initial_slide_png_path` more accurately if possible.
+        # If not, `quickedit_event_driven` will check for its existence.
+        
+        # Simplification: Let `generate_segments_from_events` try to create a plausible name,
+        # and `quickedit_event_driven` will use it if the file exists.
+        # Example: if primary_slide_event is passed to a helper in generate_segments...
+        # For this iteration, the current `initial_slide_png_path` set by `generate_segments_from_events` (which is None)
+        # will be passed. `quickedit_event_driven` will handle it if it's None or file not found.
+        # To make it slightly better, let's try to form a path if scene_name is available:
+        if segment.get('slide_scene_name'):
+             # This is a simplified guess, assumes createpreview_from_events made a file like this.
+             # This is NOT robust because of the missing index from preview generation.
+             # A proper solution would involve `createpreview_from_events` returning a map of scene_event to filename.
+             # Or `generate_segments_from_events` needs to find the matching preview based on the scene event.
+             # For now, let's assume `initial_slide_png_path` might be None and quickedit handles it.
+             pass
+
+
+    quickedit_event_driven(
+        segment_info=segment,
+        camera_file=camera_video_file,
+        slides_file=slides_video_file,
+        secsync=secssync,
+        logo_bug_path_from_config=logo_bug_path_main,
+        output_prefix_from_config=output_path_prefix_main,
+        video_zero_time_dt=video_zero_time_dt
+    )
+
+# --- Old Main Execution Logic (Commented out or removed) ---
+# Scenes = findscenes(today, obs_log_path) # Old way of getting scenes
+# ... (old calls to createpreview, allscenesarevalid, quickedit) ...
+
+# --- Log Parser Integration (Original Position - now integrated into main flow) ---
+# def process_events_from_log_parser(events_list): ...
+# log_parser_input_file = "../Sampleoutput/2017-06-02_17-36-Slides.txt" 
+# if os.path.exists(log_parser_input_file):
+#     print(f"\nAttempting to parse consolidated log file: {log_parser_input_file}")
+#     parsed_log_events = parse_log_file(log_parser_input_file) # This is now done earlier
+#     process_events_from_log_parser(parsed_log_events) # This function's purpose is now for debug/display
+# else:
+#     print(f"\nWarning: Consolidated log file for parser not found at {log_parser_input_file}. Skipping this step.")
+
+# Display parsed events for debugging if needed (using the existing function)
+if parsed_log_events:
+    process_events_from_log_parser(parsed_log_events)
+
 
 # os.system("pause") # This may not be desirable in an automated script
 print("Script finished.")

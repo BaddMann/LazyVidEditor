@@ -43,12 +43,17 @@ def parse_log_file(log_file_path):
                         # Remove timestamp from line for further processing of the same line
                         line_content_after_ts = line[timestamp_match.end():].strip()
                     except ValueError:
-                        # Invalid timestamp format, ignore this timestamp
-                        line_content_after_ts = line # Process line without new timestamp
-                        pass
+                        # Invalid timestamp format on this line, use last known good timestamp
+                        # The line content itself (line_content_after_ts) will be the full line
+                        # for event checking.
+                        print(f"Warning: Invalid timestamp format on line {line_number}: '{line}'. Using last known timestamp: {last_timestamp_str if last_timestamp_str else 'None'}.")
+                        line_content_after_ts = line 
                 else:
-                    line_content_after_ts = line # No timestamp on this line
+                    # No timestamp found at the beginning of this line.
+                    # Use last known good timestamp and process the whole line for events.
+                    line_content_after_ts = line
 
+                # Prepare event_data with the last known valid timestamp
                 event_data = {
                     "timestamp": last_timestamp_str,
                     "raw_timestamp": last_timestamp_dt,
@@ -79,45 +84,60 @@ def parse_log_file(log_file_path):
 
                 # 4. Identify OBS Scene Changes (JSON)
                 try:
-                    # Attempt to parse the line (or relevant part) as JSON
-                    # OBS logs can sometimes have other text on the line with JSON
-                    # A simple heuristic: check if line starts with { and ends with }
-                    potential_json_str = line_content_after_ts
-                    if potential_json_str.startswith('{') and potential_json_str.endswith('}'):
-                        obs_data = json.loads(potential_json_str)
-                        if isinstance(obs_data, dict) and obs_data.get("update-type") == "SwitchScenes":
-                            scene_name = obs_data.get("scene-name")
-                            # Look for 'rec-timecode' or other common timecode fields
-                            obs_timecode = obs_data.get("rec-timecode") # From Parse-badlog.ps1
-                            if not obs_timecode: # Try other potential keys
-                                obs_timecode = obs_data.get("timecode")
+                    # Attempt to parse the line_content_after_ts as JSON
+                    # Heuristic: check if it starts with '{' and ends with '}'
+                    if line_content_after_ts.startswith('{') and line_content_after_ts.endswith('}'):
+                        obs_data = json.loads(line_content_after_ts) # This line is inside the try-except
+                        
+                        update_type = obs_data.get("update-type")
+                        if update_type == "SwitchScenes":
+                            scene_name = obs_data.get("scene-name", "Unknown Scene")
+                            if scene_name == "Unknown Scene":
+                                print(f"Warning: 'scene-name' key missing in OBS SwitchScenes event on line {line_number}.")
+                            
+                            # Attempt to get rec-timecode or timecode
+                            obs_timecode = obs_data.get("rec-timecode")
+                            if obs_timecode is None: # If rec-timecode is not found or is null
+                                obs_timecode = obs_data.get("timecode") # Try 'timecode'
                             
                             event_data["event_type"] = "SceneChange"
                             event_data["details"] = {"scene_name": scene_name}
-                            if obs_timecode:
+                            if obs_timecode is not None: # Ensure obs_timecode is not None before adding
                                 event_data["details"]["obs_timecode"] = obs_timecode
+                            else:
+                                print(f"Warning: Neither 'rec-timecode' nor 'timecode' found for OBS SwitchScenes event on line {line_number}.")
+                                
                             parsed_events.append(event_data)
-                            continue
+                            continue # Processed as OBS SceneChange, move to next line
+                        # Add other OBS event types here if needed
+                        # else:
+                        #     print(f"Info: JSON object on line {line_number} is not a 'SwitchScenes' event: {line_content_after_ts}")
+
                 except json.JSONDecodeError:
-                    # Not a valid JSON line, or not the JSON we're looking for
-                    pass
+                    # This means line_content_after_ts started with { and ended with } but was not valid JSON
+                    print(f"Warning: Could not parse potential JSON on line {line_number}: {line_content_after_ts}")
+                    # Continue to check for other event types, as it might be a malformed JSON attempt
+                    # or something else that coincidentally starts/ends with braces.
                 
-                # 5. Extron Video Matrix Changes (Conceptual - Omitted for now as per instruction)
-                # If specific reliable patterns for Extron are identified, they can be added here.
-                # Example:
-                # if line_content_after_ts.startswith("Evt"):
-                #     # Further parsing for specific Extron event details
-                #     event_data["event_type"] = "ExtronEvent"
-                #     event_data["details"] = {"extron_info": "some parsed data"}
-                #     parsed_events.append(event_data)
-                #     continue
+                # 5. Extron Video Matrix Changes
+                # Check if the line (after timestamp removal) starts with "Evt" (case-insensitive)
+                if line_content_after_ts.lower().startswith("evt"):
+                    event_data["event_type"] = "ExtronEvent"
+                    # Store the part of the line that starts with "Evt" as raw_event
+                    event_data["details"] = {"raw_event": line_content_after_ts}
+                    parsed_events.append(event_data)
+                    continue # Processed as ExtronEvent, move to next line
 
     except FileNotFoundError:
         print(f"Error: Log file not found at {log_file_path}")
         return []
-    except Exception as e:
-        print(f"An error occurred: {e}")
+    except PermissionError:
+        print(f"Error: Permission denied when trying to read {log_file_path}")
         return []
+    except Exception as e:
+        print(f"An unexpected error occurred while processing {log_file_path} at line {line_number if 'line_number' in locals() else 'unknown'}: {e}")
+        # Optionally, re-raise the exception if it's critical: raise
+        return parsed_events # Return what has been parsed so far
 
     return parsed_events
 
