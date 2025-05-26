@@ -39,6 +39,19 @@ This directory contains Python scripts used for video editing, audio processing,
     -   Plays a key role in moving towards a more Python-centric video processing workflow by abstracting `ffmpeg` command creation.
     -   Includes an example usage block (`if __name__ == "__main__":`) demonstrating how to generate commands for sample segments.
 
+-   **`audio_analyzer.py`:**
+    -   **Purpose:** A command-line script for exploring audio analysis capabilities using the `pyAudioAnalysis` library. It allows for feature extraction, speaker diarization, and basic sound event detection.
+    -   **Functionality:**
+        -   **Usage:** `python audio_analyzer.py <audio_file_path> [--features] [--diarize --num_speakers <N>] [--sound_events]`
+        -   **Short-Term Feature Extraction (`--features`):** Extracts and displays a summary of short-term audio features (e.g., MFCCs, Chroma, Zero Crossing Rate, etc.) from the input audio file. It lists all feature names and shows example values for the initial windows of the audio.
+        -   **Speaker Diarization (`--diarize`):** Performs speaker diarization using `pyAudioAnalysis.audioSegmentation.speaker_diarization()`. It segments the audio by speaker and prints timed segments with speaker labels (e.g., "Speaker_0", "Speaker_1"). Requires the `--num_speakers <N>` argument to specify the expected number of speakers.
+        -   **Sound Event Detection (`--sound_events`):** Demonstrates basic sound event detection using `pyAudioAnalysis.audioSegmentation.silence_removal()`. This identifies and prints segments of sound versus silence.
+    -   **Standardized Output:** The speaker diarization (`--diarize`) and sound event detection (`--sound_events`) functions return lists of standardized event dictionaries. Each dictionary typically includes `event_type`, `start_time_sec`, `end_time_sec`, `duration_sec`, and a `details` sub-dictionary (e.g., `{'speaker_id': 'Speaker_X'}` for diarization, `{'segment_type': 'sound'}` for sound events). This structured output is then pretty-printed to the console.
+    -   **Assessment of Specific Sound Event Detection (e.g., Piano/Singing):**
+        -   Detecting specific events like "piano" or "singing" with high accuracy typically requires custom-trained machine learning models. `pyAudioAnalysis` provides tools for training such models (e.g., using its `audioTrainTest.py` functionalities), but this script (`audio_analyzer.py`) currently does not implement custom model training or use pre-trained models for these specific events. The generic sound event detection demonstrated (silence removal) does not distinguish these specific sounds.
+    -   **Potential Next Steps for Integration:**
+        -   The standardized event output from `audio_analyzer.py` (speaker segments, sound/silence segments) could be merged with the event timeline from `log_parser.py`. This combined timeline could then be used by `scenetest_friday.py` or `ffmpeg_command_generator.py` to create more nuanced edits (e.g., cutting based on speaker changes, excluding silent segments, or tagging scenes with detected sound events if custom classifiers were trained and used).
+
 -   **`alignment_by_row_channels.py`:**
     -   Implements an audio fingerprinting algorithm to determine the time delay (synchronization) between two video files (e.g., camera audio and slide audio).
     -   **Methodology:**
@@ -92,6 +105,11 @@ A `requirements.txt` file is included in this directory to simplify the installa
 -   `progressbar2`: Used in `autosub_app.py` to display command-line progress (updated from `progressbar`).
 -   Pillow (`PIL`): Used for image manipulation, often a dependency of `moviepy`.
 -   `pytimecode`: For working with video timecodes (replaces older `timecode` library if previously used by `scenetest_friday.py`, though direct datetime calculations are now more common in refactored parts).
+-   `pyAudioAnalysis`: For audio analysis tasks including feature extraction, speaker diarization, and sound event detection (used by `audio_analyzer.py`).
+-   `scikit-learn`: A dependency for `pyAudioAnalysis`.
+-   `hmmlearn`: A dependency for `pyAudioAnalysis` (specifically for older versions or certain functionalities like HMM-based segmentation, though direct usage might vary).
+-   `eyed3`: For reading audio metadata (often a dependency for audio processing libraries).
+-   `librosa`: A library for audio and music analysis (can be a dependency or alternative for some `pyAudioAnalysis` tasks, or used for more advanced analysis).
 
 Standard Python libraries are also used (e.g., `os`, `sys`, `argparse`, `json`, `re`, `pprint`, `datetime`, `subprocess`, `shlex`).
 
@@ -100,3 +118,4 @@ Standard Python libraries are also used (e.g., `os`, `sys`, `argparse`, `json`, 
 -   `imagemagick` (`convert` command): Used by `scenetest_friday.py` for image manipulation tasks like cropping and resizing preview PNGs. Must be installed and in the system's PATH for these features to work.
 
 **Note:** While `autosub_app.py` has been updated for Python 3, `scenetest_friday.py` has also undergone significant refactoring with new functions written in a Python 3 compatible style (e.g., using f-strings for new print statements). However, older parts of `scenetest_friday.py` and other utility scripts might still contain Python 2 syntax (e.g., `print` statements without parentheses). A full review and update for complete Python 3 compatibility across all scripts is recommended for the future.
+```

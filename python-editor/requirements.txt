@@ -6,3 +6,8 @@ numpy
 progressbar2
 Pillow
 pytimecode
+pyAudioAnalysis
+scikit-learn
+hmmlearn
+eyed3
+librosa
