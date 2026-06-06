@@ -1,0 +1,20 @@
+{
+  "host": "EXTRON_IP_OR_DNS_HERE",
+  "port": 23,
+  "name": "room-extron",
+  "outDir": "logs",
+  "init": [
+    "W1CV"
+  ],
+  "keepalive": "Q",
+  "keepaliveMs": 50000,
+  "poll": [],
+  "pollMs": 60000,
+  "reconnect": true,
+  "reconnectMinMs": 2000,
+  "reconnectMaxMs": 30000,
+  "sendCrLf": true,
+  "stdin": true,
+  "echoTx": true,
+  "stripTelnetNegotiation": true
+}
